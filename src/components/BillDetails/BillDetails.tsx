@@ -1,11 +1,21 @@
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
+import fetchBillStatus from "../../services/billMethod/fetchBillStatus";
+import useStore from "../../services/useAppStore";
+import fetchBillingDetails from "../../services/postpaid/fetchBillingDetails";
+
+interface BillingDetail {
+  outstandingBalance: number;
+  lastBillDate: string;
+  lastPaymentAmount: number;
+  lastPaymentDate: string;
+}
 
 interface BillDetailsProps {
   selectedTab: string;
   telephoneNo: string;
   accountNo: string;
-  billingDetails: any; 
+  billingDetails: BillingDetail[];
 }
 
 const BillDetails: React.FC<BillDetailsProps> = ({
@@ -14,27 +24,69 @@ const BillDetails: React.FC<BillDetailsProps> = ({
   accountNo,
   billingDetails,
 }) => {
-  // Log the entire billingDetails to the console
-  console.log("Full billing details:", billingDetails);
-  console.log("Telephone No:", telephoneNo);
-  console.log("Account No:", accountNo);
-
-  // Check if billingDetails exists and use the first entry directly
   const billingData = billingDetails?.[0];
 
   if (!billingData) {
     return (
-      <Box sx={{  p: 2, mt: 2, textAlign: "center", width: "95%"}}>
-        <CircularProgress/>
+      <Box sx={{ p: 2, mt: 2, textAlign: "center", width: "95%" }}>
+        <CircularProgress />
       </Box>
     );
   }
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      const details = await fetchBillingDetails(telephoneNo, accountNo);
+      console.log("Fetched billing details inside useEffect:", details);
+    };
+  
+    fetchDetails();
+  }, [telephoneNo, accountNo]);
+  
+
+  
+  const handlePayNow = async () => {
+    const details = await fetchBillingDetails(telephoneNo, accountNo);
+  
+    if (!details || details.length === 0) {
+      console.error("No billing details found");
+      return;
+    }
+  
+    const formData = {
+      EventSource: accountNo,
+      vpc_Amount: details[0].billAmount,
+      prepaidID: "",
+      reciever: "",
+      packageId: "",
+      channel: "SLTPRE",
+      commitUser: "Omni",
+      reporterPackage: "",
+      callbackURLSLT: "",
+    };
+  
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "https://billpay.slt.lk/confirm.php";
+    form.target = "_self"; // Use "_blank" to open in new tab
+  
+    Object.entries(formData).forEach(([key, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value;
+      form.appendChild(input);
+    });
+  
+    document.body.appendChild(form);
+    form.submit();
+  };
+  
 
   return (
     <Box sx={{ p: 0, width: "99%" }}>
       {selectedTab === "Total Payable" && (
         <>
-          {/* Total Payable Section */}
           <Box
             sx={{
               bgcolor: "#0056A2",
@@ -47,17 +99,15 @@ const BillDetails: React.FC<BillDetailsProps> = ({
           >
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body1">Total Payable:</Typography>
-              <Typography variant="body1">Rs. {billingData.outstandingBalance}</Typography>
-            </Box>
-            <Box sx={{ mt: 1 }}>
               <Typography variant="body1">
-                For the month ending at {billingData.lastBillDate}
+                Rs. {billingData.outstandingBalance}
               </Typography>
             </Box>
-            
+            <Typography variant="body1" sx={{ mt: 1 }}>
+              For the month ending at {billingData.lastBillDate}
+            </Typography>
           </Box>
 
-          {/* Last Payment Section */}
           <Box
             sx={{
               bgcolor: "#E0F7FA",
@@ -72,10 +122,11 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
               Last Payment: Rs. {billingData.lastPaymentAmount}
             </Typography>
-            <Typography variant="body1">On {billingData.lastPaymentDate}</Typography>
+            <Typography variant="body1">
+              On {billingData.lastPaymentDate}
+            </Typography>
           </Box>
 
-          {/* Right-Aligned Pay Now Button */}
           <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 3 }}>
             <Button
               variant="contained"
@@ -87,12 +138,9 @@ const BillDetails: React.FC<BillDetailsProps> = ({
                 width: "15%",
                 borderRadius: 2,
               }}
+              onClick={handlePayNow}
             >
-          <Typography
-          variant="body2"
-        >
-          pay now
-        </Typography>
+              <Typography variant="body2">Pay Now</Typography>
             </Button>
           </Box>
         </>
