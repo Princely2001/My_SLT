@@ -306,7 +306,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               borderRadius: "10px",
               border: isAddToBillActive ? "2px solid blue" : "2px solid transparent",
             }} 
-            onClick={() => setIsAddToBillActive(true)} // Activate the "Add to Bill" button
+            onClick={handleSubmit}
           />
           </Box>
           <img
