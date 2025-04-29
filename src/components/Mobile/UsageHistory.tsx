@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Tabs, Tab, Paper, Typography, IconButton } from "@mui/material";
+import { Box, Tabs, Tab, Paper, Typography, IconButton } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -16,7 +16,6 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
 
   return (
     <Box sx={{ p: 3 }}>
-      
       {/* Top Row: Back Arrow + Title */}
       <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
         <IconButton onClick={onBack} sx={{ color: "white", mr: 1 }}>
@@ -61,19 +60,100 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
 
       {/* Tab Content */}
       <Paper sx={usagePaperStyle}>
-        <UsageCard
-          updatedAt="28/04/2025 11:22 AM"
-          title={usageTab === 0 ? "Anytime" : usageTab === 1 ? "Voice M2M" : usageTab === 2 ? "M2M SMS" : "Loyalty Voice"}
-          used={usageTab === 0 ? 1.88 : usageTab === 1 ? 20 : 2}
-          total={usageTab === 0 ? 2 : usageTab === 1 ? 777 : 777}
-          remaining={usageTab === 0 ? "122.61 MB" : usageTab === 1 ? "757 min" : "775"}
-          unit={usageTab === 0 ? "GB" : usageTab === 1 ? "min" : "messages"}
-          expiry="2025-05-03 07:04:57"
-        />
+        {usageTab === 1 ? (
+          <>
+            <UsageCard
+              updatedAt="28/04/2025 12:23 PM"
+              title="Voice M2M"
+              used={20}
+              total={777}
+              remaining="757 min"
+              unit="min"
+              expiry="2025-05-03 07:04:57"
+            />
+            <DividerLine />
+            <UsageCard
+              updatedAt="28/04/2025 12:23 PM"
+              title="M2O Voice"
+              used={168}
+              total={1000}
+              remaining="832 min"
+              unit="min"
+              expiry="2025-05-03 07:04:57"
+            />
+          </>
+        ) : usageTab === 2 ? (
+          <>
+            <UsageCard
+              updatedAt="28/04/2025 12:30 PM"
+              title="M2M SMS"
+              used={2}
+              total={777}
+              remaining="775"
+              unit=""
+              expiry="2025-05-03 07:04:57"
+            />
+            <DividerLine />
+            <UsageCard
+              updatedAt="28/04/2025 12:30 PM"
+              title="M2O SMS"
+              used={126}
+              total={1000}
+              remaining="378"
+              unit=""
+              expiry="2025-05-03 07:04:57"
+            />
+          </>
+        ) : usageTab === 3 ? (
+          <>
+            <UsageCard
+              updatedAt="28/04/2025 12:35 PM"
+              title="Loyalty Voice"
+              used={0}
+              total={2}
+              remaining="2"
+              unit=""
+              expiry="2025-05-03 07:04:57"
+            />
+            <DividerLine />
+            <UsageCard
+              updatedAt="28/04/2025 12:35 PM"
+              title="Call Center Voice"
+              used={0}
+              total={3}
+              remaining="3"
+              unit=""
+              expiry="2025-05-03 07:04:57"
+            />
+          </>
+        ) : (
+          <UsageCard
+            updatedAt="28/04/2025 11:22 AM"
+            title="Anytime"
+            used={1.88}
+            total={2}
+            remaining="122.61 MB"
+            unit="GB"
+            expiry="2025-05-03 07:04:57"
+          />
+        )}
       </Paper>
     </Box>
   );
 }
+
+// Divider Component
+const DividerLine = () => (
+  <Box sx={{ my: 3 }}>
+    <Box sx={{
+      height: '2px',
+      width: '100%',
+      backgroundColor: '#ffffff',
+      opacity: 0.3,
+      borderRadius: '1px'
+    }} />
+  </Box>
+);
 
 // Card Style
 const usagePaperStyle = {
@@ -102,7 +182,12 @@ const UsageCard = ({ updatedAt, title, used, total, remaining, unit, expiry }) =
       <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
         <Box sx={{ width: '100%', mr: 1 }}>
           <Box sx={{ height: 8, background: 'rgba(255,255,255,0.1)', borderRadius: 5 }}>
-            <Box sx={{ width: `${progress}%`, height: '100%', background: 'linear-gradient(90deg, #00e6e6, #0099cc)', borderRadius: 5 }} />
+            <Box sx={{
+              width: `${progress}%`,
+              height: '100%',
+              background: 'linear-gradient(90deg, #00e6e6, #0099cc)',
+              borderRadius: 5
+            }} />
           </Box>
         </Box>
         <Typography variant="body2" fontWeight={600}>
