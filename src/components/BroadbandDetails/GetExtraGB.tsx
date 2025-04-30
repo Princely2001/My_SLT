@@ -9,7 +9,6 @@ import useStore from "../../services/useAppStore";
 import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
 //import { GetExtraGBActivateResponse } from "../../services/postpaid/activatepackagedetails";
-import PaymentServiceRequest from "../../services/billMethod/paybill";
 
 
 const dataPlans = [
@@ -306,7 +305,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               borderRadius: "10px",
               border: isAddToBillActive ? "2px solid blue" : "2px solid transparent",
             }} 
-            onClick={handleSubmit}
+            onClick={() => setIsAddToBillActive(true)} // Activate the "Add to Bill" button
           />
           </Box>
           <img

@@ -12,7 +12,7 @@ const CustomAppBar = () => {
   const [openDropdown, setOpenDropdown] = useState(false); // Dropdown open/close state
   const [accounts, setAccounts] = useState<AccountDetails[]>([
     {
-      telephoneno: "0714329988",
+      telephoneno: "",
       accountNo: undefined,
       accountno: "",
       status: ""
