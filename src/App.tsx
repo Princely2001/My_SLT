@@ -15,6 +15,7 @@ function App() {
         <Route path="/login" element={<LoginOrSignup />} /> {/* Add this route */}
         <Route path="/home" element={<Home />} />
         
+        
       </Routes>
     </Router>
   );
