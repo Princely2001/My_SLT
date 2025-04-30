@@ -4,11 +4,12 @@ import { FaCloudSun, FaCloudMoon, FaPhoneAlt, FaSms, FaBolt, FaWallet, FaChartLi
 import { motion } from "framer-motion";
 import UsageHistory from "./UsageHistory";
 import DataUsageDetails from "./Viewdetails";
+import ReloadHistory from "./ReloadHistory";
 
 export default function DesktopDashboard() {
   const [activeTab, setActiveTab] = useState("data");
   const [isHovered, setIsHovered] = useState(false);
-  const [view, setView] = useState<'dashboard' | 'usageHistory' | 'dataUsageDetails'>('dashboard');
+  const [view, setView] = useState<'dashboard' | 'usageHistory' | 'dataUsageDetails' | 'reloadHistory'>('dashboard');
  
   return (
     <Box sx={{
@@ -496,25 +497,24 @@ export default function DesktopDashboard() {
         whileTap={{ scale: 0.98 }}
       >
         <Button 
-          variant="outlined" 
-          sx={{ 
-            borderRadius: "20px", 
-            px: 3,
-            py: 1,
-            fontWeight: 600,
-            letterSpacing: '0.5px',
-            borderColor: 'rgba(255,255,255,0.25)',
-            color: 'white',
-            background: 'rgba(255,255,255,0.03)',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              borderColor: 'rgba(255,255,255,0.4)',
-              background: 'rgba(255,255,255,0.08)'
-            }
-          }}
-        >
-          History
-        </Button>
+  variant="outlined"
+  onClick={() => setView('reloadHistory')}
+  sx={{ 
+    borderRadius: "20px", 
+    px: 3,
+    py: 1,
+    fontWeight: 600,
+    letterSpacing: '0.5px',
+    borderColor: 'rgba(255,255,255,0.3)',
+    color: 'white',
+    '&:hover': {
+      borderColor: 'rgba(255,255,255,0.5)',
+      background: 'rgba(255,255,255,0.1)'
+    }
+  }}
+>
+  History
+</Button>
       </motion.div>
     </Box>
   </Box>
@@ -1576,6 +1576,10 @@ export default function DesktopDashboard() {
 
         {view === 'dataUsageDetails' && (
           <DataUsageDetails onBack={() => setView('dashboard')} />
+        )}
+
+        { view === 'reloadHistory' && (
+           <ReloadHistory onBack={() => setView('dashboard')} />
         )}
       </Box>
      
