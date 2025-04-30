@@ -5,23 +5,27 @@ import { useEffect, useState } from "react";
 import useStore from "../services/useAppStore";
 
 const CustomNavBar = () => {
-  const { serviceDetails, setSelectedNavbarItem, selectedNavbarItem, selectedTelephone, setLeftMenuItem, setSelectedQuickAccessItem } = useStore();
-  const isPrepaid = serviceDetails?.promotionType === "Prepaid" || serviceDetails?.promotionType === null;
+  const {
+    serviceDetails,
+    setSelectedNavbarItem,
+    selectedNavbarItem,
+    selectedTelephone,
+    setLeftMenuItem,
+    setSelectedQuickAccessItem,
+  } = useStore();
+
+  const isPrepaid =
+    serviceDetails?.promotionType === "Prepaid" ||
+    serviceDetails?.promotionType === null;
+
   const [selectedItem, setSelectedItem] = useState("Broadband");
 
-  const items =
-    selectedTelephone === "0714329988"
-      ? [
-          { label: "Ashen", key: "Ashen" },
-          { label: "Sachini", key: "Sachini" },
-          { label: "Nuwan", key: "Nuwan" },
-        ]
-      : [
-          { label: "Broadband", key: "Broadband" },
-          { label: "PEO TV", key: "PeoTV" },
-          { label: "Voice", key: "Voice" },
-          { label: "Mobile", key: "Mobile" },
-        ];
+  const items = [
+    { label: "Broadband", key: "Broadband" },
+    { label: "PEO TV", key: "PeoTV" },
+    { label: "Voice", key: "Voice" },
+    { label: "Mobile", key: "Mobile" },
+  ];
 
   const handleItemClick = (item: string) => {
     setSelectedQuickAccessItem("");
@@ -73,7 +77,8 @@ const CustomNavBar = () => {
               flexGrow: 1,
               width: "auto",
               color: selectedItem === item.key ? "white" : "#0056A2",
-              backgroundColor: selectedItem === item.key ? "#0056A2" : "transparent",
+              backgroundColor:
+                selectedItem === item.key ? "#0056A2" : "transparent",
               borderRadius: 2,
               textTransform: "capitalize",
               "&:hover": {
