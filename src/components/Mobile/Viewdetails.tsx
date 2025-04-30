@@ -13,11 +13,13 @@ import {
   Slide,
   Grow,
   Zoom,
-  Fade
+  Fade,
+  IconButton
 } from '@mui/material';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
 import { FaArrowLeft, FaBolt, FaShoppingCart } from 'react-icons/fa';
 import { MdDataUsage, MdNightlightRound, MdWbSunny } from 'react-icons/md';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 interface UsagehistoryProps {
   onBack: () => void;
@@ -149,39 +151,14 @@ export default function DataUsageDetails({ onBack }: UsagehistoryProps) {
       }}>
         {/* Back Button with smooth hover */}
         <Zoom in={true} style={{ transitionDelay: '100ms' }}>
-        <Button 
-  variant="contained"
-  startIcon={<FaArrowLeft />}
-  onClick={onBack}
-  sx={{
-    background: 'linear-gradient(90deg, #00e6e6, #0099cc)',
-    borderRadius: '20px',
-    px: 3,
-    py: 1,
-    fontWeight: 600,
-    letterSpacing: '0.5px',
-    color: 'white',
-    boxShadow: '0 4px 15px rgba(0,230,230,0.3)',
-    transition: 'all 0.3s ease',
-    textTransform: 'none',
-    '&:hover': {
-      transform: 'translateX(-4px)',
-      boxShadow: '0 6px 20px rgba(0,230,230,0.4)',
-      background: 'linear-gradient(90deg, #00c4c4, #0088aa)',
-      '& svg': {
-        transform: 'translateX(-3px)'
-      }
-    },
-    '&:active': {
-      transform: 'translateX(-2px) scale(0.98)'
-    },
-    '& .MuiButton-startIcon': {
-      transition: 'transform 0.3s ease'
-    }
-  }}
->
-  Back
-</Button>
+        <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+        <IconButton onClick={onBack} sx={{ color: "white", mr: 1 }}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h5" sx={{ fontWeight: 700, color: "white" }}>
+          Data Usage
+        </Typography>
+      </Box>
         </Zoom>
 
         {/* Title with subtle gradient */}
