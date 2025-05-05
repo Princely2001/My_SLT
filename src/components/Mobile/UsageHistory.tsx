@@ -1,15 +1,25 @@
 import React, { useState } from "react";
-import { Box, Tabs, Tab, Paper, Typography, IconButton } from "@mui/material";
+import { Box, Tabs, Tab, Paper, Typography, Button, Divider } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DataUsageIcon from '@mui/icons-material/DataUsage';
 import PhoneIcon from '@mui/icons-material/Phone';
 import SmsIcon from '@mui/icons-material/Sms';
 import CallIcon from '@mui/icons-material/Call';
 
-
 // Props Interface
 interface UsageHistoryProps {
   onBack: () => void;
+}
+
+// UsageCard Props Interface
+interface UsageCardProps {
+  updatedAt: string;
+  title: string;
+  used: number;
+  total: number;
+  remaining: string;
+  unit: string;
+  expiry: string;
 }
 
 export default function UsageHistory({ onBack }: UsageHistoryProps) {
@@ -17,15 +27,40 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
 
   return (
     <Box sx={{ p: 3 }}>
-      {/* Top Row: Back Arrow + Title */}
-      <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
-        <IconButton onClick={onBack} sx={{ color: "white", mr: 1 }}>
-          <ArrowBackIcon />
-        </IconButton>
-        <Typography variant="h5" sx={{ fontWeight: 700 }}>
-          Usage History
-        </Typography>
-      </Box>
+      {/* Converted Back Button with Title */}
+      <Button
+        startIcon={<ArrowBackIcon />}
+        onClick={onBack}
+        sx={{
+          alignSelf: 'flex-start',
+          color: 'white',
+          mb: 4,
+          px: 2,
+          py: 1,
+          borderRadius: '8px',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
+          textTransform: 'none',
+          fontSize: '1.25rem',
+          fontWeight: 700,
+          transition: 'all 0.3s ease',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(5px)',
+          '&:hover': {
+            backgroundColor: 'rgba(0, 168, 232, 0.2)',
+            borderColor: 'rgba(0, 168, 232, 0.5)',
+            boxShadow: '0 0 15px rgba(0, 168, 232, 0.3)'
+          },
+          '& .MuiButton-startIcon': {
+            transition: 'transform 0.3s ease',
+            marginRight: '8px'
+          },
+          '&:hover .MuiButton-startIcon': {
+            transform: 'translateX(-3px)'
+          }
+        }}
+      >
+        Usage History
+      </Button>
 
       {/* Tabs */}
       <Tabs
@@ -60,7 +95,14 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
       </Tabs>
 
       {/* Tab Content */}
-      <Paper sx={usagePaperStyle}>
+      <Paper sx={{
+        background: 'rgba(255,255,255,0.05)',
+        borderRadius: '16px',
+        p: 3,
+        backdropFilter: 'blur(8px)',
+        border: '1px solid rgba(255,255,255,0.1)',
+        color: 'white'
+      }}>
         {usageTab === 1 ? (
           <>
             <UsageCard
@@ -72,7 +114,7 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
               unit="min"
               expiry="2025-05-03 07:04:57"
             />
-            <DividerLine />
+            <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.3)' }} />
             <UsageCard
               updatedAt="28/04/2025 12:23 PM"
               title="M2O Voice"
@@ -94,7 +136,7 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
               unit=""
               expiry="2025-05-03 07:04:57"
             />
-            <DividerLine />
+            <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.3)' }} />
             <UsageCard
               updatedAt="28/04/2025 12:30 PM"
               title="M2O SMS"
@@ -116,7 +158,7 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
               unit=""
               expiry="2025-05-03 07:04:57"
             />
-            <DividerLine />
+            <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.3)' }} />
             <UsageCard
               updatedAt="28/04/2025 12:35 PM"
               title="Call Center Voice"
@@ -143,30 +185,8 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
   );
 }
 
-// Divider Component
-const DividerLine = () => (
-  <Box sx={{ my: 3 }}>
-    <Box sx={{
-      height: '2px',
-      width: '100%',
-      backgroundColor: '#ffffff',
-      opacity: 0.3,
-      borderRadius: '1px'
-    }} />
-  </Box>
-);
-
-// Card Style
-const usagePaperStyle = {
-  background: 'rgba(255,255,255,0.05)',
-  borderRadius: '16px',
-  p: 3,
-  backdropFilter: 'blur(8px)',
-  border: '1px solid rgba(255,255,255,0.1)',
-};
-
 // Usage Card Component
-const UsageCard = ({ updatedAt, title, used, total, remaining, unit, expiry }) => {
+const UsageCard = ({ updatedAt, title, used, total, remaining, unit, expiry }: UsageCardProps) => {
   const progress = (used / total) * 100;
   return (
     <Box sx={{ mb: 3 }}>
