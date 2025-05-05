@@ -200,7 +200,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
           },
         }}
       >
-        Back to Usage Details
+        Get Extra GB
       </Button>
 
       {/* Main Content */}

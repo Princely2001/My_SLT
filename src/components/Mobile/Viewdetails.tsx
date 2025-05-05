@@ -273,7 +273,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
           },
         }}
       >
-        Transaction History
+        Data Usage
       </Button>
 
       {/* Main Content Container */}
