@@ -118,7 +118,7 @@ export default function DesktopDashboard() {
                       gap: 1,
                       textShadow: '0 0 8px rgba(0, 230, 230, 0.3)'
                     }}>
-                      0701715336
+                      Shenaya Fernando
                       <Box component="span" sx={{
                         width: 8,
                         height: 8,
