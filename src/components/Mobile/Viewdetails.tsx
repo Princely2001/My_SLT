@@ -5,7 +5,7 @@ import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CircularProgressBar from "../CircularProgressBar";
 import { keyframes } from '@emotion/react';
-import GetExtraGbPage from './GetExtraGB'; // Import the GetExtraGB component
+import GetExtraGbPage from './GetExtraGB'; 
 
 // Define interfaces
 interface PostpaidUsageDetails {

@@ -18,7 +18,7 @@ import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import { keyframes } from '@emotion/react';
 
-// Color Scheme matching ViewDetails
+
 const colorScheme = {
   primaryDark: 'rgb(13, 54, 90)',
   primaryLight: 'rgb(25, 71, 114)',
