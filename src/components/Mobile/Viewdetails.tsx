@@ -5,6 +5,7 @@ import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CircularProgressBar from "../CircularProgressBar";
 import { keyframes } from '@emotion/react';
+import GetExtraGbPage from './GetExtraGB'; // Import the GetExtraGB component
 
 // Define interfaces
 interface PostpaidUsageDetails {
@@ -183,7 +184,7 @@ const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: {
       borderRadius: '4px',
       padding: isMobile ? '4px' : '4px 0',
       justifyContent: 'space-between',
-      minHeight: '40px', // Reduced container height
+      minHeight: '40px',
       height: 'auto',
       alignItems: 'center'
     }}>
@@ -195,7 +196,7 @@ const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: {
             flex: 1,
             minWidth: 'auto',
             px: isMobile ? 0.5 : 1.5,
-            py: 0.5, // Reduced padding
+            py: 0.5,
             borderRadius: '3px',
             background: selected === item.label 
               ? 'linear-gradient(135deg, rgba(0, 168, 232, 0.3) 0%, rgba(64, 196, 255, 0.3) 100%)' 
@@ -204,16 +205,16 @@ const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: {
             border: 'none',
             textTransform: 'none',
             fontWeight: 600,
-            fontSize: isMobile ? '0.7rem' : '0.8rem', // Slightly smaller font
+            fontSize: isMobile ? '0.7rem' : '0.8rem',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
             transition: 'all 0.2s ease',
-            minHeight: '36px', // Reduced button height
+            minHeight: '36px',
             '&:hover': {
               background: 'linear-gradient(135deg, rgba(0, 168, 232, 0.2) 0%, rgba(64, 196, 255, 0.2) 100%)',
-              transform: 'translateY(-1px)' // Reduced hover effect
+              transform: 'translateY(-1px)'
             },
             position: 'relative',
             '&::after': {
@@ -223,7 +224,7 @@ const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: {
               left: '50%',
               transform: 'translateX(-50%)',
               width: selected === item.label ? '70%' : '0',
-              height: '2px', // Thinner indicator
+              height: '2px',
               background: colorScheme.secondaryAccent,
               transition: 'width 0.2s ease',
               borderRadius: '1px'
@@ -233,14 +234,14 @@ const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: {
           <Typography sx={{ 
             fontSize: isMobile ? '0.7rem' : '0.8rem',
             fontWeight: 600,
-            mb: 0.25, // Reduced margin
+            mb: 0.25,
             whiteSpace: 'nowrap',
             lineHeight: 1.2
           }}>
             {item.label}
           </Typography>
           <Typography sx={{ 
-            fontSize: isMobile ? '0.6rem' : '0.7rem', // Smaller secondary text
+            fontSize: isMobile ? '0.6rem' : '0.7rem',
             color: selected === item.label ? colorScheme.secondaryAccent : colorScheme.textSecondary,
             fontWeight: 500,
             whiteSpace: 'nowrap',
@@ -262,6 +263,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showGetExtraGB, setShowGetExtraGB] = useState(false); // State to control Get Extra GB screen
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -338,6 +340,16 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   };
 
   const sizes = getSizeValues();
+
+  // If showGetExtraGB is true, render the GetExtraGB component
+  if (showGetExtraGB) {
+    return (
+      <GetExtraGbPage 
+        packageName={dummyServiceData.listofBBService[0].packageName}
+        onBack={() => setShowGetExtraGB(false)}
+      />
+    );
+  }
 
   return (
     <Box sx={{
@@ -842,6 +854,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
               <Button
                 variant="outlined"
                 fullWidth
+                onClick={() => setShowGetExtraGB(true)} // Add click handler to show Get Extra GB screen
                 sx={{
                   color: colorScheme.secondaryAccent,
                   py: 1,

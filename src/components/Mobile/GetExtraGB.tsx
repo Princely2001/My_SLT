@@ -10,15 +10,48 @@ import {
   DialogActions,
   CircularProgress,
   useMediaQuery,
-  useTheme
+  useTheme,
+  Divider
 } from "@mui/material";
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import AddToBillImage from "../../assets/Images/subscriptionPageImages/GetExtraGBAdd.jpeg";
-import PayNowImage from "../../assets/Images/subscriptionPageImages/GetExtraGBPay.jpeg";
 import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
-//import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
-//import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
+import { keyframes } from '@emotion/react';
+
+// Color Scheme matching ViewDetails
+const colorScheme = {
+  primaryDark: 'rgb(13, 54, 90)',
+  primaryLight: 'rgb(25, 71, 114)',
+  accent: 'rgb(0, 168, 232)',
+  secondaryAccent: 'rgb(64, 196, 255)',
+  highlight: 'rgba(100, 210, 255, 0.3)',
+  textPrimary: 'rgba(255, 255, 255, 0.95)',
+  textSecondary: 'rgba(255, 255, 255, 0.7)',
+  divider: 'rgba(255, 255, 255, 0.12)',
+  cardBg: 'rgba(18, 63, 102, 0.4)',
+  buttonGradient: 'linear-gradient(135deg, rgba(0, 168, 232, 0.9) 0%, rgba(64, 196, 255, 0.9) 100%)',
+  navbarBg: 'rgba(13, 54, 90, 0.9)',
+  glassEffect: 'rgba(255, 255, 255, 0.05)',
+  glowEffect: 'rgba(64, 196, 255, 0.3)'
+};
+
+// Animations matching ViewDetails
+const floatAnimation = keyframes`
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const borderGlow = keyframes`
+  0% { border-color: rgba(64, 196, 255, 0.3); }
+  50% { border-color: rgba(64, 196, 255, 0.7); }
+  100% { border-color: rgba(64, 196, 255, 0.3); }
+`;
 
 interface DataPlan {
   range: string;
@@ -61,13 +94,11 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
-  // Mock package details - replace with actual API call
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // Mock data - replace with: 
-        // const response = await fetchPackageDetails(serviceID, packageName);
+        // Mock data - replace with actual API call
         const mockPackageDetails: PackageDetail[] = [
           { volume: 1, postPrice: "100.00", packageId: "EXTRA1GB" },
           { volume: 2, postPrice: "200.00", packageId: "EXTRA2GB" },
@@ -116,8 +147,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
       if (!selectedPlan) throw new Error("Selected plan not found");
 
       if (paymentMethod === "addToBill") {
-        // Mock activation - replace with:
-        // const response = await activatepackagedetails(serviceID, selectedPlan.packageId);
+        // Mock activation
         const mockResponse = {
           isSuccess: true,
           message: "Package added to your bill successfully"
@@ -144,7 +174,6 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
           callbackURLSLT: "", 
         };
 
-        // In a real implementation, this would submit to payment gateway
         console.log("Payment data:", paymentData);
         setSuccessMessage("Redirecting to payment gateway...");
       }
@@ -166,15 +195,37 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
     <Box
       sx={{
         minHeight: "100vh",
-        background: `linear-gradient(135deg, rgb(13, 54, 90) 0%, rgb(25, 71, 114) 100%)`,
+        background: `linear-gradient(135deg, ${colorScheme.primaryDark} 0%, ${colorScheme.primaryLight} 100%)`,
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
         py: 4,
         px: isMobile ? 2 : 4,
-        color: "rgba(255, 255, 255, 0.95)",
+        color: colorScheme.textPrimary,
+        fontFamily: "'Inter', sans-serif",
         position: "relative",
         overflow: "hidden",
+        '&::before': {
+          content: '""',
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '4px',
+          background: colorScheme.buttonGradient,
+          zIndex: 1
+        },
+        '&::after': {
+          content: '""',
+          position: 'absolute',
+          top: '-50%',
+          left: '-50%',
+          right: '-50%',
+          bottom: '-50%',
+          background: 'linear-gradient(45deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.03) 100%)',
+          animation: `${floatAnimation} 20s infinite linear`,
+          zIndex: 0
+        }
       }}
     >
       {/* Back Button */}
@@ -183,7 +234,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
         onClick={onBack}
         sx={{
           alignSelf: 'flex-start',
-          color: 'white',
+          color: colorScheme.textPrimary,
           mb: 4,
           zIndex: 2,
           transition: 'all 0.3s ease',
@@ -208,277 +259,343 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
         sx={{
           width: '100%',
           maxWidth: '1200px',
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          alignItems: "center",
-          backgroundColor: "#FFFFFF",
-          color: "#0056A2",
-          padding: 2,
-          borderRadius: "10px",
-          boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.29)",
-          minHeight: "500px",
-          gap: 2,
-          position: "relative",
-          overflow: "hidden",
+          background: colorScheme.cardBg,
+          borderRadius: '24px',
+          backdropFilter: 'blur(16px)',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          p: isMobile ? 2 : 4,
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          position: 'relative',
+          zIndex: 1,
+          overflow: 'hidden',
+          animation: `${fadeIn} 0.5s ease-out`,
+          '&::before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: `linear-gradient(135deg, rgba(0, 168, 232, 0.1) 0%, rgba(64, 196, 255, 0.05) 100%)`,
+            zIndex: -1
+          }
         }}
       >
-        {/* Left Section - Price Plan */}
-        <Box
-          sx={{
-            flex: 1,
-            padding: { xs: 2, md: 4 },
-            width: { xs: "100%", md: "50%" },
-          }}
-        >
-          <Typography variant="h6" sx={{ 
-            color: "#0056A2", 
-            fontWeight: "bold", 
-            mb: 2, 
-            fontSize: { xs: "20px", md: "25px" } 
-          }}>
-            Price Plan
-          </Typography>
-          
-          {dataPlans.map((plan, index) => (
+        <Typography variant="h4" sx={{ 
+          fontWeight: 700,
+          mb: 3,
+          color: colorScheme.textPrimary,
+          textAlign: 'center',
+          background: `linear-gradient(90deg, ${colorScheme.accent}, ${colorScheme.secondaryAccent})`,
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent'
+        }}>
+          Get Extra Data
+        </Typography>
+
+        <Box sx={{ 
+          display: "flex", 
+          flexDirection: { xs: "column", md: "row" },
+          gap: 4,
+        }}>
+          {/* Left Section - Price Plan */}
+          <Box
+            sx={{
+              flex: 1,
+              p: isMobile ? 2 : 3,
+              background: colorScheme.cardBg,
+              borderRadius: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+            }}
+          >
+            <Typography variant="h6" sx={{ 
+              fontWeight: 600, 
+              mb: 2,
+              color: colorScheme.textPrimary,
+              borderBottom: `1px solid ${colorScheme.divider}`,
+              pb: 1,
+              position: 'relative',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                bottom: '-1px',
+                left: 0,
+                width: '40px',
+                height: '2px',
+                background: colorScheme.accent,
+                borderRadius: '2px'
+              }
+            }}>
+              Price Plan
+            </Typography>
+            
+            {dataPlans.map((plan, index) => (
+              <Box
+                key={index}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: 1.5,
+                  marginBottom: 1.5,
+                  backgroundColor: 'rgba(0, 168, 232, 0.1)',
+                  border: `1px solid ${colorScheme.secondaryAccent}30`,
+                  borderRadius: "12px",
+                  transition: "all 0.3s ease",
+                  "&:hover": {
+                    backgroundColor: 'rgba(0, 168, 232, 0.2)',
+                    transform: 'translateY(-2px)'
+                  }
+                }}
+              >
+                <Typography sx={{ 
+                  color: colorScheme.textPrimary, 
+                  fontSize: { xs: "14px", md: "16px" }, 
+                  fontWeight: 500 
+                }}>
+                  {plan.range}
+                </Typography>
+                <Typography sx={{ 
+                  color: colorScheme.secondaryAccent, 
+                  fontSize: { xs: "14px", md: "16px" }, 
+                  fontWeight: 600 
+                }}>
+                  {plan.pricePerGB} LKR/GB
+                </Typography>
+              </Box>
+            ))}
+
+            {/* Data Buttons */}
+            <Box sx={{ 
+              display: "flex", 
+              flexWrap: "wrap", 
+              gap: 2, 
+              marginTop: 3,
+              justifyContent: "center"
+            }}>
+              {Array.from({ length: 10 }, (_, i) => i + 1)
+                .filter(gb => gb !== 4)
+                .concat([15, 20, 25])
+                .map((gb) => (
+                  <Button
+                    key={gb}
+                    variant={selectedGB === gb ? "contained" : "outlined"}
+                    sx={{
+                      minWidth: { xs: "60px", md: "80px" },
+                      height: { xs: "50px", md: "60px" },
+                      fontWeight: "bold",
+                      border: `2px solid ${colorScheme.secondaryAccent}`,
+                      borderRadius: "8px",
+                      "&.MuiButton-contained": {
+                        background: colorScheme.buttonGradient,
+                        color: colorScheme.textPrimary,
+                        boxShadow: `0 4px 15px ${colorScheme.accent}40`,
+                      },
+                      "&.MuiButton-outlined": {
+                        color: colorScheme.secondaryAccent,
+                        "&:hover": {
+                          border: `2px solid ${colorScheme.highlight}`,
+                          color: colorScheme.highlight
+                        }
+                      },
+                    }}
+                    onClick={() => handleSelect(gb)}
+                    disabled={isLoading}
+                  >
+                    {gb}GB
+                  </Button>
+                ))}
+            </Box>
+          </Box>
+
+          {/* Right Section - Subscription Details */}
+          <Box
+            sx={{
+              width: isMobile ? '100%' : '35%',
+              p: isMobile ? 2 : 3,
+              background: colorScheme.cardBg,
+              borderRadius: '20px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(8px)',
+              boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+              position: 'relative',
+            }}
+          >
+            {/* Package Summary */}
             <Box
-              key={index}
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                padding: 1,
-                marginBottom: 1,
-                backgroundColor: "rgba(5, 125, 232, 0.1)",
-                border: "1px solid #0056A2",
-                borderRadius: "10px",
-                transition: "background-color 0.3s ease",
-                "&:hover": {
-                  backgroundColor: "rgba(5, 125, 232, 0.2)",
-                }
+                padding: 2,
+                borderRadius: "12px",
+                marginBottom: 3,
+                background: 'rgba(0, 168, 232, 0.15)',
+                border: `1px solid ${colorScheme.secondaryAccent}30`,
               }}
             >
-              <Typography sx={{ 
-                color: "#0056A2", 
-                fontSize: { xs: "14px", md: "16px" }, 
-                fontWeight: "bold" 
+              <Typography variant="h4" sx={{ 
+                color: colorScheme.textPrimary,
+                fontWeight: "bold",
+                fontSize: { xs: "28px", md: "34px" }
               }}>
-                {plan.range}
+                {selectedGB || "0"} GB
               </Typography>
-              <Typography sx={{ 
-                color: "#0056A2", 
-                fontSize: { xs: "14px", md: "16px" }, 
-                fontWeight: "bold" 
+              <Typography variant="h6" sx={{ 
+                color: colorScheme.secondaryAccent,
+                fontWeight: "bold",
+                fontSize: { xs: "18px", md: "22px" }
               }}>
-                {plan.pricePerGB} LKR/GB
+                Rs. {selectedPrice ? Math.floor(selectedPrice) : "0"} + Tax
               </Typography>
             </Box>
-          ))}
 
-          {/* Data Buttons */}
-          <Box sx={{ 
-            display: "flex", 
-            flexWrap: "wrap", 
-            gap: 2, 
-            marginTop: 3,
-            justifyContent: "center"
-          }}>
-            {Array.from({ length: 10 }, (_, i) => i + 1)
-              .filter(gb => gb !== 4)
-              .concat([15, 20, 25])
-              .map((gb) => (
-                <Button
-                  key={gb}
-                  variant={selectedGB === gb ? "contained" : "outlined"}
+            {/* Payment Options */}
+            <Typography variant="body1" sx={{ 
+              color: colorScheme.textPrimary,
+              mb: 2,
+              fontWeight: 500
+            }}>
+              Select Payment Method
+            </Typography>
+            
+            <Box sx={{ 
+              display: 'flex', 
+              flexDirection: 'column',
+              gap: 2, 
+              marginTop: 2,
+              marginBottom: 3,
+            }}>
+              
+              
+              <Button
+                variant={paymentMethod === "payNow" ? "contained" : "outlined"}
+                onClick={() => !isLoading && setPaymentMethod("payNow")}
+                sx={{
+                  py: 1.5,
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  fontSize: isMobile ? '0.875rem' : '1rem',
+                  transition: 'all 0.3s ease',
+                  ...(paymentMethod === "payNow" ? {
+                    background: colorScheme.buttonGradient,
+                    color: colorScheme.textPrimary,
+                    boxShadow: `0 4px 15px ${colorScheme.accent}40`,
+                    '&:hover': {
+                      transform: 'translateY(-2px)',
+                      boxShadow: `0 6px 20px ${colorScheme.accent}60`
+                    }
+                  } : {
+                    color: colorScheme.secondaryAccent,
+                    border: `2px solid ${colorScheme.secondaryAccent}`,
+                    background: 'rgba(64, 196, 255, 0.05)',
+                    '&:hover': {
+                      background: 'rgba(64, 196, 255, 0.15)',
+                      borderColor: colorScheme.accent
+                    }
+                  })
+                }}
+              >
+                Pay Now
+              </Button>
+            </Box>
+
+            <Divider sx={{ 
+              my: 2, 
+              background: `linear-gradient(90deg, transparent, ${colorScheme.secondaryAccent}, transparent)`,
+              height: '1px'
+            }} />
+
+            {/* Terms and Conditions */}
+            <Box sx={{ mt: 3, mb: 2 }}>
+              <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
+                <Checkbox
+                  checked={isCheckboxChecked}
+                  onChange={(e) => setIsCheckboxChecked(e.target.checked)}
+                  disabled={isLoading}
                   sx={{
-                    minWidth: { xs: "60px", md: "80px" },
-                    height: { xs: "50px", md: "60px" },
-                    fontWeight: "bold",
-                    border: "2px solid #0056A2",
-                    borderRadius: "8px",
-                    "&.MuiButton-contained": {
-                      backgroundColor: "#0056A2",
-                      color: "white",
-                    },
-                    "&.MuiButton-outlined": {
-                      color: "#0056A2",
-                      "&:hover": {
-                        border: "2px solid #003D7A",
-                        color: "#003D7A"
-                      }
+                    color: colorScheme.secondaryAccent,
+                    "&.Mui-checked": { 
+                      color: colorScheme.secondaryAccent,
                     },
                   }}
-                  onClick={() => handleSelect(gb)}
-                  disabled={isLoading}
-                >
-                  {gb}GB
-                </Button>
-              ))}
-          </Box>
-        </Box>
+                />
+                <Typography variant="body2" sx={{ color: colorScheme.textSecondary }}>
+                  I agree to the{" "}
+                  <span style={{ 
+                    color: colorScheme.secondaryAccent,
+                    fontWeight: "bold", 
+                    textDecoration: "underline", 
+                    cursor: "pointer" 
+                  }}>
+                    general terms and conditions
+                  </span>
+                </Typography>
+              </Box>
 
-        {/* Right Section - Subscription Details */}
-        <Box
-          sx={{
-            border: "3px dashed #0056A2",
-            padding: 3,
-            margin: { xs: "10px 0", md: "10px 15px" },
-            borderRadius: "8px",
-            width: { xs: "90%", md: "35%" },
-            position: "relative",
-            backgroundColor: "rgba(255, 255, 255, 0.9)",
-          }}
-        >
-          {/* Package Summary */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              backgroundColor: "rgba(5, 125, 232, 0.1)",
-              padding: 2,
-              borderRadius: "10px",
-              marginBottom: 3,
-              border: "1px solid #0056A2",
-            }}
-          >
-            <Typography variant="h4" sx={{ 
-              color: "#0056A2", 
-              fontWeight: "bold",
-              fontSize: { xs: "28px", md: "34px" }
-            }}>
-              {selectedGB || "0"} GB
-            </Typography>
-            <Typography variant="h6" sx={{ 
-              color: "#0056A2", 
-              fontWeight: "bold",
-              fontSize: { xs: "18px", md: "22px" }
-            }}>
-              Rs. {selectedPrice ? Math.floor(selectedPrice) : "0"} + Tax
-            </Typography>
-          </Box>
-
-          {/* Payment Options */}
-          <Box sx={{ 
-            display: "flex", 
-            justifyContent: "center", 
-            gap: 3, 
-            marginTop: 3,
-            flexDirection: { xs: "column", sm: "row" }
-          }}>
-            <Box
-              sx={{
-                border: paymentMethod === "addToBill" ? "2px solid #0056A2" : "2px solid transparent",
-                borderRadius: "10px",
-                padding: "4px",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  border: "2px solid #0056A2",
-                }
-              }}
-            >
-              <img
-                src={AddToBillImage}
-                alt="Add to Bill"
-                style={{
-                  width: "100px",
-                  height: "auto",
-                  cursor: "pointer",
-                  borderRadius: "8px",
-                  opacity: paymentMethod === "addToBill" ? 1 : 0.7,
-                }}
-                onClick={() => !isLoading && setPaymentMethod("addToBill")}
-              />
-            </Box>
-            <Box
-              sx={{
-                border: paymentMethod === "payNow" ? "2px solid #0056A2" : "2px solid transparent",
-                borderRadius: "10px",
-                padding: "4px",
-                transition: "all 0.3s ease",
-                "&:hover": {
-                  border: "2px solid #0056A2",
-                }
-              }}
-            >
-              <img
-                src={PayNowImage}
-                alt="Pay Now"
-                style={{
-                  width: "100px",
-                  height: "auto",
-                  cursor: "pointer",
-                  borderRadius: "8px",
-                  opacity: paymentMethod === "payNow" ? 1 : 0.7,
-                }}
-                onClick={() => !isLoading && setPaymentMethod("payNow")}
-              />
-            </Box>
-          </Box>
-
-          {/* Terms and Conditions */}
-          <Box sx={{ mt: 4, mb: 2 }}>
-            <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
-              <Checkbox
-                checked={isCheckboxChecked}
-                onChange={(e) => setIsCheckboxChecked(e.target.checked)}
-                disabled={isLoading}
+              <Button
+                fullWidth
+                variant="contained"
+                disabled={!isCheckboxChecked || !paymentMethod || !selectedGB || isLoading}
                 sx={{
-                  color: "#0056A2",
-                  "&.Mui-checked": { color: "#0056A2" },
+                  background: colorScheme.buttonGradient,
+                  color: colorScheme.textPrimary,
+                  py: 1.5,
+                  borderRadius: "12px",
+                  fontWeight: 600,
+                  letterSpacing: '0.5px',
+                  "&:hover": {
+                    transform: "translateY(-2px)",
+                    boxShadow: `0 8px 20px ${colorScheme.accent}50`
+                  },
+                  "&:disabled": { 
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    color: 'rgba(255, 255, 255, 0.3)'
+                  },
                 }}
-              />
-              <Typography variant="body2" sx={{ color: "#0056A2" }}>
-                I agree to the{" "}
-                <span style={{ fontWeight: "bold", textDecoration: "underline", cursor: "pointer" }}>
-                  general terms and conditions
-                </span>
-              </Typography>
+                onClick={handleSubmit}
+              >
+                {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
+              </Button>
             </Box>
 
-            <Button
-              fullWidth
-              variant="contained"
-              disabled={!isCheckboxChecked || !paymentMethod || !selectedGB || isLoading}
-              sx={{
-                backgroundColor: "#0056A2",
-                color: "white",
-                py: 1.5,
-                borderRadius: "8px",
-                fontWeight: "bold",
-                "&:hover": { backgroundColor: "#003D7A" },
-                "&:disabled": { 
-                  backgroundColor: "#E0E0E0",
-                  color: "#A0A0A0"
-                },
-              }}
-              onClick={handleSubmit}
-            >
-              {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
-            </Button>
-          </Box>
-
-          {/* Watermark Logo */}
-          <Box sx={{ 
-            position: "absolute", 
-            right: 16, 
-            bottom: 16,
-            opacity: 0.3
-          }}>
-            <img src={WatermarkLogo} alt="Watermark Logo" width={80} />
+            {/* Watermark Logo */}
+            <Box sx={{ 
+              position: "absolute", 
+              right: 16, 
+              bottom: 16,
+              opacity: 0.2
+            }}>
+              <img src={WatermarkLogo} alt="Watermark Logo" width={80} />
+            </Box>
           </Box>
         </Box>
       </Box>
 
       {/* Result Dialog */}
-      <Dialog open={openDialog} onClose={handleDialogClose}>
+      <Dialog 
+        open={openDialog} 
+        onClose={handleDialogClose}
+        PaperProps={{
+          sx: {
+            background: colorScheme.cardBg,
+            border: `1px solid ${colorScheme.divider}`,
+            borderRadius: '12px',
+            overflow: 'hidden'
+          }
+        }}
+      >
         <DialogTitle sx={{ 
-          color: errorMessage ? "error.main" : "success.main",
+          background: colorScheme.buttonGradient,
+          color: colorScheme.textPrimary,
           fontWeight: "bold"
         }}>
           {errorMessage ? "Error" : "Success"}
         </DialogTitle>
-        <DialogContent>
-          <Typography>
+        <DialogContent sx={{ py: 3 }}>
+          <Typography sx={{ color: colorScheme.textPrimary }}>
             {errorMessage || successMessage}
           </Typography>
         </DialogContent>
@@ -486,10 +603,10 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
           <Button 
             onClick={handleDialogClose} 
             sx={{ 
-              color: "#0056A2", 
+              color: colorScheme.secondaryAccent,
               fontWeight: "bold",
               "&:hover": {
-                backgroundColor: "rgba(0, 86, 162, 0.1)"
+                backgroundColor: 'rgba(0, 168, 232, 0.1)'
               }
             }}
           >
@@ -497,6 +614,34 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
           </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Decorative elements */}
+      <Box sx={{
+        position: 'absolute',
+        top: '15%',
+        left: '5%',
+        width: '120px',
+        height: '120px',
+        borderRadius: '50%',
+        background: `radial-gradient(circle, ${colorScheme.accent}10 0%, ${colorScheme.accent}00 70%)`,
+        animation: `${floatAnimation} 12s infinite ease-in-out`,
+        zIndex: 0,
+        filter: 'blur(1px)'
+      }} />
+      
+      <Box sx={{
+        position: 'absolute',
+        bottom: '20%',
+        right: '10%',
+        width: '180px',
+        height: '180px',
+        borderRadius: '50%',
+        background: `radial-gradient(circle, ${colorScheme.secondaryAccent}10 0%, ${colorScheme.secondaryAccent}00 70%)`,
+        animation: `${floatAnimation} 15s infinite ease-in-out`,
+        animationDelay: '2s',
+        zIndex: 0,
+        filter: 'blur(1px)'
+      }} />
     </Box>
   );
 };
