@@ -16,8 +16,7 @@ import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
-import axios from "axios";
-import fetchServiceDetailByTelephone from "../../services/fetchServiceDetails";
+//import { GetExtraGBActivateResponse } from "../../services/postpaid/activatepackagedetails";
 
 
 
@@ -62,7 +61,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
   const [packageDetails, setPackageDetails] = useState<PackageDetail[]>([]);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"addToBill" | "payNow" | null>(null);
+  const [isAddToBillActive, setIsAddToBillActive] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
@@ -419,31 +418,17 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               onClick={() => !isLoading && setPaymentMethod("addToBill")}
             />
           </Box>
-          <Box
-            sx={{
-              border: paymentMethod === "payNow" ? "2px solid #0056A2" : "2px solid transparent",
-              borderRadius: "10px",
-              padding: "4px",
-              transition: "all 0.3s ease",
-              "&:hover": {
-                border: "2px solid #0056A2",
-                opacity: 1
-              }
+          <img
+            src={PayNowImage}
+            alt="Pay Now"
+            style={{
+              width: "100px",
+              height: "auto",
+              cursor: "pointer",
+              
+             
             }}
-          >
-            <img
-              src={PayNowImage}
-              alt="Pay Now"
-              style={{
-                width: "100px",
-                height: "auto",
-                cursor: "pointer",
-                borderRadius: "8px",
-                opacity: paymentMethod === "payNow" ? 1 : 0.7,
-              }}
-              onClick={() => !isLoading && setPaymentMethod("payNow")}
-            />
-          </Box>
+          />
         </Box>
 
         {/* Terms and Conditions */}
