@@ -6,6 +6,7 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 import CircularProgressBar from "../CircularProgressBar";
 import BroadbandNavbar from "../BroadbandDetails/BroadbandNavbar";
 import { keyframes } from '@emotion/react';
+import GetExtraGbPage from './GetExtraGB';
 
 // Define interfaces
 interface PostpaidUsageDetails {
@@ -155,6 +156,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showGetExtraGB, setShowGetExtraGB] = useState(false);
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -198,6 +200,19 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
+  const handleGetExtraGB = () => {
+    setShowGetExtraGB(true);
+  };
+
+  if (showGetExtraGB) {
+    return (
+      <GetExtraGbPage 
+        packageName={dummyServiceData.listofBBService[0]?.packageName} 
+        onBack={() => setShowGetExtraGB(false)}
+      />
+    );
+  }
+
   return (
     <Box sx={{
       minHeight: "100vh",
@@ -235,33 +250,31 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
     }}>
       {/* Back Button */}
       <Button
-  startIcon={<ArrowBack />}
-  onClick={onBack}
-  sx={{
-    alignSelf: 'flex-start', // This helps when inside a flex container
-    color: 'white',
-    mb: 4,
-    zIndex: 2,
-    transition: 'all 0.3s ease',
-    px: 2,
-    py: 1,
-    borderRadius: '8px',
-    backgroundColor: 'transparent',
-    textTransform: 'none',
-    fontSize: '1.25rem',
-    fontWeight: 700,
-    justifyContent: 'flex-start', // Makes icon and text align to left *within* the button
-    '&:hover': {
-      backgroundColor: 'rgba(0, 168, 232, 0.1)',
-      transform: 'translateX(-5px)',
-      boxShadow: '0 2px 10px rgba(0, 168, 232, 0.3)',
-    },
-  }}
->
-  Transaction History
-</Button>
-
-
+        startIcon={<ArrowBack />}
+        onClick={onBack}
+        sx={{
+          alignSelf: 'flex-start',
+          color: 'white',
+          mb: 4,
+          zIndex: 2,
+          transition: 'all 0.3s ease',
+          px: 2,
+          py: 1,
+          borderRadius: '8px',
+          backgroundColor: 'transparent',
+          textTransform: 'none',
+          fontSize: '1.25rem',
+          fontWeight: 700,
+          justifyContent: 'flex-start',
+          '&:hover': {
+            backgroundColor: 'rgba(0, 168, 232, 0.1)',
+            transform: 'translateX(-5px)',
+            boxShadow: '0 2px 10px rgba(0, 168, 232, 0.3)',
+          },
+        }}
+      >
+        Data Usage
+      </Button>
 
       {/* Main Content Container */}
       <Box sx={{
@@ -631,6 +644,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
               <Button
                 variant="contained"
                 fullWidth
+                onClick={handleGetExtraGB}
                 sx={{
                   background: `linear-gradient(135deg, rgba(0, 168, 232, 0.2) 0%, rgba(64, 196, 255, 0.2) 100%)`,
                   color: colorScheme.secondaryAccent,
