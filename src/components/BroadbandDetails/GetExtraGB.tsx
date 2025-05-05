@@ -8,7 +8,7 @@ import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
-//import { GetExtraGBActivateResponse } from "../../services/postpaid/activatepackagedetails";
+import { GetExtraGBActivateResponse } from "../../services/postpaid/activatepackagedetails";
 
 
 const dataPlans = [
@@ -37,6 +37,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
   const [packageDetails, setPackageDetails] = useState<any[]>([]);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
   const [isAddToBillActive, setIsAddToBillActive] = useState(false);
+  const [ispaynow, setIspaynow] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [responseMessage, setResponseMessage] = useState<string>("");
@@ -318,6 +319,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               
              
             }}
+            onClick={() => setIspaynow(true)} // Activate the "Add to Bill" button
           />
         </Box>
 
