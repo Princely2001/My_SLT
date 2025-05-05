@@ -6,6 +6,7 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 import CircularProgressBar from "../CircularProgressBar";
 import { keyframes } from '@emotion/react';
 import GetExtraGbPage from './GetExtraGB'; 
+import Dataaddons from './data_add_ons'; 
 
 // Define interfaces
 interface PostpaidUsageDetails {
@@ -263,7 +264,8 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [showGetExtraGB, setShowGetExtraGB] = useState(false); // State to control Get Extra GB screen
+  const [showGetExtraGB, setShowGetExtraGB] = useState(false);
+  const [showAddons, setShowAddons] = useState(false);
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -341,12 +343,20 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
 
   const sizes = getSizeValues();
 
-  // If showGetExtraGB is true, render the GetExtraGB component
+  // Render different screens based on state
   if (showGetExtraGB) {
     return (
       <GetExtraGbPage 
         packageName={dummyServiceData.listofBBService[0].packageName}
         onBack={() => setShowGetExtraGB(false)}
+      />
+    );
+  }
+
+  if (showAddons) {
+    return (
+      <Dataaddons
+        onBack={() => setShowAddons(false)}
       />
     );
   }
@@ -854,7 +864,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
               <Button
                 variant="outlined"
                 fullWidth
-                onClick={() => setShowGetExtraGB(true)} // Add click handler to show Get Extra GB screen
+                onClick={() => setShowGetExtraGB(true)}
                 sx={{
                   color: colorScheme.secondaryAccent,
                   py: 1,
@@ -878,6 +888,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
               <Button
                 variant="outlined"
                 fullWidth
+                onClick={() => setShowAddons(true)}
                 sx={{
                   color: colorScheme.textPrimary,
                   py: 1,

@@ -465,30 +465,31 @@ export default function DesktopDashboard() {
         whileHover={{ y: -2 }}
         whileTap={{ scale: 0.98 }}
       >
-        <Button 
-          variant="contained" 
-          sx={{ 
-            background: 'linear-gradient(135deg, rgba(0,230,230,0.2), rgba(0,153,204,0.25))',
-            borderRadius: "20px", 
-            px: 3,
-            py: 1,
-            fontWeight: 600,
-            letterSpacing: '0.5px',
-            color: 'white',
-            border: '1px solid rgba(0,230,230,0.3)',
-            boxShadow: '0 4px 12px rgba(0,153,204,0.15)',
-            transition: 'all 0.3s ease',
-            '&:hover': {
-              background: 'linear-gradient(135deg, rgba(0,230,230,0.25), rgba(0,153,204,0.3))',
-              boxShadow: '0 6px 16px rgba(0,153,204,0.2)',
-            },
-            '&:active': {
-              transform: 'scale(0.98)'
-            }
-          }}
-        >
-          Top Up
-        </Button>
+       <Button 
+  variant="contained" 
+  sx={{ 
+    background: 'linear-gradient(135deg, rgba(0,230,230,0.2), rgba(0,153,204,0.25))',
+    borderRadius: "20px", 
+    px: 3,
+    py: 1,
+    fontWeight: 600,
+    letterSpacing: '0.5px',
+    color: 'white',
+    border: '1px solid rgba(0,230,230,0.3)',
+    boxShadow: '0 4px 12px rgba(0,153,204,0.15)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'linear-gradient(135deg, rgba(0,230,230,0.25), rgba(0,153,204,0.3))',
+      boxShadow: '0 6px 16px rgba(0,153,204,0.2)',
+    },
+    '&:active': {
+      transform: 'scale(0.98)'
+    }
+  }}
+  onClick={() => window.open('https://online.mobitel.lk/onlinepay/', '_blank')}
+>
+  Top Up
+</Button>
       </motion.div>
 
       {/* History Button */}
