@@ -1,37 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { 
-  Box, 
-  Typography, 
-  Button, 
-  Checkbox, 
-  Dialog, 
-  DialogTitle, 
-  DialogContent, 
-  DialogActions,
-  CircularProgress
-} from "@mui/material";
+import { Box, Typography, Button, Checkbox, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import AddToBillImage from "../../assets/Images/subscriptionPageImages/GetExtraGBAdd.jpeg";
 import PayNowImage from "../../assets/Images/subscriptionPageImages/GetExtraGBPay.jpeg";
 import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
-//import { GetExtraGBActivateResponse } from "../../services/postpaid/activatepackagedetails";
+import PaymentServiceRequest from "../../services/billMethod/paybill";
 
-
-
-interface DataPlan {
-  range: string;
-  pricePerGB: number;
-}
-
-interface PackageDetail {
-  volume: number;
-  postPrice: string;
-  packageId: string;
-}
-
-const dataPlans: DataPlan[] = [
+const dataPlans = [
   { range: "1GB to 3GB", pricePerGB: 100 },
   { range: "5GB to 19GB", pricePerGB: 85 },
   { range: "20GB to 49GB", pricePerGB: 75 },
@@ -42,191 +19,125 @@ interface DataPlanProps {
   packageName: string | null;
 }
 
-interface PaymentResponse {
-  success: boolean;
-  error?: string;
-  message?: string;
-}
-
-
 const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
-  const { serviceDetails } = useStore();
+  const { serviceDetails, userDetails } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
-  const {   selectedTelephone } = useStore();
-  
-  console.log("🔍 [Init] Service Details:", serviceDetails);
-  console.log("🆔 [Init] Service ID:", serviceID);
-  
   const [selectedGB, setSelectedGB] = useState<number | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
-  const [packageDetails, setPackageDetails] = useState<PackageDetail[]>([]);
+  const [packageDetails, setPackageDetails] = useState<any[]>([]);
   const [isCheckboxChecked, setIsCheckboxChecked] = useState(false);
-  const [isAddToBillActive, setIsAddToBillActive] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState<"addToBill" | "payNow" | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const storedEmail = localStorage.getItem("username");
-  // Logging effects
-  useEffect(() => {
-    console.log("📦 [Update] Package Details:", packageDetails);
-  }, [packageDetails]);
-
-  useEffect(() => {
-    console.log("🔄 [State] Selection Updated:", { selectedGB, selectedPrice });
-  }, [selectedGB, selectedPrice]);
-
-  useEffect(() => {
-    console.log("✅ [State] Checkbox:", isCheckboxChecked);
-  }, [isCheckboxChecked]);
-
-  useEffect(() => {
-    console.log("💳 [State] Payment Method:", paymentMethod);
-  }, [paymentMethod]);
 
   const handleSelect = (gb: number) => {
-    console.log("🖱️ [Action] Selected GB:", gb);
     const selectedPlan = packageDetails.find(plan => plan.volume === gb);
-    
     if (selectedPlan) {
-      console.log("📄 [Data] Selected Plan:", selectedPlan);
       setSelectedGB(gb);
       setSelectedPrice(parseFloat(selectedPlan.postPrice));
-    } else {
-      console.warn("⚠️ [Warning] No plan found for GB:", gb);
     }
   };
 
   const handleSubmit = async () => {
-    console.group("🚀 [Action] Form Submission");
-    console.log("⏳ [Status] Validation Started");
-  
-    if (!isCheckboxChecked || !selectedGB || !paymentMethod || !serviceID) {
-      console.log(serviceID);
-      console.log(selectedGB);
-      console.log(selectedTelephone);
-      
-
-      console.warn("⚠️ [Validation] Missing:", {
-        checkbox: !isCheckboxChecked,
-        GB: !selectedGB,
-        method: !paymentMethod,
-        serviceID: !serviceID
-      });
-  
-      setErrorMessage("Please select all required options");
+    // Validate all required fields
+    if (!isCheckboxChecked) {
+      setErrorMessage("Please agree to the terms and conditions");
       setOpenDialog(true);
-      console.groupEnd();
       return;
     }
-  
-    console.log("✅ [Validation] All fields valid");
+
+    if (!selectedGB) {
+      setErrorMessage("Please select a data package");
+      setOpenDialog(true);
+      return;
+    }
+
+    if (!paymentMethod) {
+      setErrorMessage("Please select a payment method");
+      setOpenDialog(true);
+      return;
+    }
+
+    if (!serviceID) {
+      setErrorMessage("Service ID not found");
+      setOpenDialog(true);
+      return;
+    }
+
     setIsLoading(true);
     setErrorMessage(null);
     setSuccessMessage(null);
-  
+
     try {
       const selectedPlan = packageDetails.find(plan => plan.volume === selectedGB);
-      if (!selectedPlan) throw new Error("[Error] Selected plan not found");
-  
-      console.log("📦 [Selected Plan ID]:", selectedPlan.packageId);
-  
+      if (!selectedPlan) {
+        throw new Error("Selected data package not found");
+      }
+
       if (paymentMethod === "addToBill") {
-        console.log("📝 [Action] Adding to bill...");
+        // Handle Add to Bill payment method
         const response = await activatepackagedetails(serviceID, selectedPlan.packageId);
-        console.log("📄 [Response] Activation:", response);
         
-        if (!response?.isSuccess) {
-          throw new Error(response?.errorShow || response?.errorMessege || "Failed to add to bill");
+        if (!response) {
+          throw new Error("No response received from server");
         }
-  
-        setSuccessMessage(response?.message || "Package added to your bill successfully");
-      } else {
-        console.log("💳 [Action] Redirecting to payment gateway...");
-       
-
-         // Define payment fields
-         const paymentData = {
         
-          CustEmail: storedEmail,
-          ContactNumber:selectedTelephone,
+        if (!response.isSuccess) {
+          throw new Error(response.errorMessege || "Failed to add package to your bill");
+        }
+
+        setSuccessMessage(response.message || "Package successfully added to your monthly bill");
+      } else {
+        // Handle Pay Now payment method
+        const paymentService = new PaymentServiceRequest();
+        const paymentResponse = await paymentService.submitPayment({
+          custEmail: userDetails?.email || "",
+          contactNumber: userDetails?.mobileNumber || "",
           subscriberID: serviceID,
-          prepaidID:serviceID,
-          reciever:  serviceID,
           packageId: selectedPlan.packageId,
-          channel: "SLTPRE",
-          commitUser: "OmniAPP",
-          reporterPackage: selectedPlan.packageId,
-          activatedBy: serviceID,
-          callbackURLSLT: "", 
-        };
-  
-        // Create form element
-        const form = document.createElement("form");
-        form.method = "POST";
-        form.action = "https://billpay.slt.lk/bbtopup/summaryallAPImyslt.php";
-        form.target = "_self"; // Use "_blank" to open in new tab
-  
-    
-
-
-        console.log("📤 [Form Data to be Sent]:", paymentData);
-  
-        // Append fields to form
-        Object.entries(paymentData).forEach(([key, value]) => {
-          const input = document.createElement("input");
-          input.type = "hidden";
-          input.name = key;
-          input.value = value?.toString() ?? "";
-          form.appendChild(input);
+          reciever: serviceID,
+          vpc_Amount: `${selectedPrice?.toFixed(2) || "0.00"}`
         });
-  
-        // Append and submit the form
-        document.body.appendChild(form);
-        form.submit();
-  
-        return; // Exit, since redirection will occur
+
+        if (!paymentResponse.success) {
+          throw new Error(paymentResponse.error || "Payment processing failed");
+        }
+
+        setSuccessMessage(paymentResponse.message || "Payment processed successfully! Your package will be activated shortly.");
       }
     } catch (error: any) {
-      console.error("❌ [Error] Transaction Failed:", error);
-      setErrorMessage(error.message || "An unexpected error occurred");
+      console.error("Submission error:", error);
+      setErrorMessage(error.message || "An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
       setOpenDialog(true);
-      console.log("⏳ [Status] Loading Complete");
-      console.groupEnd();
     }
   };
-  
+
   useEffect(() => {
     const fetchData = async () => {
-      console.group("🌐 [API] Fetching Packages");
       if (serviceID && packageName) {
         try {
-          console.log("⏳ [Request] Fetching package details...");
           const response = await fetchPackageDetails(serviceID, packageName);
-          console.log("✅ [Response] Received:", response);
-
           if (response && response.length > 0) {
             setPackageDetails(response);
           } else {
-            console.warn("⚠️ [Warning] No package details found");
-            setErrorMessage("No package options available");
-            setOpenDialog(true);
+            console.error("No package details found");
           }
         } catch (error) {
-          console.error("❌ [Error] Fetch Failed:", error);
-          setErrorMessage("Failed to load package options");
+          console.error("Failed to fetch package details:", error);
+          setErrorMessage("Failed to load package options. Please try again later.");
           setOpenDialog(true);
         }
       }
-      console.groupEnd();
     };
+
     fetchData();
   }, [serviceID, packageName]);
 
   const handleDialogClose = () => {
-    console.log("📢 [UI] Closing Dialog");
     setOpenDialog(false);
     setErrorMessage(null);
     setSuccessMessage(null);
@@ -242,11 +153,9 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
         color: "#0056A2",
         padding: 2,
         borderRadius: "10px",
-        boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.29)",
+        boxShadow: "0px 3px 3px #0000004A",
         minHeight: "500px",
         gap: 2,
-        position: "relative",
-        overflow: "hidden",
       }}
     >
       {/* Left Section - Price Plan */}
@@ -257,12 +166,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           width: { xs: "100%", md: "50%" },
         }}
       >
-        <Typography variant="h6" sx={{ 
-          color: "#0056A2", 
-          fontWeight: "bold", 
-          mb: 2, 
-          fontSize: { xs: "20px", md: "25px" } 
-        }}>
+        <Typography variant="h6" sx={{ color: "#0056A2", fontWeight: "bold", mb: 2, fontSize: "25px" }}>
           Price Plan
         </Typography>
         
@@ -275,40 +179,22 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               alignItems: "center",
               padding: 1,
               marginBottom: 1,
-              backgroundColor: "rgba(5, 125, 232, 0.1)",
+              backgroundColor: "rgba(5, 125, 232, 0.3)",
               border: "1px solid #0056A2",
               borderRadius: "10px",
-              transition: "background-color 0.3s ease",
-              "&:hover": {
-                backgroundColor: "rgba(5, 125, 232, 0.2)",
-              }
             }}
           >
-            <Typography sx={{ 
-              color: "#0056A2", 
-              fontSize: { xs: "14px", md: "16px" }, 
-              fontWeight: "bold" 
-            }}>
+            <Typography sx={{ color: "#0056A2", fontSize: "16px", fontWeight: "bold" }}>
               {plan.range}
             </Typography>
-            <Typography sx={{ 
-              color: "#0056A2", 
-              fontSize: { xs: "14px", md: "16px" }, 
-              fontWeight: "bold" 
-            }}>
-              {plan.pricePerGB} LKR/GB
+            <Typography sx={{ color: "#0056A2", fontSize: "16px", fontWeight: "bold" }}>
+              {plan.pricePerGB} LKR Per GB
             </Typography>
           </Box>
         ))}
 
         {/* Data Buttons */}
-        <Box sx={{ 
-          display: "flex", 
-          flexWrap: "wrap", 
-          gap: 2, 
-          marginTop: 3,
-          justifyContent: "center"
-        }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, marginTop: 3 }}>
           {Array.from({ length: 10 }, (_, i) => i + 1)
             .filter(gb => gb !== 4)
             .concat([15, 20, 25])
@@ -317,8 +203,8 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
                 key={gb}
                 variant={selectedGB === gb ? "contained" : "outlined"}
                 sx={{
-                  minWidth: { xs: "60px", md: "80px" },
-                  height: { xs: "50px", md: "60px" },
+                  minWidth: "80px",
+                  height: "60px",
                   fontWeight: "bold",
                   border: "2px solid #0056A2",
                   borderRadius: "8px",
@@ -328,14 +214,9 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
                   },
                   "&.MuiButton-outlined": {
                     color: "#0056A2",
-                    "&:hover": {
-                      border: "2px solid #003D7A",
-                      color: "#003D7A"
-                    }
                   },
                 }}
                 onClick={() => handleSelect(gb)}
-                disabled={isLoading}
               >
                 {gb}GB
               </Button>
@@ -353,7 +234,6 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           width: { xs: "90%", md: "35%" },
           position: "relative",
           backgroundColor: "rgba(255, 255, 255, 0.9)",
-          backdropFilter: "blur(5px)",
         }}
       >
         {/* Package Summary */}
@@ -362,47 +242,28 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: "rgba(5, 125, 232, 0.1)",
+            backgroundColor: "rgba(5, 125, 232, 0.2)",
             padding: 2,
             borderRadius: "10px",
             marginBottom: 3,
-            border: "1px solid #0056A2",
           }}
         >
-          <Typography variant="h4" sx={{ 
-            color: "#0056A2", 
-            fontWeight: "bold",
-            fontSize: { xs: "28px", md: "34px" }
-          }}>
+          <Typography variant="h4" sx={{ color: "#0056A2", fontWeight: "bold" }}>
             {selectedGB || "0"} GB
           </Typography>
-          <Typography variant="h6" sx={{ 
-            color: "#0056A2", 
-            fontWeight: "bold",
-            fontSize: { xs: "18px", md: "22px" }
-          }}>
+          <Typography variant="h6" sx={{ color: "#0056A2", fontWeight: "bold" }}>
             Rs. {selectedPrice ? Math.floor(selectedPrice) : "0"} + Tax
           </Typography>
         </Box>
 
         {/* Payment Options */}
-        <Box sx={{ 
-          display: "flex", 
-          justifyContent: "center", 
-          gap: 3, 
-          marginTop: 3,
-          flexDirection: { xs: "column", sm: "row" }
-        }}>
+        <Box sx={{ display: "flex", justifyContent: "center", gap: 3, marginTop: 3 }}>
           <Box
             sx={{
               border: paymentMethod === "addToBill" ? "2px solid #0056A2" : "2px solid transparent",
               borderRadius: "10px",
               padding: "4px",
               transition: "all 0.3s ease",
-              "&:hover": {
-                border: "2px solid #0056A2",
-                opacity: 1
-              }
             }}
           >
             <img
@@ -415,20 +276,30 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
                 borderRadius: "8px",
                 opacity: paymentMethod === "addToBill" ? 1 : 0.7,
               }}
-              onClick={() => !isLoading && setPaymentMethod("addToBill")}
+              onClick={() => setPaymentMethod("addToBill")}
             />
           </Box>
-          <img
-            src={PayNowImage}
-            alt="Pay Now"
-            style={{
-              width: "100px",
-              height: "auto",
-              cursor: "pointer",
-              
-             
+          <Box
+            sx={{
+              border: paymentMethod === "payNow" ? "2px solid #0056A2" : "2px solid transparent",
+              borderRadius: "10px",
+              padding: "4px",
+              transition: "all 0.3s ease",
             }}
-          />
+          >
+            <img
+              src={PayNowImage}
+              alt="Pay Now"
+              style={{
+                width: "100px",
+                height: "auto",
+                cursor: "pointer",
+                borderRadius: "8px",
+                opacity: paymentMethod === "payNow" ? 1 : 0.7,
+              }}
+              onClick={() => setPaymentMethod("payNow")}
+            />
+          </Box>
         </Box>
 
         {/* Terms and Conditions */}
@@ -436,11 +307,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           <Box sx={{ display: "flex", alignItems: "center", mb: 2 }}>
             <Checkbox
               checked={isCheckboxChecked}
-              onChange={(e) => {
-                console.log("✅ [UI] Checkbox Changed:", e.target.checked);
-                setIsCheckboxChecked(e.target.checked);
-              }}
-              disabled={isLoading}
+              onChange={() => setIsCheckboxChecked(!isCheckboxChecked)}
               sx={{
                 color: "#0056A2",
                 "&.Mui-checked": { color: "#0056A2" },
@@ -448,7 +315,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
             />
             <Typography variant="body2" sx={{ color: "#0056A2" }}>
               I agree to the{" "}
-              <span style={{ fontWeight: "bold", textDecoration: "underline", cursor: "pointer" }}>
+              <span style={{ fontWeight: "bold", textDecoration: "underline" }}>
                 general terms and conditions
               </span>
             </Typography>
@@ -465,51 +332,32 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               borderRadius: "8px",
               fontWeight: "bold",
               "&:hover": { backgroundColor: "#003D7A" },
-              "&:disabled": { 
-                backgroundColor: "#E0E0E0",
-                color: "#A0A0A0"
-              },
+              "&:disabled": { opacity: 0.6 },
             }}
             onClick={handleSubmit}
           >
-            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
+            {isLoading ? "Processing..." : "Submit"}
           </Button>
         </Box>
 
         {/* Watermark Logo */}
-        <Box sx={{ 
-          position: "absolute", 
-          right: 16, 
-          bottom: 16,
-          opacity: 0.3
-        }}>
+        <Box sx={{ position: "absolute", right: 16, bottom: 16 }}>
           <img src={WatermarkLogo} alt="Watermark Logo" width={80} />
         </Box>
       </Box>
 
       {/* Result Dialog */}
       <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle sx={{ 
-          color: errorMessage ? "error.main" : "success.main",
-          fontWeight: "bold"
-        }}>
+        <DialogTitle sx={{ color: errorMessage ? "error.main" : "success.main" }}>
           {errorMessage ? "Error" : "Success"}
         </DialogTitle>
         <DialogContent>
-          <Typography>
-            {errorMessage || successMessage}
-          </Typography>
+          <Typography>{errorMessage || successMessage}</Typography>
         </DialogContent>
         <DialogActions>
           <Button 
             onClick={handleDialogClose} 
-            sx={{ 
-              color: "#0056A2", 
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "rgba(0, 86, 162, 0.1)"
-              }
-            }}
+            sx={{ color: "#0056A2", fontWeight: "bold" }}
           >
             Close
           </Button>
