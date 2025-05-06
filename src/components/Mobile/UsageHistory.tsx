@@ -6,12 +6,10 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import SmsIcon from '@mui/icons-material/Sms';
 import CallIcon from '@mui/icons-material/Call';
 
-// Props Interface
 interface UsageHistoryProps {
   onBack: () => void;
 }
 
-// UsageCard Props Interface
 interface UsageCardProps {
   updatedAt: string;
   title: string;
@@ -22,47 +20,75 @@ interface UsageCardProps {
   expiry: string;
 }
 
+const colorScheme = {
+  primaryDark: 'rgb(13, 54, 90)',
+  primaryLight: 'rgb(25, 71, 114)',
+  accent: 'rgb(0, 168, 232)',
+  secondaryAccent: 'rgb(64, 196, 255)',
+  highlight: 'rgba(100, 210, 255, 0.3)',
+  textPrimary: 'rgba(255, 255, 255, 0.95)',
+  textSecondary: 'rgba(255, 255, 255, 0.7)',
+  divider: 'rgba(255, 255, 255, 0.12)',
+  cardBg: 'rgba(18, 63, 102, 0.4)',
+  buttonGradient: 'linear-gradient(135deg, rgba(0, 168, 232, 0.9) 0%, rgba(64, 196, 255, 0.9) 100%)',
+  navbarBg: 'rgba(13, 54, 90, 0.9)',
+  glassEffect: 'rgba(255, 255, 255, 0.05)',
+  glowEffect: 'rgba(64, 196, 255, 0.3)'
+};
+
 export default function UsageHistory({ onBack }: UsageHistoryProps) {
   const [usageTab, setUsageTab] = useState(0);
 
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Converted Back Button with Title */}
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={onBack}
-        sx={{
-          alignSelf: 'flex-start',
-          color: 'white',
-          mb: 4,
-          px: 2,
-          py: 1,
-          borderRadius: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          textTransform: 'none',
-          fontSize: '1.25rem',
-          fontWeight: 700,
-          transition: 'all 0.3s ease',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(5px)',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 168, 232, 0.2)',
-            borderColor: 'rgba(0, 168, 232, 0.5)',
-            boxShadow: '0 0 15px rgba(0, 168, 232, 0.3)'
-          },
-          '& .MuiButton-startIcon': {
-            transition: 'transform 0.3s ease',
-            marginRight: '8px'
-          },
-          '&:hover .MuiButton-startIcon': {
-            transform: 'translateX(-3px)'
-          }
-        }}
-      >
-        Usage History
-      </Button>
+    <Box sx={{ 
+      p: 3,
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 3
+    }}>
+      {/* Button Container with Adjusted Layout */}
+      <Box sx={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'flex-start',
+        alignItems: 'center',
+        mb: 1
+      }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={onBack}
+          sx={{
+            color: colorScheme.textPrimary,
+            zIndex: 2,
+            transition: 'all 0.3s ease',
+            px: 2,
+            py: 1,
+            borderRadius: '8px',
+            backgroundColor: 'transparent',
+            textTransform: 'none',
+            fontSize: '1rem',
+            fontWeight: 700,
+            minWidth: 'auto',
+            '&:hover': {
+              backgroundColor: 'rgba(0, 168, 232, 0.1)',
+              transform: 'translateX(-5px)',
+              boxShadow: `0 0 12px ${colorScheme.glowEffect}`
+            },
+            '& .MuiSvgIcon-root': {
+              transition: 'all 0.3s ease',
+              marginRight: '8px',
+              fontSize: '1.25rem'
+            },
+            '&:hover .MuiSvgIcon-root': {
+              transform: 'translateX(-3px)'
+            }
+          }}
+        >
+          Usage History
+        </Button>
+      </Box>
 
-      {/* Tabs */}
+      {/* Tabs - Unchanged */}
       <Tabs
         value={usageTab}
         onChange={(e, newValue) => setUsageTab(newValue)}
@@ -94,7 +120,7 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
         <Tab icon={<CallIcon />} label="Call" />
       </Tabs>
 
-      {/* Tab Content */}
+      {/* Tab Content - Unchanged */}
       <Paper sx={{
         background: 'rgba(255,255,255,0.05)',
         borderRadius: '16px',
@@ -185,7 +211,7 @@ export default function UsageHistory({ onBack }: UsageHistoryProps) {
   );
 }
 
-// Usage Card Component
+// Usage Card Component - Unchanged
 const UsageCard = ({ updatedAt, title, used, total, remaining, unit, expiry }: UsageCardProps) => {
   const progress = (used / total) * 100;
   return (

@@ -5,17 +5,11 @@ import { motion } from "framer-motion";
 import UsageHistory from "./UsageHistory";
 import DataUsageDetails from "./Viewdetails";
 import ReloadHistory from "./ReloadHistory";
-import BuyDataBundle from "./BuyDataBundle";
-import AddMinutes from "./AddMinutes";
-import SmsPackages from "./SmsPackages";
-
 
 export default function DesktopDashboard() {
   const [activeTab, setActiveTab] = useState("data");
   const [isHovered, setIsHovered] = useState(false);
-  const [view, setView] = useState<'dashboard' | 'usageHistory' | 'dataUsageDetails' | 'reloadHistory' | 'buyDataBundle' | 'addMinutes' | 'smsPackages'>('dashboard');
-
-
+  const [view, setView] = useState<'dashboard' | 'usageHistory' | 'dataUsageDetails' | 'reloadHistory'>('dashboard');
  
   return (
     <Box sx={{
@@ -1512,12 +1506,6 @@ export default function DesktopDashboard() {
           <Button
             fullWidth
             startIcon={action.icon}
-            onClick={() => {
-              if (action.label === "Buy Data Bundle") setView('buyDataBundle');
-              if (action.label === "Add Minutes") setView("addMinutes");
-              if (action.label === "SMS Packages") setView('smsPackages');
-
-            }}
             sx={{
               background: 'rgba(255,255,255,0.05)',
               borderRadius: '12px',
@@ -1594,20 +1582,6 @@ export default function DesktopDashboard() {
         { view === 'reloadHistory' && (
            <ReloadHistory onBack={() => setView('dashboard')} />
         )}
-
-        {view === 'buyDataBundle' && (
-          <BuyDataBundle onBack={() => setView('dashboard')} />
-        )}
-
-        {view === 'addMinutes' && (
-          <AddMinutes onBack={() => setView('dashboard')} />
-        )}
-
-{view === 'smsPackages' && (
-  <SmsPackages onBack={() => setView('dashboard')} />
-)}
-
-
       </Box>
      
       {/* Floating action button */}

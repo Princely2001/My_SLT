@@ -7,6 +7,8 @@ import CircularProgressBar from "../CircularProgressBar";
 import { keyframes } from '@emotion/react';
 import GetExtraGbPage from './GetExtraGB'; 
 import Dataaddons from './data_add_ons'; 
+import BroadbandPostPaidPackageUpgrader from './packageupgrade'; 
+
 
 // Define interfaces
 interface PostpaidUsageDetails {
@@ -266,6 +268,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [showGetExtraGB, setShowGetExtraGB] = useState(false);
   const [showAddons, setShowAddons] = useState(false);
+  const [showpackageupgrade, setpackageupgrade] = useState(false);
   
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -361,88 +364,95 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
     );
   }
 
+
+  if ( showpackageupgrade) {
+    return (
+      <BroadbandPostPaidPackageUpgrader
+        onBack={() => setpackageupgrade(false)}
+      />
+    );
+  }
+
+
   return (
-    <Box sx={{
-      width: "105%",
-      maxWidth: "1200px",
-      minHeight: "50vh",
-      background: `linear-gradient(135deg, ${colorScheme.primaryDark} 0%, ${colorScheme.primaryLight} 100%)`,
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "left",
-      py: 3,
-      px: isMobile ? 2 : 3,
-      color: colorScheme.textPrimary,
-      position: "relative",
-      overflow: "hidden",
-      margin: "0 auto",
-      borderRadius: '16px',
-      boxShadow: '0 20px 50px rgba(0, 0, 0, 0.3)',
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '4px',
-        background: `linear-gradient(90deg, ${colorScheme.accent} 0%, ${colorScheme.secondaryAccent} 100%)`,
-        zIndex: 1,
-        animation: `${gradientFlow} 3s ease infinite`,
-        backgroundSize: '200% 200%'
-      },
-      '&::after': {
-        content: '""',
-        position: 'absolute',
-        top: '50%',
-        left: '-100px',
-        width: '200px',
-        height: '200px',
-        background: 'radial-gradient(circle, rgba(64, 196, 255, 0.15) 0%, rgba(64, 196, 255, 0) 70%)',
-        borderRadius: '50%',
-        filter: 'blur(20px)',
-        animation: `${floatAnimation} 8s ease-in-out infinite`,
-        zIndex: 0
-      },
-      '@media (max-width: 600px)': {
-        width: "100%",
-        minHeight: "55vh",
-        py: 2
-      }
-    }}>
+    <Box
+  sx={{
+    display: "flex",
+    flexDirection: { xs: "column", md: "row" },
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
+    color: "#0056A2",
+    padding: 0.3,
+    borderRadius: "5px",
+    boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.29)",
+    minHeight: "290px", // Reduced from 430px to 360px
+    height: "auto", // Added to ensure content fits
+    gap: 2,
+    position: "relative",
+    overflow: "hidden",
+    width: "100%",
+    maxWidth: "1200px",
+    background: `linear-gradient(135deg, ${colorScheme.primaryDark} 0%, ${colorScheme.primaryLight} 100%)`,
+    '&::before': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      height: '4px',
+      background: `linear-gradient(90deg, ${colorScheme.accent} 0%, ${colorScheme.secondaryAccent} 100%)`,
+      zIndex: 1,
+      animation: `${gradientFlow} 3s ease infinite`,
+      backgroundSize: '120% 120%'
+    },
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: '50%',
+      left: '-100px',
+      width: '200px',
+      height: '150px', // Reduced from 180px to 150px
+      background: 'radial-gradient(circle, rgba(64, 196, 255, 0.15) 0%, rgba(64, 196, 255, 0) 70%)',
+      borderRadius: '50%',
+      filter: 'blur(20px)',
+      animation: `${floatAnimation} 8s ease-in-out infinite`,
+      zIndex: 0
+    }
+  }}
+>
       {/* Back Button with enhanced styling */}
       <Button
-        startIcon={<ArrowBack />}
-        onClick={onBack}
-        sx={{
-          alignSelf: 'flex-start',
-          color: 'white',
-          mb: 3,
-          zIndex: 2,
-          px: 2,
-          py: 1,
-          borderRadius: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          textTransform: 'none',
-          fontSize: isMobile ? '0.875rem' : '1rem',
-          fontWeight: 600,
-          transition: 'all 0.3s ease',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(5px)',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 168, 232, 0.2)',
-            borderColor: 'rgba(0, 168, 232, 0.5)',
-            boxShadow: '0 0 15px rgba(0, 168, 232, 0.3)'
-          },
-          '& .MuiButton-startIcon': {
-            transition: 'transform 0.3s ease'
-          },
-          '&:hover .MuiButton-startIcon': {
-            transform: 'translateX(-3px)'
-          }
-        }}
-      >
-        Data Usage
-      </Button>
+  startIcon={<ArrowBack />}
+  onClick={onBack}
+  sx={{
+    alignSelf: 'flex-start',
+    color: colorScheme.textPrimary,
+    zIndex: 2,
+    transition: 'all 0.3s ease',
+    px: 2, // Same horizontal padding
+    py: 1, // Same vertical padding
+    borderRadius: '10px', // Same border radius
+    backgroundColor: 'transparent',
+    textTransform: 'none',
+    fontSize: '1rem', // Same font size
+    fontWeight: 700, // Same font weight
+    minWidth: 'auto', // Remove minimum width
+    '&:hover': {
+      backgroundColor: 'rgba(0, 168, 232, 0.1)',
+      transform: 'translateX(-5px)', // Same hover movement
+      boxShadow: `0 0 12px ${colorScheme.glowEffect}` // Same glow effect
+    },
+    '& .MuiSvgIcon-root': {
+      transition: 'all 0.3s ease',
+      fontSize: '1.25rem' // Matching icon size
+    },
+    '&:hover .MuiSvgIcon-root': {
+      transform: 'translateX(-3px)' // Same icon movement
+    }
+  }}
+>
+  Dashboard
+</Button>
 
       {/* Main Content Container with glass morphism effect */}
       <Box sx={{
@@ -827,6 +837,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
               <Button
                 variant="contained"
                 fullWidth
+                onClick={() => setpackageupgrade(true)}
                 sx={{
                   background: colorScheme.buttonGradient,
                   color: 'white',
