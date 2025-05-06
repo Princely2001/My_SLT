@@ -234,21 +234,30 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
         onClick={onBack}
         sx={{
           alignSelf: 'flex-start',
-          color: colorScheme.textPrimary,
-          mb: 4,
+          color: 'white',
+          mb: 3,
           zIndex: 2,
-          transition: 'all 0.3s ease',
           px: 2,
           py: 1,
           borderRadius: '8px',
-          backgroundColor: 'transparent',
+          backgroundColor: 'rgba(255, 255, 255, 0.05)',
           textTransform: 'none',
-          fontSize: '1.25rem',
-          fontWeight: 700,
+          fontSize: isMobile ? '0.875rem' : '1rem',
+          fontWeight: 600,
+          transition: 'all 0.3s ease',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          backdropFilter: 'blur(5px)',
           '&:hover': {
-            backgroundColor: 'rgba(0, 168, 232, 0.1)',
-            transform: 'translateX(-5px)',
+            backgroundColor: 'rgba(0, 168, 232, 0.2)',
+            borderColor: 'rgba(0, 168, 232, 0.5)',
+            boxShadow: '0 0 15px rgba(0, 168, 232, 0.3)'
           },
+          '& .MuiButton-startIcon': {
+            transition: 'transform 0.3s ease'
+          },
+          '&:hover .MuiButton-startIcon': {
+            transform: 'translateX(-3px)'
+          }
         }}
       >
         Get Extra GB
