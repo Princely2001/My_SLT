@@ -107,6 +107,7 @@ const PurchaseHistoryComponent: React.FC = () => {
     <Box
       sx={{
         maxWidth: "1200px",
+        height:"400px",
         margin: "auto",
         padding: "30px",
         textAlign: "center",
