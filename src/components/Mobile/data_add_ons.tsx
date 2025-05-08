@@ -19,25 +19,28 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 import { keyframes } from "@emotion/react";
 import GetAddOnsImage from "../../assets/Images/GetAddOns.jpeg"; // Make sure this path is correct
 
-// Color Scheme
+// White Theme Color Scheme
 const colorScheme = {
-  primaryDark: 'rgb(13, 54, 90)',
-  primaryLight: 'rgb(25, 71, 114)',
-  accent: 'rgb(0, 168, 232)',
-  secondaryAccent: 'rgb(64, 196, 255)',
-  highlight: 'rgba(100, 210, 255, 0.3)',
-  textPrimary: 'rgba(255, 255, 255, 0.95)',
-  textSecondary: 'rgba(255, 255, 255, 0.7)',
-  divider: 'rgba(255, 255, 255, 0.12)',
-  cardBg: 'rgba(18, 63, 102, 0.4)',
-  buttonGradient: 'linear-gradient(135deg, rgba(0, 168, 232, 0.9) 0%, rgba(64, 196, 255, 0.9) 100%)',
-  navbarBg: 'rgba(13, 54, 90, 0.9)',
-  glassEffect: 'rgba(255, 255, 255, 0.05)',
-  glowEffect: 'rgba(64, 196, 255, 0.3)',
-  navbarText: 'rgba(255, 255, 255, 0.9)',
-  navbarHover: 'rgba(64, 196, 255, 0.2)',
-  navbarActive: 'rgba(0, 168, 232, 0.7)',
-  navbarIndicator: 'rgb(64, 196, 255)'
+  primary: '#FFFFFF',             // White background
+  primaryLight: '#F8F9FA',        // Very light gray
+  accent: '#1976D2',              // Blue accent
+  secondaryAccent: '#757575',     // Gray accent
+  highlight: 'rgba(25, 118, 210, 0.1)',
+  textPrimary: '#212121',         // Dark text
+  textSecondary: '#424242',       // Slightly lighter text
+  divider: '#E0E0E0',             // Light divider
+  cardBg: '#FFFFFF',              // White card background
+  buttonGradient: 'linear-gradient(135deg, #1976D2 0%, #2196F3 100%)',
+  navbarBg: '#FFFFFF',            // White navbar
+  white: '#FFFFFF',
+  dark: '#F5F5F5',               // Very light gray
+  errorRed: '#D32F2F',
+  successGreen: '#388E3C',
+  navbarText: '#1976D2',
+  navbarHover: 'rgba(25, 118, 210, 0.1)',
+  navbarActive: 'rgba(25, 118, 210, 0.2)',
+  navbarIndicator: '#1976D2',
+  glowEffect: 'rgba(25, 118, 210, 0.2)'
 };
 
 interface DataaddonsProps {
@@ -60,9 +63,9 @@ interface PostpaidAddOnPackage {
 
 // Animation definitions
 const pulse = keyframes`
-  0% { box-shadow: 0 0 0 0 rgba(64, 196, 255, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(64, 196, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(64, 196, 255, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(25, 118, 210, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(25, 118, 210, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(25, 118, 210, 0); }
 `;
 
 const fadeIn = keyframes`
@@ -120,27 +123,16 @@ const BroadbandNavbar = ({
         backgroundColor: colorScheme.navbarBg,
         border: `1px solid ${colorScheme.divider}`,
         borderRadius: "12px",
-        boxShadow: `0 4px 20px ${colorScheme.glowEffect}`,
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
         overflow: "hidden",
         transition: "all 0.3s ease",
         "&:hover": {
-          boxShadow: `0 6px 24px ${colorScheme.glowEffect}`
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)'
         },
         animation: `${fadeIn} 0.5s ease-out`,
         padding: isMobile ? "8px" : "0",
         gap: isMobile ? "8px" : "0",
-        backdropFilter: "blur(8px)",
         position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "2px",
-          background: `linear-gradient(90deg, transparent, ${colorScheme.secondaryAccent}, transparent)`,
-          opacity: 0.7
-        }
       }}
     >
       {navbarItems.map((item, index) => (
@@ -157,7 +149,7 @@ const BroadbandNavbar = ({
             display: "flex",
             flexDirection: "column",
             borderRadius: "8px",
-            color: selectedItem === item.label ? colorScheme.textPrimary : colorScheme.navbarText,
+            color: selectedItem === item.label ? colorScheme.accent : colorScheme.textPrimary,
             backgroundColor: selectedItem === item.label 
               ? colorScheme.navbarActive 
               : hoveredItem === item.label 
@@ -206,8 +198,7 @@ const BroadbandNavbar = ({
               maxWidth: "100%",
               transition: "all 0.2s ease",
               transform: hoveredItem === item.label ? "scale(1.05)" : "none",
-              letterSpacing: "0.5px",
-              textShadow: selectedItem === item.label ? `0 0 8px ${colorScheme.glowEffect}` : "none"
+              letterSpacing: "0.5px"
             }}
           >
             {item.label}
@@ -220,7 +211,7 @@ const BroadbandNavbar = ({
                 textTransform: "capitalize",
                 fontWeight: 600,
                 color: selectedItem === item.label 
-                  ? colorScheme.textPrimary 
+                  ? colorScheme.accent 
                   : colorScheme.textSecondary,
                 transition: "all 0.2s ease",
                 opacity: hoveredItem === item.label || selectedItem === item.label ? 1 : 0.8,
@@ -244,7 +235,7 @@ const BroadbandNavbar = ({
                 left: 0,
                 width: "100%",
                 height: "100%",
-                background: `linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%)`,
+                background: `linear-gradient(135deg, rgba(25, 118, 210, 0.1) 0%, transparent 100%)`,
                 pointerEvents: "none",
                 animation: `${pulse} 2s infinite`
               }}
@@ -397,27 +388,16 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
       sx={{
         display: "flex",
         flexDirection: "column",
-        backgroundColor: colorScheme.cardBg,
+        backgroundColor: colorScheme.primary,
         color: colorScheme.textPrimary,
         padding: 3,
-        borderRadius: "16px",
-        boxShadow: "0px 8px 24px rgba(0, 0, 0, 0.2)",
+        borderRadius: "12px",
+        boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
-        width: "100%",
+        width: "94%",
         border: `1px solid ${colorScheme.divider}`,
-        backdropFilter: "blur(8px)",
         gap: 2,
         position: "relative",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "1px",
-          background: `linear-gradient(90deg, transparent, ${colorScheme.secondaryAccent}, transparent)`,
-          opacity: 0.5
-        }
       }}
     >
       {/* Back Button */}
@@ -426,7 +406,7 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
         onClick={onBack}
         sx={{
           alignSelf: 'flex-start',
-          color: colorScheme.textPrimary,
+          color: colorScheme.accent,
           zIndex: 2,
           transition: 'all 0.3s ease',
           px: 2,
@@ -437,9 +417,8 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
           fontSize: '1rem',
           fontWeight: 700,
           '&:hover': {
-            backgroundColor: 'rgba(0, 168, 232, 0.1)',
+            backgroundColor: 'rgba(25, 118, 210, 0.1)',
             transform: 'translateX(-5px)',
-            boxShadow: `0 0 12px ${colorScheme.glowEffect}`
           },
           '& .MuiSvgIcon-root': {
             transition: 'all 0.3s ease',
@@ -463,196 +442,212 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
 
       {/* Content Scroll Area */}
       <Box
-        ref={scrollRef}
-        onScroll={handleScroll}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={() => setIsDragging(false)}
+  ref={scrollRef}
+  onScroll={handleScroll}
+  onMouseDown={handleMouseDown}
+  onMouseMove={handleMouseMove}
+  onMouseUp={handleMouseUp}
+  onMouseLeave={() => setIsDragging(false)}
+  sx={{
+    display: "flex",
+    gap: 2,
+    width: "100%",
+    padding: "16px 8px",
+    overflowX: "auto",
+    flexDirection: "row",
+    cursor: isDragging ? "grabbing" : "grab",
+    "&::-webkit-scrollbar": { display: "none" },
+    userSelect: "none",
+    scrollbarWidth: "none",
+    scrollSnapType: "x mandatory",
+    "& > *": {
+      scrollSnapAlign: "start"
+    },
+    position: "relative",
+    "&::after": {
+      content: '""',
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: "1px",
+      background: `linear-gradient(90deg, transparent, ${colorScheme.divider}, transparent)`,
+      opacity: 0.5
+    }
+  }}
+>
+  {dummyPackages
+    .find((pkg) => pkg.category === selectedItem)
+    ?.addons.map((addon) => (
+      <Card
+        key={addon.id}
         sx={{
-          display: "flex",
-          gap: 2,
-          width: "100%",
-          padding: "16px 8px",
-          overflowX: "auto",
-          flexDirection: "row",
-          cursor: isDragging ? "grabbing" : "grab",
-          "&::-webkit-scrollbar": { display: "none" },
-          userSelect: "none",
-          scrollbarWidth: "none",
-          scrollSnapType: "x mandatory",
-          "& > *": {
-            scrollSnapAlign: "start"
-          },
+          minWidth: isMobile || mobileView ? "85%" : "320px",
+          maxWidth: isMobile || mobileView ? "85%" : "320px",
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          borderRadius: "16px",
+          boxShadow: "0 8px 32px rgba(0, 0, 0, 0.1)",
+          textAlign: "center",
+          margin: "4px",
+          border: `1px solid rgba(255, 255, 255, 0.2)`,
+          transition: "transform 0.3s ease, box-shadow 0.3s ease",
+          overflow: "hidden",
           position: "relative",
-          "&::after": {
+          backdropFilter: "blur(10px)",
+          "&:hover": {
+            transform: "translateY(-8px)",
+            boxShadow: "0 12px 24px rgba(0, 120, 212, 0.2)",
+          },
+          '&::before': {
             content: '""',
-            position: "absolute",
-            bottom: 0,
+            position: 'absolute',
+            top: 0,
             left: 0,
             right: 0,
-            height: "1px",
-            background: `linear-gradient(90deg, transparent, ${colorScheme.divider}, transparent)`,
-            opacity: 0.5
+            bottom: 0,
+            background: `linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%)`,
+            zIndex: -1
           }
         }}
       >
-        {dummyPackages
-          .find((pkg) => pkg.category === selectedItem)
-          ?.addons.map((addon) => (
-            <Card
-              key={addon.id}
-              sx={{
-                minWidth: isMobile || mobileView ? "85%" : "300px",
-                maxWidth: isMobile || mobileView ? "85%" : "300px",
-                backgroundColor: colorScheme.primaryDark,
-                borderRadius: "12px",
-                boxShadow: `0 6px 16px rgba(0, 0, 0, 0.3)`,
-                textAlign: "center",
-                margin: "4px",
-                border: `1px solid ${colorScheme.divider}`,
-                transition: "transform 0.3s ease, box-shadow 0.3s ease",
-                overflow: "hidden",
-                position: "relative",
-                "&:hover": {
-                  transform: "translateY(-5px)",
-                  boxShadow: `0 12px 24px ${colorScheme.glowEffect}`,
-                  "&::before": {
-                    opacity: 1
-                  }
-                },
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  height: "100%",
-                  background: `linear-gradient(135deg, ${colorScheme.highlight} 0%, transparent 100%)`,
-                  opacity: 0,
-                  transition: "opacity 0.3s ease"
-                }
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: 1,
+            borderRadius: 0,
+            overflow: "hidden",
+            position: "relative",
+            height: "220px",
+            backgroundImage: `linear-gradient(rgba(0, 120, 212, 0.1), rgba(0, 120, 212, 0.1)), url(${GetAddOnsImage})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            "&::after": {
+              content: '""',
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              right: 0,
+              height: "4px",
+              background: colorScheme.accent,
+              opacity: 0.7
+            }
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: 'rgba(255, 255, 255, 0.7)',
+              padding: '16px',
+              borderRadius: '12px',
+              textAlign: 'center',
+              backdropFilter: 'blur(8px)',
+              border: `1px solid rgba(255, 255, 255, 0.3)`,
+              width: "90%",
+              transition: "all 0.3s ease",
+              boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+              "&:hover": {
+                transform: "scale(1.02)",
+                boxShadow: "0 8px 24px rgba(0, 120, 212, 0.2)"
+              }
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ 
+                color: colorScheme.textPrimary, 
+                fontSize: isMobile || mobileView ? 18 : 20, 
+                fontWeight: 800,
+                mb: 1.5,
+                letterSpacing: "0.5px"
               }}
             >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: 1,
-                  borderRadius: 0,
-                  overflow: "hidden",
-                  boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.3)",
-                  position: "relative",
-                  height: "180px",
-                  backgroundImage: `linear-gradient(rgba(13, 54, 90, 0.8), rgba(13, 54, 90, 0.8)), url(${GetAddOnsImage})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  "&::after": {
-                    content: '""',
-                    position: "absolute",
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    height: "4px",
-                    background: colorScheme.secondaryAccent,
-                    opacity: 0.7
-                  }
-                }}
-              >
-                <Box
-                  sx={{
-                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                    padding: '12px',
-                    borderRadius: '8px',
-                    textAlign: 'center',
-                    backdropFilter: 'blur(4px)',
-                    border: `1px solid ${colorScheme.divider}`,
-                    width: "90%",
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      transform: "scale(1.02)",
-                      boxShadow: `0 0 16px ${colorScheme.glowEffect}`
-                    }
-                  }}
-                >
-                  <Typography
-                    variant="body2"
-                    sx={{ 
-                      color: colorScheme.textPrimary, 
-                      fontSize: isMobile || mobileView ? 16 : 18, 
-                      fontWeight: 700,
-                      mb: 1,
-                      textShadow: `0 0 8px ${colorScheme.glowEffect}`
-                    }}
-                  >
-                    {addon.name}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ 
-                      color: colorScheme.textSecondary, 
-                      fontSize: isMobile || mobileView ? 12 : 14,
-                      mb: 1
-                    }}
-                  >
-                    {addon.description}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{ 
-                      color: colorScheme.secondaryAccent, 
-                      fontSize: isMobile || mobileView ? 16 : 18, 
-                      fontWeight: 800,
-                      letterSpacing: "0.5px"
-                    }}
-                  >
-                    {`Rs. ${addon.postprice}`}
-                  </Typography>
-                </Box>
-              </Box>
-              <CardContent
-                sx={{
-                  p: 1,
-                  display: "flex",
-                  justifyContent: "center",
-                  paddingX: "20px",
-                  background: `linear-gradient(180deg, ${colorScheme.primaryLight} 0%, ${colorScheme.primaryDark} 100%)`
-                }}
-              >
-                <Button
-                  variant="contained"
-                  sx={{
-                    mt: 1,
-                    background: colorScheme.buttonGradient,
-                    color: "white",
-                    fontSize: isMobile || mobileView ? 12 : 14,
-                    padding: "8px 24px",
-                    borderRadius: "20px",
-                    fontWeight: 700,
-                    letterSpacing: "0.5px",
-                    textTransform: "uppercase",
-                    boxShadow: `0 4px 8px rgba(0, 0, 0, 0.2)`,
-                    transition: "all 0.3s ease",
-                    "&:hover": {
-                      opacity: 0.9,
-                      boxShadow: `0 0 20px ${colorScheme.glowEffect}`,
-                      transform: "translateY(-2px)"
-                    },
-                    "&:active": {
-                      transform: "translateY(0)"
-                    }
-                  }}
-                  onClick={() => handleCardButtonClick(addon)}
-                >
-                  Activate Now
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-      </Box>
+              {addon.name}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ 
+                color: colorScheme.textSecondary, 
+                fontSize: isMobile || mobileView ? 14 : 16,
+                mb: 1.5,
+                lineHeight: 1.4
+              }}
+            >
+              {addon.description}
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ 
+                color: colorScheme.accent, 
+                fontSize: isMobile || mobileView ? 18 : 22, 
+                fontWeight: 900,
+                letterSpacing: "0.5px",
+                textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+              }}
+            >
+              {`Rs. ${addon.postprice}`}
+            </Typography>
+          </Box>
+        </Box>
+        <CardContent
+          sx={{
+            p: 2,
+            display: "flex",
+            justifyContent: "center",
+            background: 'rgba(255, 255, 255, 0.2)',
+            backdropFilter: 'blur(5px)',
+            borderTop: `1px solid rgba(255, 255, 255, 0.3)`
+          }}
+        >
+          <Button
+            variant="contained"
+            sx={{
+              mt: 1,
+              background: `linear-gradient(135deg, ${colorScheme.accent} 0%, ${colorScheme.secondaryAccent} 100%)`,
+              color: "white",
+              fontSize: isMobile || mobileView ? 14 : 16,
+              padding: "10px 32px",
+              borderRadius: "24px",
+              fontWeight: 700,
+              letterSpacing: "0.5px",
+              textTransform: "uppercase",
+              boxShadow: "0 4px 12px rgba(0, 120, 212, 0.3)",
+              transition: "all 0.3s ease",
+              position: 'relative',
+              overflow: 'hidden',
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: 'rgba(255, 255, 255, 0.1)',
+                transform: 'translateX(-100%)',
+                transition: 'transform 0.3s ease'
+              },
+              "&:hover": {
+                opacity: 0.9,
+                boxShadow: "0 8px 16px rgba(0, 120, 212, 0.4)",
+                transform: "translateY(-3px)",
+                '&::before': {
+                  transform: 'translateX(0)'
+                }
+              },
+              "&:active": {
+                transform: "translateY(0)"
+              }
+            }}
+            onClick={() => handleCardButtonClick(addon)}
+          >
+            Activate Now
+          </Button>
+        </CardContent>
+      </Card>
+    ))}
+</Box>
       
       {/* Confirmation Dialog */}
       <Dialog 
@@ -660,32 +655,23 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
         onClose={handleDialogClose}
         PaperProps={{
           sx: {
-            background: `linear-gradient(135deg, ${colorScheme.primaryDark} 0%, ${colorScheme.primaryLight} 100%)`,
+            background: colorScheme.primary,
             color: colorScheme.textPrimary,
-            borderRadius: '16px',
+            borderRadius: '12px',
             border: `1px solid ${colorScheme.divider}`,
             minWidth: isMobile || mobileView ? '90vw' : '400px',
-            boxShadow: `0 8px 32px rgba(0, 0, 0, 0.3)`,
+            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
             overflow: "hidden",
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              top: 0,
-              left: 0,
-              right: 0,
-              height: "4px",
-              background: `linear-gradient(90deg, ${colorScheme.accent}, ${colorScheme.secondaryAccent})`,
-              opacity: 0.8
-            }
           }
         }}
       >
         <DialogTitle
           sx={{
-            background: "rgba(0, 0, 0, 0.2)",
+            background: colorScheme.primaryLight,
             borderBottom: `1px solid ${colorScheme.divider}`,
             fontWeight: 700,
-            letterSpacing: "0.5px"
+            letterSpacing: "0.5px",
+            color: colorScheme.textPrimary
           }}
         >
           Confirm Activation
@@ -694,7 +680,7 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
           <Typography sx={{ mt: 2, mb: 1 }}>
             Do you want to purchase and activate <strong>{selectedPackage?.name}</strong>?
           </Typography>
-          <Typography variant="body2" sx={{ color: colorScheme.secondaryAccent, mb: 2 }}>
+          <Typography variant="body2" sx={{ color: colorScheme.accent, mb: 2 }}>
             {selectedPackage?.description}
           </Typography>
           {(selectedItem === "LMS" || selectedItem === "Home Schooling & WFH") && (
@@ -708,9 +694,9 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
                 control={
                   <Radio 
                     sx={{ 
-                      color: colorScheme.secondaryAccent,
+                      color: colorScheme.accent,
                       "&.Mui-checked": {
-                        color: colorScheme.secondaryAccent
+                        color: colorScheme.accent
                       }
                     }} 
                   />
@@ -726,9 +712,9 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
                 control={
                   <Radio 
                     sx={{ 
-                      color: colorScheme.secondaryAccent,
+                      color: colorScheme.accent,
                       "&.Mui-checked": {
-                        color: colorScheme.secondaryAccent
+                        color: colorScheme.accent
                       }
                     }} 
                   />
@@ -745,7 +731,7 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
             sx={{
               mt: 2,
               p: 2,
-              backgroundColor: "rgba(0, 0, 0, 0.2)",
+              backgroundColor: colorScheme.primaryLight,
               borderRadius: "8px",
               border: `1px solid ${colorScheme.divider}`
             }}
@@ -764,19 +750,19 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
         <DialogActions
           sx={{
             p: 2,
-            background: "rgba(0, 0, 0, 0.2)",
+            background: colorScheme.primaryLight,
             borderTop: `1px solid ${colorScheme.divider}`
           }}
         >
           <Button 
             onClick={handleDialogClose} 
             sx={{ 
-              color: colorScheme.textSecondary,
-              borderRadius: "20px",
+              color: colorScheme.textPrimary,
+              borderRadius: "6px",
               px: 3,
               border: `1px solid ${colorScheme.divider}`,
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.1)"
+                backgroundColor: "rgba(0, 0, 0, 0.05)"
               }
             }}
           >
@@ -787,13 +773,12 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
             sx={{ 
               background: colorScheme.buttonGradient,
               color: 'white',
-              borderRadius: "20px",
+              borderRadius: "6px",
               px: 3,
               fontWeight: 700,
-              boxShadow: `0 4px 8px rgba(0, 0, 0, 0.2)`,
+              boxShadow: "0 2px 6px rgba(0, 0, 0, 0.1)",
               '&:hover': { 
                 opacity: 0.9,
-                boxShadow: `0 0 16px ${colorScheme.glowEffect}`
               }
             }}
           >
@@ -819,11 +804,10 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
               sx={{
                 width: activeIndex === index + 1 ? "24px" : "8px",
                 height: "8px",
-                backgroundColor: activeIndex === index + 1 ? colorScheme.secondaryAccent : colorScheme.divider,
+                backgroundColor: activeIndex === index + 1 ? colorScheme.accent : colorScheme.divider,
                 borderRadius: activeIndex === index + 1 ? "4px" : "50%",
                 transition: "all 0.3s ease",
                 opacity: activeIndex === index + 1 ? 1 : 0.6,
-                boxShadow: activeIndex === index + 1 ? `0 0 8px ${colorScheme.glowEffect}` : "none"
               }}
             />
           ))}

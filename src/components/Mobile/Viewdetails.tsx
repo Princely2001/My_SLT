@@ -785,7 +785,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                     justifyContent: 'space-between',
                     p: 1.5,
                     borderRadius: '8px',
-                    background: 'rgba(255, 255, 255, 0.03)',
+                    background: 'rgba(246, 242, 242, 0.03)',
                     transition: 'all 0.3s ease',
                     position: 'relative',
                     overflow: 'hidden',

@@ -18,7 +18,7 @@ import {
 import useStore from "../services/useAppStore";
 
 const PurchaseHistoryComponent: React.FC = () => {
-  const [purchaseHistory, setPurchaseHistory] = useState<DataBundle[] | null>(null);
+  const [allPurchaseHistory, setAllPurchaseHistory] = useState<DataBundle[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedTab, setSelectedTab] = useState<number>(0);
@@ -68,14 +68,15 @@ const PurchaseHistoryComponent: React.FC = () => {
 
     setLoading(true);
     setError(null);
-    setPurchaseHistory(null);
     setShowTable(false);
 
     try {
       const formattedFrom = from.toISOString().split("T")[0];
       const formattedTo = to.toISOString().split("T")[0];
+      
       const data = await fetchPurchaseHistory(subscriberID, formattedFrom, formattedTo);
-      setPurchaseHistory(data && data.length > 0 ? data : []);
+      setAllPurchaseHistory(data && data.length > 0 ? data : []);
+      
       setShowTable(true);
     } catch {
       setError("Failed to fetch purchase history. Please try again.");
@@ -87,18 +88,37 @@ const PurchaseHistoryComponent: React.FC = () => {
   const filterByTab = (data: DataBundle[] | null, tab: number): DataBundle[] => {
     if (!data) return [];
     switch (tab) {
-      case 1:
-        return data.filter((item) => item.vasType?.toLowerCase() === "extra gb");
-      case 2:
-        return data.filter((item) => item.vasType?.toLowerCase().includes("add-on"));
-      default:
+      case 1: // Extra GB tab - strict filtering
+        return data.filter((item) => {
+          const lowerType = item.vasType?.toLowerCase() || '';
+          const lowerPackage = item.vasPackage?.toLowerCase() || '';
+          return (
+            (lowerType === "extra gb" || 
+            lowerPackage.includes("extra gb") ||
+            lowerPackage.includes("extragb")) &&
+            !lowerType.includes("add-on") &&
+            !lowerPackage.includes("add-on")
+          );
+        });
+      case 2: // Add-Ons tab
+        return data.filter((item) => {
+          const lowerType = item.vasType?.toLowerCase() || '';
+          const lowerPackage = item.vasPackage?.toLowerCase() || '';
+          return (
+            (lowerType.includes("add-on") ||
+            lowerPackage.includes("add-on")) &&
+            !lowerType.includes("extra gb") &&
+            !lowerPackage.includes("extra gb")
+          );
+        });
+      default: // All tab
         return data;
     }
   };
 
   const currentTabKey = ["all", "extra gb", "add-on"][selectedTab];
   const { from: historyFrom, to: historyTo } = dateRanges[currentTabKey];
-  const filteredHistory = filterByTab(purchaseHistory, selectedTab);
+  const filteredHistory = filterByTab(allPurchaseHistory, selectedTab);
 
   const handleViewModeChange = (
     event: React.MouseEvent<HTMLElement>,
@@ -150,7 +170,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         {["All", "Extra GB", "Add-Ons"].map((tab, index) => (
           <Button 
             key={tab} 
-            onClick={() => { setSelectedTab(index); setShowTable(false); }}
+            onClick={() => { setSelectedTab(index); setShowTable(true); }}
             sx={{ 
               flex: 1, 
               height: "32px", 
@@ -290,7 +310,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         </Typography>
       )}
 
-      {purchaseHistory && showTable && (
+      {allPurchaseHistory && showTable && (
         <>
           <Box sx={{ 
             display: "flex", 
@@ -366,7 +386,6 @@ const PurchaseHistoryComponent: React.FC = () => {
                         display: "flex", 
                         flexDirection: "column", 
                         justifyContent: "space-between",
-                         
                       }}>
                         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
                           <Typography sx={{ 
@@ -417,92 +436,92 @@ const PurchaseHistoryComponent: React.FC = () => {
             </Box>
           ) : (
             <TableContainer
-            component={Paper}
-            sx={{
-              borderRadius: 2,
-              overflow: "auto",
-              maxHeight: "200px",
-              width: "100%",
-              "&::-webkit-scrollbar": {
-                width: "8px",
-                height: "8px",
-              },
-              "&::-webkit-scrollbar-track": {
-                backgroundColor: "#f1f1f1",
-                borderRadius: "10px",
-              },
-              "&::-webkit-scrollbar-thumb": {
-                backgroundColor: "#0D67A6",
-                borderRadius: "10px",
-              },
-              "&::-webkit-scrollbar-thumb:hover": {
-                backgroundColor: "#0056A2",
-              },
-            }}
-          >
-            <Table>
-              <TableHead
-                sx={{
-                  position: "sticky",
-                  top: 0,
-                  zIndex: 1,
+              component={Paper}
+              sx={{
+                borderRadius: 2,
+                overflow: "auto",
+                maxHeight: "200px",
+                width: "100%",
+                "&::-webkit-scrollbar": {
+                  width: "8px",
+                  height: "8px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "#f1f1f1",
+                  borderRadius: "10px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "#0D67A6",
+                  borderRadius: "10px",
+                },
+                "&::-webkit-scrollbar-thumb:hover": {
                   backgroundColor: "#0056A2",
-                }}
-              >
-                <TableRow>
-                  <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                    Package Type
-                  </TableCell>
-                  <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                    Package Name
-                  </TableCell>
-                  <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                    Valid Till
-                  </TableCell>
-                  <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                    Price
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredHistory.length > 0 ? (
-                  filteredHistory.map((item, index) => (
-                    <TableRow 
-                      key={index} 
-                      sx={{ 
-                        height: "40px",
-                        "&:nth-of-type(odd)": {
-                          backgroundColor: "#F9F9F9",
-                        },
-                        "&:hover": {
-                          backgroundColor: "#E5F0FA",
-                        }
-                      }}
-                    >
-                      <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                        {item.vasType}
-                      </TableCell>
-                      <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                        {item.vasPackage}
-                      </TableCell>
-                      <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                        {item.validTill || "N/A"}
-                      </TableCell>
-                      <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                        Rs. {item.payPrice || "0.00"}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
+                },
+              }}
+            >
+              <Table>
+                <TableHead
+                  sx={{
+                    position: "sticky",
+                    top: 0,
+                    zIndex: 1,
+                    backgroundColor: "#0056A2",
+                  }}
+                >
                   <TableRow>
-                    <TableCell colSpan={4} align="center" sx={{ color: "#0056A2", fontFamily: "'Roboto', sans-serif" }}>
-                      No {["All", "Extra GB", "Add-Ons"][selectedTab]} history found in the selected range.
+                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
+                      Package Type
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
+                      Package Name
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
+                      Valid Till
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
+                      Price
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {filteredHistory.length > 0 ? (
+                    filteredHistory.map((item, index) => (
+                      <TableRow 
+                        key={index} 
+                        sx={{ 
+                          height: "40px",
+                          "&:nth-of-type(odd)": {
+                            backgroundColor: "#F9F9F9",
+                          },
+                          "&:hover": {
+                            backgroundColor: "#E5F0FA",
+                          }
+                        }}
+                      >
+                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
+                          {item.vasType}
+                        </TableCell>
+                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
+                          {item.vasPackage}
+                        </TableCell>
+                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
+                          {item.validTill || "N/A"}
+                        </TableCell>
+                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
+                          Rs. {item.payPrice || "0.00"}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} align="center" sx={{ color: "#0056A2", fontFamily: "'Roboto', sans-serif" }}>
+                        No {["All", "Extra GB", "Add-Ons"][selectedTab]} history found in the selected range.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
           )}
         </>
       )}

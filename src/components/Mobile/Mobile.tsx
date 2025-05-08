@@ -1,1949 +1,920 @@
-import React, { useState } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  CircularProgress,
-  Grid,
-  Paper,
-  Divider,
+import { useState, useEffect } from 'react';
+import { 
+  Box, 
+  Button, 
+  Typography, 
+  useMediaQuery, 
+  useTheme,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  Divider
 } from "@mui/material";
-import {
-  FaCloudSun,
-  FaCloudMoon,
-  FaPhoneAlt,
-  FaSms,
-  FaBolt,
-  FaWallet,
-  FaChartLine,
-  FaHistory,
-  FaArrowLeft,
-} from "react-icons/fa";
-import { motion } from "framer-motion";
-import UsageHistory from "./UsageHistory";
-import DataUsageDetails from "./Viewdetails";
-import ReloadHistory from "./ReloadHistory";
-import AddMinutes from "./AddMinutes";
-import BuyDataBundle from "./BuyDataBundle";
-import SmsPackages from "./SmsPackages";
-import Payment from "./Payment";
+import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import DataUsageIcon from "@mui/icons-material/DataUsage";
+import AddBoxIcon from "@mui/icons-material/AddBox";
+import UpgradeIcon from "@mui/icons-material/Upgrade";
+import SettingsIcon from "@mui/icons-material/Settings";
+import CircularProgressBar from "../CircularProgressBar";
+import { keyframes } from '@emotion/react';
+import GetExtraGbPage from './GetExtraGB'; 
+import Dataaddons from './data_add_ons'; 
+import BroadbandPostPaidPackageUpgrader from './packageupgrade'; 
 
-export default function DesktopDashboard() {
-  const [activeTab, setActiveTab] = useState("data");
-  const [isHovered, setIsHovered] = useState(false);
-  const [view, setView] = useState<
-    | "dashboard"
-    | "usageHistory"
-    | "dataUsageDetails"
-    | "reloadHistory"
-    | "buyDataBundle"
-    | "addMinutes"
-    | "smsPackages"
-    | "payment"
-  >("dashboard");
+// Define interfaces
+interface PostpaidUsageDetails {
+  package_summary: {
+    used: string;
+    limit: string;
+  };
+  usageDetails: Array<{
+    name: string;
+    used: string;
+    limit: string;
+    expiry_date: string;
+    percentage: number;
+  }>;
+}
 
+interface ServiceData {
+  listofBBService: Array<{
+    serviceID: string;
+    serviceStatus: string;
+    packageName: string;
+  }>;
+}
+
+// White Color Scheme
+const colorScheme = {
+  primary: 'rgb(255, 255, 255)',
+  primaryLight: 'rgb(250, 250, 250)',
+  primaryDark: 'rgb(245, 245, 245)',
+  accent: 'rgb(0, 120, 212)',
+  secondaryAccent: 'rgb(0, 95, 184)',
+  highlight: 'rgba(0, 120, 212, 0.1)',
+  textPrimary: 'rgba(0, 0, 0, 0.87)',
+  textSecondary: 'rgba(0, 0, 0, 0.6)',
+  divider: 'rgba(0, 0, 0, 0.12)',
+  cardBg: 'rgba(255, 255, 255, 0.9)',
+  buttonGradient: 'linear-gradient(135deg, rgba(0, 120, 212, 0.9) 0%, rgba(0, 95, 184, 0.9) 100%)',
+  navbarBg: 'rgba(255, 255, 255, 0.95)',
+  glassEffect: 'rgba(255, 255, 255, 0.7)',
+  glowEffect: 'rgba(0, 120, 212, 0.2)',
+  shadow: '0 2px 10px rgba(0, 0, 0, 0.08)'
+};
+
+// Animations
+const floatAnimation = keyframes`
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+`;
+
+const pulseAnimation = keyframes`
+  0% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(0, 120, 212, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0); }
+`;
+
+const fadeIn = keyframes`
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
+const shimmer = keyframes`
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+`;
+
+const borderGlow = keyframes`
+  0% { border-color: rgba(0, 120, 212, 0.3); }
+  50% { border-color: rgba(0, 120, 212, 0.7); }
+  100% { border-color: rgba(0, 120, 212, 0.3); }
+`;
+
+const gradientFlow = keyframes`
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+`;
+
+// Mock data
+const dummyServiceData: ServiceData = {
+  listofBBService: [{
+    serviceID: "BB-123456",
+    serviceStatus: "Active",
+    packageName: "Premium Internet"
+  }]
+};
+
+const dummyUsageDetails = {
+  myPackageDetails: {
+    package_summary: { used: "75", limit: "200" },
+    usageDetails: [
+      {
+        name: "Main Package",
+        used: "75",
+        limit: "200",
+        expiry_date: "2024-12-31",
+        percentage: 37.5
+      },
+      {
+        name: "Night Package",
+        used: "30",
+        limit: "100",
+        expiry_date: "2024-12-31",
+        percentage: 30
+      }
+    ]
+  },
+  extraGBDetails: {
+    package_summary: { used: "5", limit: "10" },
+    usageDetails: [
+      {
+        name: "Extra GB Pack",
+        used: "5",
+        limit: "10",
+        expiry_date: "2024-06-30",
+        percentage: 50
+      }
+    ]
+  },
+  bonusDataDetails: {
+    package_summary: { used: "2", limit: "5" },
+    usageDetails: [
+      {
+        name: "Bonus Data",
+        used: "2",
+        limit: "5",
+        expiry_date: "2024-07-15",
+        percentage: 40
+      }
+    ]
+  },
+  addOnsDetails: {
+    package_summary: { used: "0", limit: "0" },
+    usageDetails: []
+  },
+  freeDataDetails: {
+    package_summary: { used: "10", limit: "15" },
+    usageDetails: [
+      {
+        name: "Free Data Pack",
+        used: "10",
+        limit: "15",
+        expiry_date: "2024-08-01",
+        percentage: 66.67
+      }
+    ]
+  }
+};
+
+const navbarItems = [
+  { label: "My Package", ...dummyUsageDetails.myPackageDetails.package_summary },
+  { label: "Extra GB", ...dummyUsageDetails.extraGBDetails.package_summary },
+  { label: "Bonus Data", ...dummyUsageDetails.bonusDataDetails.package_summary },
+  { label: "Add-Ons", ...dummyUsageDetails.addOnsDetails.package_summary },
+  { label: "Free Data", ...dummyUsageDetails.freeDataDetails.package_summary },
+];
+
+const sidebarItems = [
+  { label: "Dashboard", icon: <DashboardIcon />, active: false },
+  { label: "Data Usage", icon: <DataUsageIcon />, active: true },
+  { label: "Add Data", icon: <AddBoxIcon />, active: false },
+  { label: "Upgrade", icon: <UpgradeIcon />, active: false },
+  { label: "Settings", icon: <SettingsIcon />, active: false },
+];
+
+// Navigation Bar Component with white theme
+const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: { 
+  navbarItems: any[], 
+  onSelected: (item: string) => void, 
+  selected: string,
+  isMobile: boolean 
+}) => {
   return (
-    <Box
-      sx={{
-        minHeight: "100vh",
-        background:
-          "linear-gradient(135deg,rgb(13, 54, 90) 0%,rgb(25, 71, 114) 100%)",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        py: 4,
-        color: "white",
-        fontFamily: "'Inter', sans-serif",
-        position: "relative",
-        overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: "4px",
-          background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-          zIndex: 1,
-        },
-      }}
-    >
-      {/* Floating background elements */}
-      {[...Array(10)].map((_, i) => (
-        <Box
-          key={i}
-          sx={{
-            position: "absolute",
-            borderRadius: "50%",
-            background:
-              "radial-gradient(circle, rgba(0, 230, 230, 0.1) 0%, transparent 70%)",
-            width: `${200 + Math.random() * 300}px`,
-            height: `${200 + Math.random() * 300}px`,
-            top: `${Math.random() * 100}%`,
-            left: `${Math.random() * 100}%`,
-            opacity: 0.3,
-            zIndex: 0,
-          }}
-        />
-      ))}
-
-      {/* Main Content Container */}
-      <Box
-        sx={{
-          width: "150%",
-          maxWidth: "975px",
-          position: "relative",
-          zIndex: 1,
-          overflowY: "auto",
-          height: "75vh",
-          maxHeight: "70vh",
-          scrollbarWidth: "thin",
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "rgba(0,230,230,0.5)",
-            borderRadius: "4px",
-          },
-          "&::-webkit-scrollbar-track": {
-            backgroundColor: "rgba(0,0,0,0.1)",
-          },
-        }}
-      >
-        {view === "dashboard" && (
-          <>
-            {/* Header Section */}
-            <Grid container spacing={3} sx={{ mb: 4 }}>
-              <Grid item xs={12} md={6}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 3,
-                    p: 2,
-                    background: "rgba(255,255,255,0.08)",
-                    borderRadius: "16px",
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    boxShadow: "0 4px 20px rgba(0,0,0,0.15)",
-                  }}
-                >
-                  {/* Profile Avatar */}
-                  <Box
-                    sx={{
-                      width: 64,
-                      height: 64,
-                      borderRadius: "50%",
-                      background: "linear-gradient(135deg, #00e6e6, #0099cc)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "white",
-                      fontSize: "1.5rem",
-                      fontWeight: 700,
-                    }}
-                  >
-                    JP
-                  </Box>
-
-                  {/* Profile Info */}
-                  <Box
-                    sx={{
-                      animation: "fadeIn 0.8s ease-in-out",
-                      "@keyframes fadeIn": {
-                        "0%": { opacity: 0, transform: "translateY(10px)" },
-                        "100%": { opacity: 1, transform: "translateY(0)" },
-                      },
-                    }}
-                  >
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        fontWeight: 700,
-                        mb: 0.5,
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        textShadow: "0 0 8px rgba(0, 230, 230, 0.3)",
-                      }}
-                    >
-                      Shenaya Fernando
-                      <Box
-                        component="span"
-                        sx={{
-                          width: 8,
-                          height: 8,
-                          borderRadius: "50%",
-                          background: "#4CAF50",
-                          boxShadow: "0 0 8px #4CAF50",
-                          animation: "pulse 2s infinite",
-                          "@keyframes pulse": {
-                            "0%": {
-                              boxShadow: "0 0 0 0 rgba(76, 175, 80, 0.7)",
-                            },
-                            "70%": {
-                              boxShadow: "0 0 0 10px rgba(76, 175, 80, 0)",
-                            },
-                            "100%": {
-                              boxShadow: "0 0 0 0 rgba(76, 175, 80, 0)",
-                            },
-                          },
-                        }}
-                      />
-                    </Typography>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1.5,
-                        animation: "slideIn 0.5s ease-out 0.2s both",
-                        "@keyframes slideIn": {
-                          "0%": { opacity: 0, transform: "translateX(-10px)" },
-                          "100%": { opacity: 1, transform: "translateX(0)" },
-                        },
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          px: 2,
-                          py: 0.5,
-                          borderRadius: "12px",
-                          background: "rgba(0, 230, 230, 0.1)",
-                          backdropFilter: "blur(10px)",
-                          border: "1px solid rgba(0, 230, 230, 0.3)",
-                          boxShadow: "0 4px 20px rgba(0, 153, 204, 0.2)",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            transform: "translateY(-2px)",
-                            boxShadow: "0 6px 24px rgba(0, 153, 204, 0.3)",
-                          },
-                          position: "relative",
-                          overflow: "hidden",
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: 0,
-                            left: "-100%",
-                            width: "100%",
-                            height: "100%",
-                            background:
-                              "linear-gradient(90deg, transparent, rgba(0, 230, 230, 0.2), transparent)",
-                            transition: "0.5s",
-                          },
-                          "&:hover::before": {
-                            left: "100%",
-                          },
-                        }}
-                      >
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            fontWeight: 600,
-                            letterSpacing: "0.5px",
-                            background:
-                              "linear-gradient(90deg, #00e6e6, #0099cc)",
-                            backgroundClip: "text",
-                            textFillColor: "transparent",
-                            position: "relative",
-                            zIndex: 1,
-                          }}
-                        >
-                          Silver Member
-                        </Typography>
-                      </Box>
-
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "rgba(255,255,255,0.7)",
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 0.5,
-                          px: 1.5,
-                          py: 0.5,
-                          borderRadius: "8px",
-                          background: "rgba(0, 153, 204, 0.1)",
-                          backdropFilter: "blur(5px)",
-                          border: "1px solid rgba(0, 153, 204, 0.2)",
-                          transition: "all 0.3s ease",
-                          "&:hover": {
-                            background: "rgba(0, 153, 204, 0.2)",
-                            transform: "scale(1.03)",
-                          },
-                        }}
-                      >
-                        <FaWallet
-                          size={14}
-                          style={{
-                            filter:
-                              "drop-shadow(0 0 4px rgba(0, 230, 230, 0.5))",
-                            transition: "transform 0.3s ease",
-                            "&:hover": {
-                              transform: "rotate(10deg)",
-                            },
-                          }}
-                        />
-                        <Box
-                          component="span"
-                          sx={{
-                            color: "#00e6e6",
-                            textShadow: "0 0 8px rgba(0, 230, 230, 0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(0, 230, 230, 0.5)",
-                            },
-                          }}
-                        >
-                          Rs 120.08
-                        </Box>
-                      </Typography>
-                    </Box>
-                  </Box>
-                </Box>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                    alignItems: "center",
-                    height: "100%",
-                  }}
-                >
-                  <Button
-                    variant="outlined"
-                    startIcon={<FaHistory />}
-                    onClick={() => setView("usageHistory")}
-                    sx={{
-                      borderRadius: "20px",
-                      px: 3,
-                      py: 1,
-                      fontWeight: 600,
-                      letterSpacing: "0.5px",
-                      borderColor: "rgba(255,255,255,0.3)",
-                      color: "white",
-                      mr: 2,
-                      "&:hover": {
-                        borderColor: "rgba(255,255,255,0.5)",
-                        background: "rgba(255,255,255,0.1)",
-                      },
-                    }}
-                  >
-                    Usage History
-                  </Button>
-                  <Button
-                    variant="contained"
-                    startIcon={<FaChartLine />}
-                    sx={{
-                      background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-                      borderRadius: "20px",
-                      px: 3,
-                      py: 1,
-                      fontWeight: 600,
-                      letterSpacing: "0.5px",
-                      boxShadow: "0 4px 15px rgba(0,230,230,0.3)",
-                      "&:hover": {
-                        boxShadow: "0 6px 20px rgba(0,230,230,0.4)",
-                      },
-                    }}
-                  >
-                    Analytics
-                  </Button>
-                </Box>
-              </Grid>
-            </Grid>
-
-            {/* Main Dashboard Grid */}
-            <Grid container spacing={4}>
-              {/* Left Column */}
-              <Grid item xs={12} md={4}>
-                {/* Circular Data Progress */}
-                <Paper
-                  sx={{
-                    background: "rgba(255,255,255,0.05)",
-                    borderRadius: "16px",
-                    p: 3,
-                    mb: 4,
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.18)",
-                  }}
-                >
-                  <Box
-                    sx={{
-                      position: "relative",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <CircularProgress
-                      variant="determinate"
-                      value={75}
-                      size={150}
-                      thickness={4}
-                      sx={{
-                        color: "#00e6e6",
-                        filter: "drop-shadow(0 0 12px rgba(0,230,230,0.7))",
-                      }}
-                    />
-                    <Box sx={{ textAlign: "center", mt: 3 }}>
-                      <Typography
-                        variant="h3"
-                        sx={{
-                          fontWeight: 700,
-                          background:
-                            "linear-gradient(90deg, #00e6e6, #ffffff)",
-                          backgroundClip: "text",
-                          textFillColor: "transparent",
-                          lineHeight: 1,
-                          mb: 1,
-                        }}
-                      >
-                        75%
-                      </Typography>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          color: "rgba(255,255,255,0.8)",
-                          mb: 2,
-                        }}
-                      >
-                        Data Remaining
-                      </Typography>
-                      <Button
-                        variant="contained"
-                        onClick={() => setView("dataUsageDetails")}
-                        sx={{
-                          background:
-                            "linear-gradient(135deg, rgba(0, 230, 230, 0.2), rgba(0, 153, 204, 0.3))",
-                          borderRadius: "20px",
-                          px: 4,
-                          py: 1.5,
-                          fontWeight: 600,
-                          border: "1px solid rgba(0, 230, 230, 0.3)",
-                          color: "#ffffff",
-                          boxShadow: "0 4px 15px rgba(0, 153, 204, 0.2)",
-                          "&:hover": {
-                            background:
-                              "linear-gradient(135deg, rgba(0, 230, 230, 0.3), rgba(0, 153, 204, 0.4))",
-                            boxShadow: "0 6px 20px rgba(0, 153, 204, 0.3)",
-                          },
-                        }}
-                      >
-                        View Details
-                      </Button>
-                    </Box>
-                  </Box>
-                </Paper>
-
-                {/* Account Balance */}
-                <Paper
-                  sx={{
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.07), rgba(255,255,255,0.03))",
-                    borderRadius: "18px",
-                    p: 3,
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.15)",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition:
-                      "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      boxShadow: "0 12px 35px rgba(0,153,204,0.2)",
-                      borderColor: "rgba(0, 230, 230, 0.25)",
-                    },
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: "3px",
-                      background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-                      opacity: 0,
-                      transition: "opacity 0.6s ease",
-                    },
-                    "&:hover::before": {
-                      opacity: 0.7,
-                    },
-                  }}
-                >
-                  {/* Floating currency symbol animation */}
-                  <motion.div
-                    style={{
-                      position: "absolute",
-                      top: "15%",
-                      right: "15%",
-                      opacity: 0.1,
-                      fontSize: "3rem",
-                      color: "#00e6e6",
-                    }}
-                    animate={{
-                      y: [0, -10, 0],
-                      rotate: [0, 5, 0],
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                    }}
-                  >
-                    Rs
-                  </motion.div>
-
-                  <Box
-                    sx={{
-                      textAlign: "center",
-                      position: "relative",
-                      zIndex: 1,
-                    }}
-                  >
-                    <motion.div
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.5 }}
-                    >
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          mb: 2,
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: 1,
-                          color: "rgba(255,255,255,0.85)",
-                          textShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                        }}
-                      >
-                        <motion.div
-                          whileHover={{ rotate: 10 }}
-                          transition={{ type: "spring", stiffness: 300 }}
-                        >
-                          <FaWallet size={20} />
-                        </motion.div>
-                        Account Balance
-                      </Typography>
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ duration: 0.8, type: "spring" }}
-                    >
-                      <Typography
-                        variant="h3"
-                        sx={{
-                          fontWeight: 700,
-                          background:
-                            "linear-gradient(90deg, #00e6e6, #80f0ff)",
-                          backgroundClip: "text",
-                          textFillColor: "transparent",
-                          lineHeight: 1.2,
-                          mb: 2,
-                          textShadow: "0 0 15px rgba(0,230,230,0.3)",
-                          position: "relative",
-                          display: "inline-block",
-                          "&::after": {
-                            content: '""',
-                            position: "absolute",
-                            bottom: -5,
-                            left: "25%",
-                            width: "50%",
-                            height: "2px",
-                            background:
-                              "linear-gradient(90deg, transparent, #00e6e6, transparent)",
-                            opacity: 0.7,
-                          },
-                        }}
-                      >
-                        Rs 120.08
-                      </Typography>
-                    </motion.div>
-
-                    <Box
-                      sx={{
-                        display: "flex",
-                        gap: 2,
-                        justifyContent: "center",
-                        position: "relative",
-                      }}
-                    >
-                      {/* Top Up Button - Subtler version */}
-                      <motion.div
-                        whileHover={{ y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          variant="contained"
-                          sx={{
-                            background:
-                              "linear-gradient(135deg, rgba(0,230,230,0.2), rgba(0,153,204,0.25))",
-                            borderRadius: "20px",
-                            px: 3,
-                            py: 1,
-                            fontWeight: 600,
-                            letterSpacing: "0.5px",
-                            color: "white",
-                            border: "1px solid rgba(0,230,230,0.3)",
-                            boxShadow: "0 4px 12px rgba(0,153,204,0.15)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              background:
-                                "linear-gradient(135deg, rgba(0,230,230,0.25), rgba(0,153,204,0.3))",
-                              boxShadow: "0 6px 16px rgba(0,153,204,0.2)",
-                            },
-                            "&:active": {
-                              transform: "scale(0.98)",
-                            },
-                          }}
-                          onClick={() =>
-                            window.open(
-                              "https://online.mobitel.lk/onlinepay/",
-                              "_blank"
-                            )
-                          }
-                        >
-                          Top Up
-                        </Button>
-                      </motion.div>
-
-                      {/* History Button */}
-                      <motion.div
-                        whileHover={{ y: -2 }}
-                        whileTap={{ scale: 0.98 }}
-                      >
-                        <Button
-                          variant="outlined"
-                          onClick={() => setView("reloadHistory")}
-                          sx={{
-                            borderRadius: "20px",
-                            px: 3,
-                            py: 1,
-                            fontWeight: 600,
-                            letterSpacing: "0.5px",
-                            borderColor: "rgba(255,255,255,0.3)",
-                            color: "white",
-                            "&:hover": {
-                              borderColor: "rgba(255,255,255,0.5)",
-                              background: "rgba(255,255,255,0.1)",
-                            },
-                          }}
-                        >
-                          History
-                        </Button>
-                      </motion.div>
-                    </Box>
-                  </Box>
-
-                  {/* Floating particles */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      bottom: "20%",
-                      left: "15%",
-                      width: "6px",
-                      height: "6px",
-                      borderRadius: "50%",
-                      background: "#00e6e6",
-                      filter: "blur(1px)",
-                      boxShadow: "0 0 10px #00e6e6",
-                      opacity: 0.5,
-                      animation: "pulse 3s infinite ease-in-out",
-                    }}
-                  />
-                </Paper>
-              </Grid>
-
-              {/* Middle Column */}
-              <Grid item xs={12} md={4}>
-                {/* Data Usage Details */}
-                <Paper
-                  sx={{
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05))",
-                    borderRadius: "20px",
-                    p: 3,
-                    mb: 4,
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.18)",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition:
-                      "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
-                    "&:hover": {
-                      transform: "translateY(-8px)",
-                      boxShadow: "0 12px 35px rgba(0,0,0,0.25)",
-                      borderColor: "rgba(255,255,255,0.25)",
-                    },
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background:
-                        "linear-gradient(45deg, rgba(0,230,230,0.05) 0%, rgba(0,153,204,0.05) 100%)",
-                      zIndex: -1,
-                      opacity: 0,
-                      transition: "opacity 0.5s ease",
-                    },
-                    "&:hover::before": {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  {/* Animated border highlight on hover */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: "2px",
-                      background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-                      transform: "scaleX(0)",
-                      transformOrigin: "left",
-                      transition:
-                        "transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)",
-                      "Paper:hover &": {
-                        transform: "scaleX(1)",
-                      },
-                    }}
-                  />
-
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      mb: 2,
-                      fontWeight: 700,
-                      color: "white",
-                      textShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                      position: "relative",
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        bottom: -8,
-                        left: 0,
-                        width: "40px",
-                        height: "3px",
-                        background:
-                          "linear-gradient(90deg, #00e6e6, transparent)",
-                        borderRadius: "3px",
-                        transition: "width 0.4s ease",
-                      },
-                      "&:hover::after": {
-                        width: "100px",
-                      },
-                    }}
-                  >
-                    Data Usage Breakdown
-                  </Typography>
-
-                  {/* Day Data Section */}
-                  <Box
-                    sx={{
-                      mb: 3,
-                      animation: "fadeIn 0.6s ease-out",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mb: 1,
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          fontWeight: 500,
-                          color: "rgba(255,255,255,0.9)",
-                        }}
-                      >
-                        <Box
-                          component="span"
-                          sx={{
-                            color: "#00e6e6",
-                            textShadow: "0 0 8px rgba(0,230,230,0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(0,230,230,0.5)",
-                            },
-                          }}
-                        >
-                          Day Data:
-                        </Box>{" "}
-                        1545 MB
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "rgba(255,255,255,0.6)",
-                          fontSize: "0.8rem",
-                        }}
-                      >
-                        / 3575 MB
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "10px",
-                        background: "rgba(0,0,0,0.25)",
-                        borderRadius: "5px",
-                        overflow: "hidden",
-                        mb: 2,
-                        boxShadow: "inset 0 1px 3px rgba(0,0,0,0.2)",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: "43%",
-                          height: "100%",
-                          background:
-                            "linear-gradient(90deg, #00e6e6, #0099cc)",
-                          borderRadius: "5px",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "width 1s ease-out",
-                          "&::after": {
-                            content: '""',
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background:
-                              "linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0))",
-                            animation: "shine 2s infinite",
-                          },
-                        }}
-                      />
-                    </Box>
-                  </Box>
-
-                  {/* Night Data Section */}
-                  <Box
-                    sx={{
-                      animation: "fadeIn 0.8s ease-out",
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        mb: 1,
-                        alignItems: "center",
-                      }}
-                    >
-                      <Typography
-                        variant="body1"
-                        sx={{
-                          fontWeight: 500,
-                          color: "rgba(255,255,255,0.9)",
-                        }}
-                      >
-                        <Box
-                          component="span"
-                          sx={{
-                            color: "#0099cc",
-                            textShadow: "0 0 8px rgba(0,153,204,0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(0,153,204,0.5)",
-                            },
-                          }}
-                        >
-                          Night Data:
-                        </Box>{" "}
-                        4578 MB
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color: "rgba(255,255,255,0.6)",
-                          fontSize: "0.8rem",
-                        }}
-                      >
-                        / 4697 MB
-                      </Typography>
-                    </Box>
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: "10px",
-                        background: "rgba(0,0,0,0.25)",
-                        borderRadius: "5px",
-                        overflow: "hidden",
-                        boxShadow: "inset 0 1px 3px rgba(0,0,0,0.2)",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          width: "97%",
-                          height: "100%",
-                          background:
-                            "linear-gradient(90deg, #0099cc, #0066cc)",
-                          borderRadius: "5px",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "width 1s ease-out",
-                          "&::after": {
-                            content: '""',
-                            position: "absolute",
-                            top: 0,
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            background:
-                              "linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0))",
-                            animation: "shine 2s infinite",
-                          },
-                        }}
-                      />
-                    </Box>
-                  </Box>
-
-                  {/* Glowing dots decoration */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 20,
-                      right: 20,
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: "#00e6e6",
-                      filter: "blur(1px)",
-                      boxShadow: "0 0 10px #00e6e6, 0 0 20px #00e6e6",
-                      opacity: 0.6,
-                      animation: "pulse 3s infinite alternate",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      bottom: 30,
-                      left: 25,
-                      width: "6px",
-                      height: "6px",
-                      borderRadius: "50%",
-                      background: "#0099cc",
-                      filter: "blur(1px)",
-                      boxShadow: "0 0 8px #0099cc, 0 0 16px #0099cc",
-                      opacity: 0.6,
-                      animation: "pulse 3s infinite alternate 0.5s",
-                    }}
-                  />
-
-                  {/* Keyframes for animations */}
-                  <style jsx global>{`
-                    @keyframes shine {
-                      0% {
-                        transform: translateX(-100%);
-                      }
-                      100% {
-                        transform: translateX(100%);
-                      }
-                    }
-                    @keyframes fadeIn {
-                      from {
-                        opacity: 0;
-                        transform: translateY(10px);
-                      }
-                      to {
-                        opacity: 1;
-                        transform: translateY(0);
-                      }
-                    }
-                    @keyframes pulse {
-                      0% {
-                        opacity: 0.3;
-                        transform: scale(0.95);
-                      }
-                      100% {
-                        opacity: 0.7;
-                        transform: scale(1.1);
-                      }
-                    }
-                  `}</style>
-                </Paper>
-
-                {/* Voice and SMS Section - Enhanced */}
-                <Paper
-                  sx={{
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
-                    borderRadius: "18px",
-                    p: 3,
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.18)",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition:
-                      "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      boxShadow: "0 12px 40px rgba(0,153,204,0.25)",
-                      borderColor: "rgba(0, 230, 230, 0.3)",
-                    },
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: "3px",
-                      background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-                      opacity: 0,
-                      transition: "opacity 0.6s ease",
-                    },
-                    "&:hover::before": {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  {/* Floating particles */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "20%",
-                      right: "15%",
-                      width: "6px",
-                      height: "6px",
-                      borderRadius: "50%",
-                      background: "#00e6e6",
-                      filter: "blur(1px)",
-                      boxShadow: "0 0 10px #00e6e6, 0 0 20px #00e6e6",
-                      opacity: 0.6,
-                      animation: "pulse 3s infinite alternate",
-                    }}
-                  />
-
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      mb: 3,
-                      fontWeight: 700,
-                      color: "white",
-                      textShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                      position: "relative",
-                      display: "inline-block",
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        bottom: -8,
-                        left: 0,
-                        width: "40px",
-                        height: "3px",
-                        background:
-                          "linear-gradient(90deg, #00e6e6, transparent)",
-                        borderRadius: "3px",
-                        transition: "all 0.4s ease",
-                      },
-                      "&:hover::after": {
-                        width: "100px",
-                        background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-                      },
-                    }}
-                  >
-                    Voice & SMS
-                  </Typography>
-
-                  <Grid container spacing={2}>
-                    {/* Voice Minutes - Enhanced */}
-                    <Grid item xs={6}>
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          p: 2.5,
-                          borderRadius: "14px",
-                          background: "rgba(0,230,230,0.08)",
-                          border: "1px solid rgba(0,230,230,0.2)",
-                          height: "100%",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "all 0.4s ease",
-                          boxShadow: "0 4px 15px rgba(0,230,230,0.05)",
-                          "&:hover": {
-                            transform: "translateY(-5px)",
-                            boxShadow: "0 8px 25px rgba(0,230,230,0.15)",
-                            background: "rgba(0,230,230,0.12)",
-                            borderColor: "rgba(0,230,230,0.4)",
-                          },
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: "-50%",
-                            left: "-50%",
-                            width: "200%",
-                            height: "200%",
-                            background:
-                              "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-                            transform: "rotate(45deg)",
-                            transition: "all 0.6s ease",
-                            opacity: 0,
-                          },
-                          "&:hover::before": {
-                            opacity: 1,
-                            animation: "shine 1.5s",
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "inline-flex",
-                            p: 1.5,
-                            borderRadius: "50%",
-                            background:
-                              "linear-gradient(135deg, rgba(0,230,230,0.3), rgba(0,153,204,0.4))",
-                            mb: 1.5,
-                            color: "white",
-                            transition: "all 0.3s ease",
-                            transform: "scale(1)",
-                            boxShadow: "0 0 0 0px rgba(0,230,230,0.3)",
-                            "&:hover": {
-                              transform: "scale(1.1) rotate(5deg)",
-                              boxShadow: "0 0 0 8px rgba(0,230,230,0.1)",
-                            },
-                          }}
-                        >
-                          <FaPhoneAlt size={20} />
-                        </Box>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: 600,
-                            mb: 1,
-                            color: "#00e6e6",
-                            textShadow: "0 0 8px rgba(0,230,230,0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(0,230,230,0.5)",
-                            },
-                          }}
-                        >
-                          Voice Minutes
-                        </Typography>
-                        <motion.div
-                          initial={{ scale: 0.9 }}
-                          animate={{ scale: 1 }}
-                          transition={{ duration: 0.5 }}
-                        >
-                          <Typography
-                            variant="h4"
-                            sx={{
-                              fontWeight: 700,
-                              mb: 0.5,
-                              background:
-                                "linear-gradient(90deg, #00e6e6, #80f0ff)",
-                              WebkitBackgroundClip: "text",
-                              WebkitTextFillColor: "transparent",
-                              textShadow: "0 0 10px rgba(0,230,230,0.3)",
-                            }}
-                          >
-                            0 min
-                          </Typography>
-                        </motion.div>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "rgba(255,255,255,0.7)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              color: "rgba(255,255,255,0.9)",
-                            },
-                          }}
-                        >
-                          of unlimited
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    {/* SMS Count - Enhanced */}
-                    <Grid item xs={6}>
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          p: 2.5,
-                          borderRadius: "14px",
-                          background: "rgba(0,153,204,0.08)",
-                          border: "1px solid rgba(0,153,204,0.2)",
-                          height: "100%",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "all 0.4s ease",
-                          boxShadow: "0 4px 15px rgba(0,153,204,0.05)",
-                          "&:hover": {
-                            transform: "translateY(-5px)",
-                            boxShadow: "0 8px 25px rgba(0,153,204,0.15)",
-                            background: "rgba(0,153,204,0.12)",
-                            borderColor: "rgba(0,153,204,0.4)",
-                          },
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: "-50%",
-                            left: "-50%",
-                            width: "200%",
-                            height: "200%",
-                            background:
-                              "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-                            transform: "rotate(45deg)",
-                            transition: "all 0.6s ease",
-                            opacity: 0,
-                          },
-                          "&:hover::before": {
-                            opacity: 1,
-                            animation: "shine 1.5s",
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "inline-flex",
-                            p: 1.5,
-                            borderRadius: "50%",
-                            background:
-                              "linear-gradient(135deg, rgba(0,153,204,0.3), rgba(0,102,204,0.4))",
-                            mb: 1.5,
-                            color: "white",
-                            transition: "all 0.3s ease",
-                            transform: "scale(1)",
-                            boxShadow: "0 0 0 0px rgba(0,153,204,0.3)",
-                            "&:hover": {
-                              transform: "scale(1.1) rotate(5deg)",
-                              boxShadow: "0 0 0 8px rgba(0,153,204,0.1)",
-                            },
-                          }}
-                        >
-                          <FaSms size={20} />
-                        </Box>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: 600,
-                            mb: 1,
-                            color: "#0099cc",
-                            textShadow: "0 0 8px rgba(0,153,204,0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(0,153,204,0.5)",
-                            },
-                          }}
-                        >
-                          SMS Count
-                        </Typography>
-                        <motion.div
-                          initial={{ scale: 0.9 }}
-                          animate={{ scale: 1 }}
-                          transition={{ duration: 0.5, delay: 0.1 }}
-                        >
-                          <Typography
-                            variant="h4"
-                            sx={{
-                              fontWeight: 700,
-                              mb: 0.5,
-                              background:
-                                "linear-gradient(90deg, #0099cc, #66ccff)",
-                              WebkitBackgroundClip: "text",
-                              WebkitTextFillColor: "transparent",
-                              textShadow: "0 0 10px rgba(0,153,204,0.3)",
-                            }}
-                          >
-                            0
-                          </Typography>
-                        </motion.div>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "rgba(255,255,255,0.7)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              color: "rgba(255,255,255,0.9)",
-                            },
-                          }}
-                        >
-                          of unlimited
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-
-                  {/* Keyframes for animations */}
-                  <style jsx global>{`
-                    @keyframes shine {
-                      0% {
-                        transform: translateX(-100%) rotate(45deg);
-                      }
-                      100% {
-                        transform: translateX(100%) rotate(45deg);
-                      }
-                    }
-                    @keyframes pulse {
-                      0% {
-                        opacity: 0.3;
-                        transform: scale(0.95);
-                      }
-                      100% {
-                        opacity: 0.7;
-                        transform: scale(1.1);
-                      }
-                    }
-                  `}</style>
-                </Paper>
-              </Grid>
-
-              {/* Right Column */}
-              <Grid item xs={12} md={4}>
-                {/* Day and Night Usage */}
-                <Paper
-                  sx={{
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
-                    borderRadius: "18px",
-                    p: 3,
-                    mb: 4,
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.18)",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition:
-                      "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
-                    "&:hover": {
-                      transform: "translateY(-8px)",
-                      boxShadow: "0 12px 40px rgba(0,0,0,0.25)",
-                      borderColor: "rgba(255,255,255,0.25)",
-                    },
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      background:
-                        "radial-gradient(circle at 20% 30%, rgba(255,193,7,0.03) 0%, rgba(0,153,204,0.03) 100%)",
-                      zIndex: -1,
-                      opacity: 0,
-                      transition: "opacity 0.6s ease",
-                    },
-                    "&:hover::before": {
-                      opacity: 0.8,
-                    },
-                  }}
-                >
-                  {/* Animated border highlight */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: "2px",
-                      background: "linear-gradient(90deg, #FFC107, #0099cc)",
-                      transform: "scaleX(0)",
-                      transformOrigin: "left",
-                      transition:
-                        "transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)",
-                      "Paper:hover &": {
-                        transform: "scaleX(1)",
-                      },
-                    }}
-                  />
-
-                  <Typography
-                    variant="h6"
-                    sx={{
-                      mb: 3,
-                      fontWeight: 700,
-                      color: "white",
-                      textShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                      position: "relative",
-                      display: "inline-block",
-                      "&::after": {
-                        content: '""',
-                        position: "absolute",
-                        bottom: -8,
-                        left: 0,
-                        width: "40px",
-                        height: "3px",
-                        background:
-                          "linear-gradient(90deg, #FFC107, transparent)",
-                        borderRadius: "3px",
-                        transition: "all 0.4s ease",
-                      },
-                      "&:hover::after": {
-                        width: "100px",
-                        background: "linear-gradient(90deg, #FFC107, #0099cc)",
-                      },
-                    }}
-                  >
-                    Usage Comparison
-                  </Typography>
-
-                  <Grid container spacing={2}>
-                    {/* Day Usage - Enhanced with animations */}
-                    <Grid item xs={6}>
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          p: 2.5,
-                          borderRadius: "12px",
-                          background: "rgba(255,193,7,0.08)",
-                          border: "1px solid rgba(255,193,7,0.25)",
-                          height: "90%",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "all 0.4s ease",
-                          boxShadow: "0 4px 15px rgba(255,193,7,0.05)",
-                          "&:hover": {
-                            transform: "translateY(-5px)",
-                            boxShadow: "0 8px 25px rgba(255,193,7,0.15)",
-                            background: "rgba(255,193,7,0.12)",
-                            borderColor: "rgba(255,193,7,0.4)",
-                          },
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: "-50%",
-                            left: "-50%",
-                            width: "200%",
-                            height: "200%",
-                            background:
-                              "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-                            transform: "rotate(45deg)",
-                            transition: "all 0.6s ease",
-                            opacity: 0,
-                          },
-                          "&:hover::before": {
-                            opacity: 1,
-                            animation: "shine 1.5s",
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "inline-flex",
-                            p: 1.5,
-                            borderRadius: "100%",
-                            background: "rgba(255,193,7,0.2)",
-                            mb: 1.5,
-                            color: "#FFC107",
-                            transition: "all 0.3s ease",
-                            transform: "scale(1)",
-                            boxShadow: "0 0 0 0px rgba(255,193,7,0.3)",
-                            "&:hover": {
-                              transform: "scale(1.1)",
-                              boxShadow: "0 0 0 8px rgba(255,193,7,0.1)",
-                            },
-                          }}
-                        >
-                          <FaCloudSun size={20} />
-                        </Box>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: 600,
-                            mb: 1,
-                            color: "#FFC107",
-                            textShadow: "0 0 8px rgba(255,193,7,0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(255,193,7,0.5)",
-                            },
-                          }}
-                        >
-                          Day Usage
-                        </Typography>
-                        <Typography
-                          variant="h4"
-                          sx={{
-                            fontWeight: 700,
-                            mb: 0.5,
-                            background:
-                              "linear-gradient(90deg, #FFC107, #FFA000)",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              transform: "scale(1.05)",
-                            },
-                          }}
-                        >
-                          2030 MB
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "rgba(255,255,255,0.7)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              color: "rgba(255,255,255,0.9)",
-                            },
-                          }}
-                        >
-                          of 3575 MB
-                        </Typography>
-                      </Box>
-                    </Grid>
-
-                    {/* Night Usage - Enhanced with animations */}
-                    <Grid item xs={6}>
-                      <Box
-                        sx={{
-                          textAlign: "center",
-                          p: 2.5,
-                          borderRadius: "12px",
-                          background: "rgba(0,153,204,0.08)",
-                          border: "1px solid rgba(0,153,204,0.25)",
-                          height: "90%",
-                          position: "relative",
-                          overflow: "hidden",
-                          transition: "all 0.4s ease",
-                          boxShadow: "0 4px 15px rgba(0,153,204,0.05)",
-                          "&:hover": {
-                            transform: "translateY(-5px)",
-                            boxShadow: "0 8px 25px rgba(0,153,204,0.15)",
-                            background: "rgba(0,153,204,0.12)",
-                            borderColor: "rgba(0,153,204,0.4)",
-                          },
-                          "&::before": {
-                            content: '""',
-                            position: "absolute",
-                            top: "-50%",
-                            left: "-50%",
-                            width: "200%",
-                            height: "200%",
-                            background:
-                              "linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)",
-                            transform: "rotate(45deg)",
-                            transition: "all 0.6s ease",
-                            opacity: 0,
-                          },
-                          "&:hover::before": {
-                            opacity: 1,
-                            animation: "shine 1.5s",
-                          },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: "inline-flex",
-                            p: 1.5,
-                            borderRadius: "50%",
-                            background: "rgba(0,153,204,0.2)",
-                            mb: 1.5,
-                            color: "#0099cc",
-                            transition: "all 0.3s ease",
-                            transform: "scale(1)",
-                            boxShadow: "0 0 0 0px rgba(0,153,204,0.3)",
-                            "&:hover": {
-                              transform: "scale(1.1)",
-                              boxShadow: "0 0 0 8px rgba(0,153,204,0.1)",
-                            },
-                          }}
-                        >
-                          <FaCloudMoon size={20} />
-                        </Box>
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            fontWeight: 600,
-                            mb: 1,
-                            color: "#0099cc",
-                            textShadow: "0 0 8px rgba(0,153,204,0.3)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              textShadow: "0 0 12px rgba(0,153,204,0.5)",
-                            },
-                          }}
-                        >
-                          Night Usage
-                        </Typography>
-                        <Typography
-                          variant="h4"
-                          sx={{
-                            fontWeight: 700,
-                            mb: 0.5,
-                            background:
-                              "linear-gradient(90deg, #0099cc, #0066cc)",
-                            WebkitBackgroundClip: "text",
-                            WebkitTextFillColor: "transparent",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              transform: "scale(1.05)",
-                            },
-                          }}
-                        >
-                          119 MB
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "rgba(255,255,255,0.7)",
-                            transition: "all 0.3s ease",
-                            "&:hover": {
-                              color: "rgba(255,255,255,0.9)",
-                            },
-                          }}
-                        >
-                          of 4697 MB
-                        </Typography>
-                      </Box>
-                    </Grid>
-                  </Grid>
-
-                  {/* Floating particles */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "10%",
-                      left: "15%",
-                      width: "4px",
-                      height: "4px",
-                      borderRadius: "50%",
-                      background: "#FFC107",
-                      filter: "blur(0.5px)",
-                      boxShadow: "0 0 6px #FFC107, 0 0 12px #FFC107",
-                      opacity: 0.6,
-                      animation: "float 6s infinite ease-in-out",
-                    }}
-                  />
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      bottom: "20%",
-                      right: "20%",
-                      width: "3px",
-                      height: "3px",
-                      borderRadius: "50%",
-                      background: "#0099cc",
-                      filter: "blur(0.5px)",
-                      boxShadow: "0 0 6px #0099cc, 0 0 12px #0099cc",
-                      opacity: 0.6,
-                      animation: "float 8s infinite ease-in-out 1s",
-                    }}
-                  />
-
-                  {/* Keyframes for animations */}
-                  <style jsx global>{`
-                    @keyframes shine {
-                      0% {
-                        transform: translateX(-100%) rotate(45deg);
-                      }
-                      100% {
-                        transform: translateX(100%) rotate(45deg);
-                      }
-                    }
-                    @keyframes float {
-                      0%,
-                      100% {
-                        transform: translateY(0) translateX(0);
-                      }
-                      50% {
-                        transform: translateY(-20px) translateX(10px);
-                      }
-                    }
-                  `}</style>
-                </Paper>
-
-                {/* Quick Actions */}
-                {/* Quick Actions */}
-                <Paper
-                  sx={{
-                    background:
-                      "linear-gradient(135deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03))",
-                    borderRadius: "14px",
-                    p: 3,
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255,255,255,0.15)",
-                    boxShadow: "0 8px 32px rgba(0, 0, 0, 0.18)",
-                    position: "relative",
-                    overflow: "hidden",
-                    transition:
-                      "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
-                    "&:hover": {
-                      transform: "translateY(-5px)",
-                      boxShadow: "0 12px 40px rgba(0,153,204,0.25)",
-                      borderColor: "rgba(0, 230, 230, 0.3)",
-                    },
-                    "&::before": {
-                      content: '""',
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      height: "3px",
-                      background: "linear-gradient(90deg, #00e6e6, #0099cc)",
-                      opacity: 0,
-                      transition: "opacity 0.6s ease",
-                    },
-                    "&:hover::before": {
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  {/* Floating particles */}
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: "15%",
-                      right: "10%",
-                      width: "6px",
-                      height: "6px",
-                      borderRadius: "50%",
-                      background: "#00e6e6",
-                      filter: "blur(1px)",
-                      boxShadow: "0 0 10px #00e6e6, 0 0 20px #00e6e6",
-                      opacity: 0.6,
-                      animation: "pulse 3s infinite alternate",
-                    }}
-                  />
-
-                  <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        mb: 2,
-                        fontWeight: 700,
-                        color: "white",
-                        textShadow: "0 2px 8px rgba(0,0,0,0.2)",
-                        position: "relative",
-                        display: "inline-block",
-                        "&::after": {
-                          content: '""',
-                          position: "absolute",
-                          bottom: -8,
-                          left: 0,
-                          width: "40px",
-                          height: "3px",
-                          background:
-                            "linear-gradient(90deg, #00e6e6, transparent)",
-                          borderRadius: "3px",
-                          transition: "all 0.4s ease",
-                        },
-                        "&:hover::after": {
-                          width: "100px",
-                          background:
-                            "linear-gradient(90deg, #00e6e6, #0099cc)",
-                        },
-                      }}
-                    >
-                      Quick Actions
-                    </Typography>
-                  </motion.div>
-
-                  <Grid container spacing={1.5}>
-                    {[
-                      {
-                        icon: <FaBolt size={18} />,
-                        label: "Buy Data Bundle",
-                        color: "white",
-                        hoverColor: "rgba(232, 231, 231, 0.15)",
-                      },
-                      {
-                        icon: <FaPhoneAlt size={18} />,
-                        label: "Add Minutes",
-                        color: "white",
-                        hoverColor: "rgba(0,230,230,0.15)",
-                      },
-                      {
-                        icon: <FaSms size={18} />,
-                        label: "SMS Packages",
-                        color: "white",
-                        hoverColor: "rgba(156,39,176,0.15)",
-                      },
-                      {
-                        icon: <FaWallet size={18} />,
-                        label: "Payment",
-                        color: "white",
-                        hoverColor: "rgba(76,175,80,0.15)",
-                      },
-                    ].map((action, index) => (
-                      <Grid item xs={6} key={index}>
-                        <motion.div
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.98 }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 10,
-                          }}
-                        >
-                          <Button
-                            fullWidth
-                            startIcon={action.icon}
-                            onClick={() => {
-                              if (action.label === "Buy Data Bundle")
-                                setView("buyDataBundle");
-                              if (action.label === "SMS Packages")
-                                setView("smsPackages");
-                              if (action.label === "Add Minutes")
-                                setView("addMinutes");
-                              if (action.label === "Payment")
-                                setView("payment");
-                            }}
-                            sx={{
-                              background: "rgba(255,255,255,0.05)",
-                              borderRadius: "12px",
-                              py: 1.8,
-                              color: action.color,
-                              justifyContent: "flex-start",
-                              pl: 2.5,
-                              textTransform: "none",
-                              border: "1px solid rgba(255,255,255,0.1)",
-                              transition:
-                                "all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1)",
-                              position: "relative",
-                              overflow: "hidden",
-                              "&:hover": {
-                                background: action.hoverColor,
-                                boxShadow: `0 0 20px ${action.color}40`,
-                                borderColor: action.color,
-                                "&::before": {
-                                  transform: "translateX(0)",
-                                },
-                              },
-                              "&::before": {
-                                content: '""',
-                                position: "absolute",
-                                top: 0,
-                                left: 0,
-                                width: "100%",
-                                height: "100%",
-                                background: `linear-gradient(90deg, ${action.color}20, transparent)`,
-                                transform: "translateX(-100%)",
-                                transition: "transform 0.6s ease",
-                                zIndex: 0,
-                              },
-                            }}
-                          >
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                fontWeight: 600,
-                                position: "relative",
-                                zIndex: 1,
-                                textShadow: `0 0 8px ${action.color}80`,
-                                transition: "all 0.3s ease",
-                              }}
-                            >
-                              {action.label}
-                            </Typography>
-                          </Button>
-                        </motion.div>
-                      </Grid>
-                    ))}
-                  </Grid>
-
-                  {/* Keyframes for animations */}
-                  <style jsx global>{`
-                    @keyframes pulse {
-                      0% {
-                        opacity: 0.3;
-                        transform: scale(0.95);
-                      }
-                      100% {
-                        opacity: 0.7;
-                        transform: scale(1.1);
-                      }
-                    }
-                  `}</style>
-                </Paper>
-              </Grid>
-            </Grid>
-          </>
-        )}
-
-        {view === "usageHistory" && (
-          <UsageHistory onBack={() => setView("dashboard")} />
-        )}
-
-        {view === "dataUsageDetails" && (
-          <DataUsageDetails onBack={() => setView("dashboard")} />
-        )}
-
-        {view === "reloadHistory" && (
-          <ReloadHistory onBack={() => setView("dashboard")} />
-        )}
-
-        {view === "buyDataBundle" && (
-          <BuyDataBundle onBack={() => setView("dashboard")} />
-        )}
-
-        {view === "addMinutes" && (
-          <AddMinutes onBack={() => setView("dashboard")} />
-        )}
-
-        {view === "smsPackages" && (
-          <SmsPackages onBack={() => setView("dashboard")} />
-        )}
-
-        {view === "payment" && <Payment onBack={() => setView("dashboard")} />}
-      </Box>
-
-      {/* Floating action button */}
-      <motion.div
-        animate={{
-          y: [0, -10, 0],
-        }}
-        transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
-        style={{
-          position: "fixed",
-          bottom: "30px",
-          right: "30px",
-          zIndex: 10,
-        }}
-      >
+    <Box sx={{
+      width: '100%',
+      display: 'flex',
+      flexDirection: isMobile ? 'column' : 'row',
+      gap: isMobile ? 0.5 : 0,
+      mb: 1.5,
+      overflowX: isMobile ? 'auto' : 'visible',
+      scrollbarWidth: 'none',
+      '&::-webkit-scrollbar': {
+        display: 'none'
+      },
+      background: colorScheme.navbarBg,
+      borderRadius: '8px',
+      padding: isMobile ? '4px' : '4px 0',
+      justifyContent: 'space-between',
+      minHeight: '40px',
+      height: 'auto',
+      alignItems: 'center',
+      boxShadow: colorScheme.shadow
+    }}>
+      {navbarItems.map((item, index) => (
         <Button
-          variant="contained"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          key={index}
+          onClick={() => onSelected(item.label)}
           sx={{
-            minWidth: 0,
-            width: 64,
-            height: 64,
-            borderRadius: "50%",
-            background: "linear-gradient(135deg, #00e6e6, #0099cc)",
-            boxShadow: "0 6px 25px rgba(0,230,230,0.4)",
-            color: "white",
-            "&:hover": {
-              background: "linear-gradient(135deg, #00e6e6, #0099cc)",
+            flex: 1,
+            minWidth: 'auto',
+            px: isMobile ? 0.5 : 1.5,
+            py: 0.5,
+            borderRadius: '6px',
+            background: selected === item.label 
+              ? 'rgba(0, 120, 212, 0.1)' 
+              : 'transparent',
+            color: selected === item.label ? colorScheme.accent : colorScheme.textSecondary,
+            border: 'none',
+            textTransform: 'none',
+            fontWeight: 600,
+            fontSize: isMobile ? '0.7rem' : '0.8rem',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            transition: 'all 0.2s ease',
+            minHeight: '36px',
+            '&:hover': {
+              background: 'rgba(0, 120, 212, 0.05)',
+              color: colorScheme.accent
             },
+            position: 'relative',
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              bottom: 0,
+              left: '50%',
+              transform: 'translateX(-50%)',
+              width: selected === item.label ? '70%' : '0',
+              height: '2px',
+              background: colorScheme.accent,
+              transition: 'width 0.2s ease',
+              borderRadius: '1px'
+            }
           }}
         >
-          <motion.div
-            animate={{
-              rotate: isHovered ? 360 : 0,
-            }}
-            transition={{
-              duration: 1,
-              ease: "easeInOut",
-            }}
-          >
-            <FaBolt size={24} />
-          </motion.div>
+          <Typography sx={{ 
+            fontSize: isMobile ? '0.7rem' : '0.8rem',
+            fontWeight: 600,
+            mb: 0.25,
+            whiteSpace: 'nowrap',
+            lineHeight: 1.2
+          }}>
+            {item.label}
+          </Typography>
+          <Typography sx={{ 
+            fontSize: isMobile ? '0.6rem' : '0.7rem',
+            color: selected === item.label ? colorScheme.accent : colorScheme.textSecondary,
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            lineHeight: 1.2
+          }}>
+            {item.used} / {item.limit} GB
+          </Typography>
         </Button>
-      </motion.div>
+      ))}
     </Box>
   );
-}
+};
+
+const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
+  const [selectedItem, setSelectedItem] = useState("My Package");
+  const [selectedPackage, setSelectedPackage] = useState<PostpaidUsageDetails | null>(
+    dummyUsageDetails.myPackageDetails
+  );
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [showGetExtraGB, setShowGetExtraGB] = useState(false);
+  const [showAddons, setShowAddons] = useState(false);
+  const [showpackageupgrade, setpackageupgrade] = useState(false);
+  
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handlePackageChange = (item: string) => {
+    setIsLoading(true);
+    setSelectedItem(item);
+    
+    setTimeout(() => {
+      switch(item) {
+        case "My Package":
+          setSelectedPackage(dummyUsageDetails.myPackageDetails);
+          break;
+        case "Extra GB":
+          setSelectedPackage(dummyUsageDetails.extraGBDetails);
+          break;
+        case "Bonus Data":
+          setSelectedPackage(dummyUsageDetails.bonusDataDetails);
+          break;
+        case "Add-Ons":
+          setSelectedPackage(dummyUsageDetails.addOnsDetails);
+          break;
+        case "Free Data":
+          setSelectedPackage(dummyUsageDetails.freeDataDetails);
+          break;
+        default:
+          setSelectedPackage(dummyUsageDetails.myPackageDetails);
+      }
+      setSelectedIndex(0);
+      setIsLoading(false);
+    }, 500);
+  };
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  // Calculate sizes based on device
+  const getSizeValues = () => {
+    if (isMobile) return {
+      containerWidth: '95%',
+      mainContentPadding: 2,
+      progressBarSize: 120,
+      iconSize: '1.25rem',
+      rightPanelWidth: '100%',
+      buttonPadding: '8px 16px',
+      panelHeight: '240px',
+      sidebarWidth: '72px'
+    };
+    if (isTablet) return {
+      containerWidth: '90%',
+      mainContentPadding: 3,
+      progressBarSize: 150,
+      iconSize: '1.5rem',
+      rightPanelWidth: '40%',
+      buttonPadding: '10px 20px',
+      panelHeight: '280px',
+      sidebarWidth: '200px'
+    };
+    return {
+      containerWidth: '100%',
+      mainContentPadding: 3,
+      progressBarSize: 180,
+      iconSize: '1.75rem',
+      rightPanelWidth: '35%',
+      buttonPadding: '12px 24px',
+      panelHeight: '380px',
+      sidebarWidth: '240px'
+    };
+  };
+
+  const sizes = getSizeValues();
+
+  // Render different screens based on state
+  if (showGetExtraGB) {
+    return (
+      <GetExtraGbPage 
+        packageName={dummyServiceData.listofBBService[0].packageName}
+        onBack={() => setShowGetExtraGB(false)}
+      />
+    );
+  }
+
+  if (showAddons) {
+    return (
+      <Dataaddons
+        onBack={() => setShowAddons(false)}
+      />
+    );
+  }
+
+  if (showpackageupgrade) {
+    return (
+      <BroadbandPostPaidPackageUpgrader
+        onBack={() => setpackageupgrade(false)}
+      />
+    );
+  }
+
+  return (
+    <Box sx={{ 
+      display: 'flex',
+      width: '100%',
+      minHeight: '80vh',
+      height: '100%'
+    }}>
+      {/* Sidebar */}
+      <Box sx={{
+        width: sizes.sidebarWidth,
+        backgroundColor: colorScheme.primaryLight,
+        borderRight: `1px solid ${colorScheme.divider}`,
+        display: { xs: 'none', sm: 'flex' },
+        flexDirection: 'column',
+        transition: 'width 0.3s ease',
+        boxShadow: colorScheme.shadow,
+        zIndex: 1
+      }}>
+        {/* Sidebar Header */}
+        <Box sx={{ 
+          p: 2,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: isTablet ? 'center' : 'flex-start',
+          borderBottom: `1px solid ${colorScheme.divider}`
+        }}>
+          {!isTablet && (
+            <Typography variant="h6" sx={{ 
+              color: colorScheme.accent,
+              fontWeight: 700,
+              fontSize: '1rem',
+              whiteSpace: 'nowrap'
+            }}>
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Mobile Portal
+            </Typography>
+          )}
+          {isTablet && (
+            <DataUsageIcon sx={{ 
+              color: colorScheme.accent,
+              fontSize: '1.8rem'
+            }} />
+          )}
+        </Box>
+
+        {/* Navigation Items */}
+        <List sx={{ flexGrow: 1, p: 1 }}>
+          {sidebarItems.map((item) => (
+            <ListItem key={item.label} disablePadding>
+              <ListItemButton
+                sx={{
+                  borderRadius: '6px',
+                  p: isTablet ? '12px 8px' : '12px 16px',
+                  justifyContent: isTablet ? 'center' : 'flex-start',
+                  mb: 0.5,
+                  backgroundColor: item.active ? colorScheme.highlight : 'transparent',
+                  '&:hover': {
+                    backgroundColor: colorScheme.highlight
+                  }
+                }}
+              >
+                <ListItemIcon sx={{ 
+                  minWidth: 'auto',
+                  mr: isTablet ? 0 : 2,
+                  justifyContent: 'center',
+                  color: item.active ? colorScheme.accent : colorScheme.textSecondary
+                }}>
+                  {item.icon}
+                </ListItemIcon>
+                {!isTablet && (
+                  <ListItemText 
+                    primary={item.label} 
+                    primaryTypographyProps={{
+                      fontSize: '0.9rem',
+                      fontWeight: item.active ? 600 : 500,
+                      color: item.active ? colorScheme.accent : colorScheme.textPrimary
+                    }}
+                  />
+                )}
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+
+        {/* Back Button */}
+       
+      </Box>
+
+      {/* Main Content */}
+      <Box sx={{ 
+        flex: 1,
+        p: 3,
+        display: 'flex',
+        justifyContent: 'center',
+        backgroundColor: colorScheme.primaryDark
+      }}>
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: '1300px',
+            backgroundColor: colorScheme.primary,
+            borderRadius: '12px',
+            boxShadow: colorScheme.shadow,
+            overflow: 'hidden',
+            position: 'relative',
+            '&::before': {
+              content: '""',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              height: '4px',
+              background: `linear-gradient(90deg, ${colorScheme.accent} 0%, ${colorScheme.secondaryAccent} 100%)`,
+              animation: `${gradientFlow} 3s ease infinite`,
+              backgroundSize: '120% 120%'
+            }
+          }}
+        >
+          {/* Mobile back button */}
+          {isMobile && (
+            <Button
+              startIcon={<ArrowBack />}
+              onClick={onBack}
+              sx={{
+                position: 'absolute',
+                top: 16,
+                left: 16,
+                zIndex: 2,
+                color: colorScheme.accent,
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                backdropFilter: 'blur(4px)',
+                '&:hover': {
+                  backgroundColor: 'rgba(255, 255, 255, 0.9)'
+                }
+              }}
+            >
+              Back
+            </Button>
+          )}
+
+          {/* Main Content Container */}
+          <Box sx={{
+            width: '95%',
+            height: '110%',
+            background: colorScheme.cardBg,
+            p: sizes.mainContentPadding,
+            position: 'relative',
+            zIndex: 1,
+            animation: `${fadeIn} 0.5s ease-out`
+          }}>
+            {/* Full-width Navigation Bar */}
+            <BroadbandNavbar
+              navbarItems={navbarItems}
+              onSelected={handlePackageChange}
+              selected={selectedItem}
+              isMobile={isMobile}
+            />
+
+            {/* Content Area */}
+            <Box sx={{ 
+              display: "flex", 
+              flexDirection: isMobile ? 'column' : 'row',
+              gap: 1,
+              mt: 1
+            }}>
+              {/* Left Panel - Usage Visualization */}
+              <Box sx={{
+                flex: 1,
+                width: '10%',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: 2,
+                p: isMobile ? 1.5 : 2,
+                background: colorScheme.cardBg,
+                borderRadius: '12px',
+                border: '1px solid rgba(0, 0, 0, 0.08)',
+                minHeight: sizes.panelHeight,
+                position: 'relative',
+                overflow: 'hidden',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  boxShadow: '0 0 20px rgba(0, 120, 212, 0.05)'
+                }
+              }}>
+                {isLoading ? (
+                  <Box sx={{
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 2
+                  }}>
+                    <Box sx={{
+                      width: sizes.progressBarSize,
+                      height: sizes.progressBarSize,
+                      borderRadius: '50%',
+                      background: 'linear-gradient(90deg, rgba(0,0,0,0.05) 25%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.05) 75%)',
+                      backgroundSize: '200% 100%',
+                      animation: `${shimmer} 1.5s infinite linear`
+                    }} />
+                  </Box>
+                ) : selectedPackage?.usageDetails.length > 0 ? (
+                  <>
+                    <Typography variant="h6" sx={{ 
+                      fontWeight: 600,
+                      textAlign: 'center',
+                      color: colorScheme.accent,
+                      fontSize: isMobile ? '1rem' : '1.1rem',
+                      px: 2,
+                      py: 1,
+                      borderRadius: '8px',
+                      background: 'rgba(0, 120, 212, 0.05)'
+                    }}>
+                      {selectedPackage?.usageDetails[selectedIndex]?.name}
+                    </Typography>
+                    
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: 1
+                    }}>
+                      <ArrowBackIos
+                        sx={{
+                          color: selectedIndex === 0 ? 'rgba(0,0,0,0.2)' : colorScheme.textSecondary,
+                          cursor: selectedIndex === 0 ? 'not-allowed' : 'pointer',
+                          fontSize: sizes.iconSize,
+                          '&:hover': {
+                            color: selectedIndex === 0 ? 'rgba(0,0,0,0.2)' : colorScheme.accent
+                          }
+                        }}
+                        onClick={() => selectedIndex > 0 && setSelectedIndex(prev => prev - 1)}
+                      />
+                      
+                      <Box sx={{
+                        position: 'relative',
+                        '&::after': {
+                          content: '""',
+                          position: 'absolute',
+                          top: '-10px',
+                          left: '-10px',
+                          right: '-10px',
+                          bottom: '-10px',
+                          borderRadius: '50%',
+                          border: '2px solid rgba(0, 120, 212, 0.1)',
+                          animation: `${pulseAnimation} 2s infinite`,
+                          pointerEvents: 'none'
+                        }
+                      }}>
+                        <CircularProgressBar
+                          percentage={selectedPackage.usageDetails[selectedIndex].percentage}
+                          size={sizes.progressBarSize}
+                          accentColor={colorScheme.accent}
+                          darkMode={false}
+                        />
+                      </Box>
+
+                      <ArrowForwardIos
+                        sx={{
+                          color: selectedIndex === selectedPackage.usageDetails.length - 1 
+                            ? 'rgba(0,0,0,0.2)' : colorScheme.textSecondary,
+                          cursor: selectedIndex === selectedPackage.usageDetails.length - 1 ? 'not-allowed' : 'pointer',
+                          fontSize: sizes.iconSize,
+                          '&:hover': {
+                            color: selectedIndex === selectedPackage.usageDetails.length - 1 
+                              ? 'rgba(0,0,0,0.2)' : colorScheme.accent
+                          }
+                        }}
+                        onClick={() => selectedIndex < selectedPackage.usageDetails.length - 1 && 
+                          setSelectedIndex(prev => prev + 1)}
+                      />
+                    </Box>
+
+                    <Box sx={{ 
+                      textAlign: 'center',
+                      width: '100%'
+                    }}>
+                      <Typography variant="h5" sx={{ 
+                        fontWeight: 700,
+                        mb: 1,
+                        color: colorScheme.textPrimary,
+                        fontSize: isMobile ? '1.25rem' : '1.5rem'
+                      }}>
+                        {`${selectedPackage.usageDetails[selectedIndex].used} GB`}
+                        <Typography component="span" sx={{ 
+                          color: colorScheme.textSecondary,
+                          fontSize: '0.6em',
+                          ml: 1,
+                          fontWeight: 400
+                        }}>
+                          {`/ ${selectedPackage.usageDetails[selectedIndex].limit} GB`}
+                        </Typography>
+                      </Typography>
+                      
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          color: colorScheme.textPrimary,
+                          px: 2,
+                          py: 1,
+                          borderRadius: '8px',
+                          background: `linear-gradient(90deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 95, 184, 0.1) 100%)`,
+                          fontSize: isMobile ? '0.75rem' : '0.875rem',
+                          display: 'inline-block',
+                          border: '1px solid rgba(0, 120, 212, 0.2)',
+                          animation: `${borderGlow} 3s infinite ease-in-out`
+                        }}
+                      >
+                        {`Valid until ${formatDate(selectedPackage.usageDetails[selectedIndex].expiry_date)}`}
+                      </Typography>
+                    </Box>
+                  </>
+                ) : (
+                  <Box sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                    textAlign: 'center',
+                    gap: 1
+                  }}>
+                    <Box sx={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: '50%',
+                      background: 'rgba(0, 0, 0, 0.03)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      border: '2px dashed rgba(0, 0, 0, 0.1)',
+                      animation: `${pulseAnimation} 2s infinite`
+                    }}>
+                      <Typography variant="h4" sx={{ 
+                        opacity: 0.3, 
+                        fontSize: '2rem',
+                        animation: `${floatAnimation} 3s ease-in-out infinite`
+                      }}>∅</Typography>
+                    </Box>
+                    <Typography variant="h6" sx={{ 
+                      fontWeight: 500, 
+                      fontSize: '1rem',
+                      color: colorScheme.textSecondary,
+                      mt: 1
+                    }}>
+                      No usage data available
+                    </Typography>
+                  </Box>
+                )}
+              </Box>
+
+              {/* Right Panel - Account Details */}
+              <Box sx={{
+                width: sizes.rightPanelWidth,
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 1.5,
+                p: isMobile ? 1.5 : 2,
+                background: colorScheme.cardBg,
+                borderRadius: '5px',
+                border: '1px solid rgba(0, 0, 0, 0.08)',
+                minHeight: sizes.panelHeight,
+                position: 'relative',
+                overflow: 'hidden'
+              }}>
+                <Typography variant="h6" sx={{ 
+                  fontWeight: 600, 
+                  mb: 1,
+                  color: colorScheme.textPrimary,
+                  fontSize: isMobile ? '1rem' : '1.1rem',
+                  display: 'flex',
+                  alignItems: 'left',
+                  '&::before': {
+                    content: '""',
+                    display: 'inline-block',
+                    width: '4px',
+                    height: '16px',
+                    background: colorScheme.accent,
+                    borderRadius: '2px',
+                    marginRight: '8px'
+                  }
+                }}>
+                  Account Details
+                </Typography>
+                
+                <Box sx={{ 
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: 1.5,
+                  mb: 1
+                }}>
+                  {[
+                    { label: "Package", value: dummyServiceData.listofBBService[0].packageName },
+                    { label: "Status", value: dummyServiceData.listofBBService[0].serviceStatus, highlight: true },
+                    { label: "Service ID", value: dummyServiceData.listofBBService[0].serviceID },
+                  ].map((item, index) => (
+                    <Box 
+                      key={index}
+                      sx={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between',
+                        p: 1.5,
+                        borderRadius: '8px',
+                        background: 'rgba(0, 0, 0, 0.02)',
+                        '&:hover': {
+                          background: 'rgba(0, 120, 212, 0.03)'
+                        },
+                        '&::before': {
+                          content: '""',
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '3px',
+                          height: '100%',
+                          background: item.highlight ? colorScheme.accent : 'rgba(0, 0, 0, 0.05)'
+                        }
+                      }}
+                    >
+                      <Typography variant="body1" sx={{ 
+                        color: colorScheme.textSecondary,
+                        fontSize: isMobile ? '0.75rem' : '0.875rem',
+                        pl: 1
+                      }}>
+                        {item.label}:
+                      </Typography>
+                      <Typography variant="body1" sx={{ 
+                        fontWeight: 500,
+                        color: item.highlight ? colorScheme.accent : colorScheme.textPrimary,
+                        fontSize: isMobile ? '0.75rem' : '0.875rem',
+                        textAlign: 'right'
+                      }}>
+                        {item.value}
+                      </Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                <Box sx={{ 
+                  mt: 'auto',
+                  display: 'flex', 
+                  flexDirection: 'column', 
+                  gap: 1.5
+                }}>
+                  <Button
+                    variant="contained"
+                    fullWidth
+                    onClick={() => setpackageupgrade(true)}
+                    sx={{
+                      background: colorScheme.buttonGradient,
+                      color: 'white',
+                      py: 1,
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.75rem' : '0.875rem',
+                      '&:hover': {
+                        boxShadow: `0 5px 15px ${colorScheme.glowEffect}`
+                      }
+                    }}
+                  >
+                    Package Upgrade
+                  </Button>
+                  
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => setShowGetExtraGB(true)}
+                    sx={{
+                      color: colorScheme.accent,
+                      py: 1,
+                      borderRadius: '8px',
+                      border: `1px solid ${colorScheme.accent}`,
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.75rem' : '0.875rem',
+                      background: 'rgba(0, 120, 212, 0.03)',
+                      '&:hover': {
+                        background: 'rgba(0, 120, 212, 0.08)',
+                        borderColor: colorScheme.secondaryAccent
+                      }
+                    }}
+                  >
+                    Get Extra GB
+                  </Button>
+                  
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    onClick={() => setShowAddons(true)}
+                    sx={{
+                      color: colorScheme.textPrimary,
+                      py: 1,
+                      borderRadius: '8px',
+                      border: '1px solid rgba(0, 0, 0, 0.2)',
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.75rem' : '0.875rem',
+                      background: 'rgba(0, 0, 0, 0.01)',
+                      '&:hover': {
+                        background: 'rgba(0, 0, 0, 0.03)',
+                        borderColor: 'rgba(0, 0, 0, 0.3)'
+                      }
+                    }}
+                  >
+                    Data Add-ons
+                  </Button>
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+      </Box>
+    </Box>
+  );
+};
+
+export default DataUsageDetails;

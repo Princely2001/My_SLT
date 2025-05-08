@@ -16,23 +16,23 @@ import {
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import useStore from "../../services/useAppStore";
 
-// Dark theme color scheme
+// White theme color scheme
 const colorScheme = {
-  primaryDark: '#0A192F',         // Navy blue
-  primaryLight: '#172A45',        // Lighter navy
-  accent: '#64FFDA',              // Teal accent
-  secondaryAccent: '#8892B0',     // Light gray-blue
-  highlight: 'rgba(100, 255, 218, 0.1)',
-  textPrimary: '#CCD6F6',         // Light blue-gray
-  textSecondary: '#E6F1FF',       // Bright white-blue
-  divider: '#1E2A3A',             // Dark divider
-  cardBg: '#112240',              // Dark card background
-  buttonGradient: 'linear-gradient(135deg, #64FFDA 0%, #8892B0 100%)',
-  navbarBg: '#0A192F',            // Dark navbar
+  primary: '#FFFFFF',             // White background
+  primaryLight: '#F8F9FA',        // Very light gray
+  accent: '#1976D2',              // Blue accent
+  secondaryAccent: '#757575',     // Gray accent
+  highlight: 'rgba(25, 118, 210, 0.1)',
+  textPrimary: '#212121',         // Dark text
+  textSecondary: '#424242',       // Slightly lighter text
+  divider: '#E0E0E0',             // Light divider
+  cardBg: '#FFFFFF',              // White card background
+  buttonGradient: 'linear-gradient(135deg, #1976D2 0%, #2196F3 100%)',
+  navbarBg: '#FFFFFF',            // White navbar
   white: '#FFFFFF',
-  dark: '#020C1B',                // Very dark blue
-  errorRed: '#FF5555',
-  successGreen: '#50FA7B'
+  dark: '#F5F5F5',               // Very light gray
+  errorRed: '#D32F2F',
+  successGreen: '#388E3C'
 };
 
 interface DataPlan {
@@ -175,79 +175,74 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        background: "linear-gradient(135deg,rgb(13, 54, 90) 0%,rgb(25, 71, 114) 100%)",
+        background: "#FFFFFF",
         color: colorScheme.textPrimary,
         padding: 2,
         borderRadius: "10px",
-        boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.3)",
+        boxShadow: "0px 3px 10px rgba(0, 0, 0, 0.1)",
         minHeight: "500px",
         position: "relative",
+        border: "1px solid #E0E0E0"
       }}
     >
       {/* Header with back button */}
       <Box sx={{
-        width: '100%',
+        width: '95%',
         display: 'flex',
         flexDirection: isMobile ? 'column' : 'row',
         gap: isMobile ? 0.5 : 0,
         mb: 1.5,
-        background: 'rgb(15, 45, 72)',
+        background: '#FFFFFF',
         borderRadius: '8px',
         padding: isMobile ? '8px' : '8px 16px',
         justifyContent: 'space-between',
         minHeight: '48px',
         height: 'auto',
-        alignItems: 'center'
+        alignItems: 'center',
+        borderBottom: '1px solid #E0E0E0',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
       }}>
-       <Button
-  startIcon={<ArrowBack />}
-  onClick={onBack}
-  sx={{
-    alignSelf: 'flex-start',
-    color: 'rgba(237, 240, 243, 0.9)', // Brighter text for better visibility
-    zIndex: 2,
-    transition: 'all 0.3s ease',
-    px: 2,
-    py: 1,
-    borderRadius: '10px',
-    backgroundColor: 'transparent',
-    textTransform: 'none',
-    fontSize: '1rem',
-    fontWeight: 700,
-    minWidth: 'auto',
-    '&:hover': {
-      backgroundColor: 'rgba(0, 168, 232, 0.15)', // Slightly more visible hover
-      transform: 'translateX(-5px)',
-      boxShadow: '0 0 12px rgba(0, 168, 232, 0.3)' // Soft blue glow effect
-    },
-    '& .MuiSvgIcon-root': {
-      transition: 'all 0.3s ease',
-      fontSize: '1.25rem',
-      color: 'rgba(237, 240, 243, 0.9)' // Matching icon color
-    },
-    '&:hover .MuiSvgIcon-root': {
-      transform: 'translateX(-3px)'
-    },
-    // Added responsive adjustments
-    '@media (max-width: 600px)': {
-      px: 1.5,
-      py: 0.75,
-      fontSize: '0.9rem',
-      '& .MuiSvgIcon-root': {
-        fontSize: '1.1rem'
-      }
-    }
-  }}
->
-Get Extra Data
-</Button>
-        <Typography variant="h6" sx={{ 
-          color:  'rgba(237, 240, 243, 0.7)',
-          fontWeight: 600,
-          fontSize: isMobile ? '1.1rem' : '1.3rem'
-        }}>
-         
-        </Typography>
+        <Button
+          startIcon={<ArrowBack />}
+          onClick={onBack}
+          sx={{
+            alignSelf: 'flex-start',
+            color: colorScheme.accent,
+            zIndex: 2,
+            transition: 'all 0.3s ease',
+            px: 2,
+            py: 1,
+            borderRadius: '10px',
+            backgroundColor: 'transparent',
+            textTransform: 'none',
+            fontSize: '1rem',
+            fontWeight: 700,
+            minWidth: 'auto',
+            '&:hover': {
+              backgroundColor: 'rgba(25, 118, 210, 0.1)',
+              transform: 'translateX(-5px)',
+              boxShadow: '0 0 12px rgba(25, 118, 210, 0.2)'
+            },
+            '& .MuiSvgIcon-root': {
+              transition: 'all 0.3s ease',
+              fontSize: '1.25rem',
+              color: colorScheme.accent
+            },
+            '&:hover .MuiSvgIcon-root': {
+              transform: 'translateX(-3px)'
+            },
+            '@media (max-width: 600px)': {
+              px: 1.5,
+              py: 0.75,
+              fontSize: '0.9rem',
+              '& .MuiSvgIcon-root': {
+                fontSize: '1.1rem'
+              }
+            }
+          }}
+        >
+          Get Extra Data
+        </Button>
         <Box sx={{ width: isMobile ? 0 : 100 }} /> {/* Spacer for alignment */}
       </Box>
 
@@ -266,16 +261,16 @@ Get Extra Data
           sx={{
             flex: 1,
             p: 2,
-            background: 'linear-gradient(90deg, transparent, rgba(12, 62, 62, 0.2), transparent)',
+            background: '#FFFFFF',
             borderRadius: '8px',
             border: `1px solid ${colorScheme.divider}`,
-            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.05)',
           }}
         >
           <Typography variant="h6" sx={{ 
             fontWeight: 600, 
             mb: 2,
-            color: 'rgba(237, 240, 243, 0.7)',
+            color: colorScheme.textPrimary,
             borderBottom: `1px solid ${colorScheme.divider}`,
             pb: 1,
           }}>
@@ -293,18 +288,18 @@ Get Extra Data
                 marginBottom: 1,
                 backgroundColor: colorScheme.primaryLight,
                 borderRadius: "6px",
-                boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.2)',
+                boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)',
               }}
             >
               <Typography sx={{ 
-                color:  'rgba(237, 240, 243, 0.7)', 
+                color: colorScheme.textPrimary, 
                 fontSize: "14px", 
                 fontWeight: 500 
               }}>
                 {plan.range}
               </Typography>
               <Typography sx={{ 
-                color: 'rgba(237, 240, 243, 0.7)', 
+                color: colorScheme.textPrimary, 
                 fontSize: "14px", 
                 fontWeight: 600 
               }}>
@@ -333,17 +328,17 @@ Get Extra Data
                     height: "40px",
                     fontWeight: "bold",
                     fontSize: '12px',
-                    border: `1px solid ${'rgba(237, 240, 243, 0.7)'}`,
+                    border: `1px solid ${colorScheme.accent}`,
                     borderRadius: "4px",
                     "&.MuiButton-contained": {
-                      background: 'rgba(237, 240, 243, 0.7)',
-                      color: colorScheme.dark,
+                      background: colorScheme.accent,
+                      color: colorScheme.white,
                     },
                     "&.MuiButton-outlined": {
-                      color: 'rgba(237, 240, 243, 0.7)',
+                      color: colorScheme.accent,
                       "&:hover": {
-                        border: `1px solid ${'rgba(237, 240, 243, 0.7)'}`,
-                        color: 'rgba(237, 240, 243, 0.7)',
+                        border: `1px solid ${colorScheme.accent}`,
+                        color: colorScheme.accent,
                         backgroundColor: colorScheme.highlight
                       }
                     },
@@ -362,10 +357,10 @@ Get Extra Data
           sx={{
             width: isMobile ? '100%' : '35%',
             p: 2,
-            background: 'linear-gradient(90deg, transparent, rgba(12, 62, 62, 0.2), transparent)',
+            background: '#FFFFFF',
             borderRadius: '8px',
             border: `1px solid ${colorScheme.divider}`,
-            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.2)',
+            boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.05)',
           }}
         >
           {/* Package Summary */}
@@ -378,18 +373,18 @@ Get Extra Data
               borderRadius: "6px",
               marginBottom: 2,
               background: colorScheme.primaryLight,
-              border: `1px solid ${'rgba(237, 240, 243, 0.7)'}`,
+              border: `1px solid ${colorScheme.divider}`,
             }}
           >
             <Typography variant="h5" sx={{ 
-              color: 'rgba(237, 240, 243, 0.7)',
+              color: colorScheme.textPrimary,
               fontWeight: "bold",
               fontSize: "20px"
             }}>
               {selectedGB || "0"} GB
             </Typography>
             <Typography variant="h6" sx={{ 
-              color: 'rgba(237, 240, 243, 0.7)',
+              color: colorScheme.textPrimary,
               fontWeight: "bold",
               fontSize: "16px"
             }}>
@@ -423,10 +418,10 @@ Get Extra Data
                 fontWeight: 600,
                 fontSize: '14px',
                 ...(paymentMethod === "payNow" ? {
-                  background: 'rgba(237, 240, 243, 0.7)',
-                  color: colorScheme.dark,
+                  background: colorScheme.accent,
+                  color: colorScheme.white,
                 } : {
-                  color: 'rgba(237, 240, 243, 0.7)',
+                  color: colorScheme.accent,
                   border: `1px solid ${colorScheme.accent}`,
                   background: 'transparent',
                 })
@@ -442,8 +437,7 @@ Get Extra Data
           }} />
 
           {/* Terms and Conditions */}
-            {/* Terms and Conditions */}
-            <Box sx={{ mt: 2, mb: 1 }}>
+          <Box sx={{ mt: 2, mb: 1 }}>
             <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
               <Checkbox
                 checked={isCheckboxChecked}
@@ -481,14 +475,15 @@ Get Extra Data
               variant="contained"
               disabled={!isCheckboxChecked || !paymentMethod || !selectedGB || isLoading}
               sx={{
-                background: 'rgba(65, 105, 145, 0.7)',
+                background: colorScheme.accent,
                 color: colorScheme.white,
                 py: 1.5,
                 borderRadius: "6px",
                 fontWeight: 600,
                 fontSize: '14px',
                 "&:hover": {
-                  opacity: 0.9
+                  opacity: 0.9,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                 },
                 "&:disabled": { 
                   background: colorScheme.divider,
@@ -503,106 +498,92 @@ Get Extra Data
         </Box>
       </Box>
         
-    
-
       {/* Result Dialog */}
       <Dialog 
-  open={openDialog} 
-  onClose={handleDialogClose}
-  PaperProps={{
-    sx: {
-      background: `linear-gradient(135deg, ${colorScheme.primaryDark} 0%, ${colorScheme.primaryLight} 100%)`,
-      color: colorScheme.textPrimary,
-      borderRadius: '16px',
-      border: `1px solid ${colorScheme.divider}`,
-      minWidth: isMobile ? '90vw' : '400px',
-      boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
-      overflow: "hidden",
-      "&::before": {
-        content: '""',
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        height: "4px",
-        background: `linear-gradient(90deg, ${colorScheme.accent}, ${colorScheme.secondaryAccent})`,
-        opacity: 0.8
-      }
-    }
-  }}
->
-  <DialogTitle sx={{ 
-    background: errorMessage ? 'rgba(244, 67, 54, 0.2)' : 'rgba(76, 175, 80, 0.2)',
-    borderBottom: `1px solid ${colorScheme.divider}`,
-    fontWeight: 700,
-    letterSpacing: "0.5px",
-    color: colorScheme.textPrimary,
-    fontSize: '18px',
-    py: 2
-  }}>
-    {errorMessage ? "Error" : "Success"}
-  </DialogTitle>
-  
-  <DialogContent sx={{ py: 3, px: 3 }}>
-    <Typography sx={{ 
-      color: colorScheme.textPrimary, 
-      fontSize: '15px',
-      lineHeight: 1.6,
-      mb: 2
-    }}>
-      {errorMessage || successMessage}
-    </Typography>
-  </DialogContent>
-  
-  <DialogActions
-    sx={{
-      p: 2,
-      background: "rgba(0, 0, 0, 0.1)",
-      borderTop: `1px solid ${colorScheme.divider}`
-    }}
-  >
-    <Button 
-      onClick={handleDialogClose} 
-      sx={{ 
-        color: colorScheme.textSecondary,
-        borderRadius: "20px",
-        px: 3,
-        border: `1px solid ${colorScheme.divider}`,
-        fontWeight: 600,
-        textTransform: 'none',
-        fontSize: '14px',
-        "&:hover": {
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          boxShadow: `0 0 8px rgba(255, 255, 255, 0.1)`
-        }
-      }}
-    >
-      Close
-    </Button>
-    
-    {!errorMessage && (
-      <Button 
-        onClick={handleDialogClose} 
-        sx={{ 
-          background: 'rgba(38, 73, 109, 0.7)',
-          color: colorScheme.white,
-          borderRadius: "20px",
-          px: 3,
-          fontWeight: 700,
-          textTransform: 'none',
-          fontSize: '14px',
-          boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
-          '&:hover': { 
-            opacity: 0.9,
-            boxShadow: `0 0 16px ${colorScheme.glowEffect}`
+        open={openDialog} 
+        onClose={handleDialogClose}
+        PaperProps={{
+          sx: {
+            background: '#FFFFFF',
+            color: colorScheme.textPrimary,
+            borderRadius: '12px',
+            border: `1px solid ${colorScheme.divider}`,
+            minWidth: isMobile ? '90vw' : '400px',
+            boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+            overflow: "hidden",
           }
         }}
       >
-        Continue
-      </Button>
-    )}
-  </DialogActions>
-</Dialog>
+        <DialogTitle sx={{ 
+          background: errorMessage ? 'rgba(211, 47, 47, 0.1)' : 'rgba(56, 142, 60, 0.1)',
+          borderBottom: `1px solid ${colorScheme.divider}`,
+          fontWeight: 700,
+          letterSpacing: "0.5px",
+          color: errorMessage ? colorScheme.errorRed : colorScheme.successGreen,
+          fontSize: '18px',
+          py: 2
+        }}>
+          {errorMessage ? "Error" : "Success"}
+        </DialogTitle>
+        
+        <DialogContent sx={{ py: 3, px: 3 }}>
+          <Typography sx={{ 
+            color: colorScheme.textPrimary, 
+            fontSize: '15px',
+            lineHeight: 1.6,
+            mb: 2
+          }}>
+            {errorMessage || successMessage}
+          </Typography>
+        </DialogContent>
+        
+        <DialogActions
+          sx={{
+            p: 2,
+            background: "#FAFAFA",
+            borderTop: `1px solid ${colorScheme.divider}`
+          }}
+        >
+          <Button 
+            onClick={handleDialogClose} 
+            sx={{ 
+              color: colorScheme.textPrimary,
+              borderRadius: "6px",
+              px: 3,
+              border: `1px solid ${colorScheme.divider}`,
+              fontWeight: 600,
+              textTransform: 'none',
+              fontSize: '14px',
+              "&:hover": {
+                backgroundColor: "rgba(0, 0, 0, 0.05)",
+              }
+            }}
+          >
+            Close
+          </Button>
+          
+          {!errorMessage && (
+            <Button 
+              onClick={handleDialogClose} 
+              sx={{ 
+                background: colorScheme.accent,
+                color: colorScheme.white,
+                borderRadius: "6px",
+                px: 3,
+                fontWeight: 700,
+                textTransform: 'none',
+                fontSize: '14px',
+                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                '&:hover': { 
+                  opacity: 0.9,
+                }
+              }}
+            >
+              Continue
+            </Button>
+          )}
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
