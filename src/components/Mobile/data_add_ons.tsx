@@ -401,35 +401,40 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
       }}
     >
       {/* Back Button */}
-      <Button
-        startIcon={<ArrowBack />}
-        onClick={onBack}
-        sx={{
-          alignSelf: 'flex-start',
-          color: colorScheme.accent,
-          zIndex: 2,
-          transition: 'all 0.3s ease',
-          px: 2,
-          py: 1,
-          borderRadius: '8px',
-          backgroundColor: 'transparent',
-          textTransform: 'none',
-          fontSize: '1rem',
-          fontWeight: 700,
-          '&:hover': {
-            backgroundColor: 'rgba(25, 118, 210, 0.1)',
-            transform: 'translateX(-5px)',
-          },
-          '& .MuiSvgIcon-root': {
-            transition: 'all 0.3s ease',
-          },
-          '&:hover .MuiSvgIcon-root': {
-            transform: 'translateX(-3px)'
-          }
-        }}
-      >
-        Data Add-ons
-      </Button>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, position: 'relative' }}>
+          <Button
+            onClick={onBack}
+            sx={{
+              minWidth: 'auto',
+              p: 0.5,
+              mr: 2,
+              color: colorScheme.accent,
+              '&:hover': {
+                backgroundColor: 'transparent',
+                boxShadow: 'none'
+              }
+            }}
+          >
+            <ArrowBack fontSize="medium" />
+          </Button>
+
+          <Box sx={{ flex: 1, textAlign: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 700,
+                fontSize: '24px',
+                color: colorScheme.accent
+              }}
+            >
+              Data Add-ons
+            </Typography>
+          </Box>
+
+  {/* Right-side placeholder for symmetry */}
+  <Box sx={{ width: '40px' }} />
+</Box>
+
 
       {/* Enhanced Navigation Bar */}
       <BroadbandNavbar
@@ -642,7 +647,9 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
             }}
             onClick={() => handleCardButtonClick(addon)}
           >
-            Activate Now
+            <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
+                         Activate Now
+            </Typography>
           </Button>
         </CardContent>
       </Card>
@@ -673,11 +680,13 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
             letterSpacing: "0.5px",
             color: colorScheme.textPrimary
           }}
-        >
+        > 
+          <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
           Confirm Activation
+          </Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography sx={{ mt: 2, mb: 1 }}>
+          <Typography variant="body2" sx={{ mt: 2, mb: 1 }}>
             Do you want to purchase and activate <strong>{selectedPackage?.name}</strong>?
           </Typography>
           <Typography variant="body2" sx={{ color: colorScheme.accent, mb: 2 }}>
@@ -702,7 +711,7 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
                   />
                 }
                 label={
-                  <Typography sx={{ color: colorScheme.textPrimary }}>
+                  <Typography variant="body2" sx={{ color: colorScheme.textPrimary }}>
                     One-Time Activation
                   </Typography>
                 }
@@ -720,7 +729,7 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
                   />
                 }
                 label={
-                  <Typography sx={{ color: colorScheme.textPrimary }}>
+                  <Typography variant="body2" sx={{ color: colorScheme.textPrimary }}>
                     Recurrent Monthly
                   </Typography>
                 }
@@ -740,7 +749,7 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
               <span>Package Price:</span>
               <span style={{ fontWeight: 700 }}>Rs. {selectedPackage?.postprice}</span>
             </Typography>
-            <Typography variant="caption" sx={{ color: colorScheme.textSecondary, display: "block", mt: 1 }}>
+            <Typography variant="body2" sx={{ color: colorScheme.textSecondary, display: "block", mt: 1 }}>
               {activationType === "recurrent" ? 
                 "This package will be automatically renewed each month" : 
                 "This is a one-time charge"}
@@ -766,7 +775,9 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
               }
             }}
           >
+            <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
             Cancel
+            </Typography>
           </Button>
           <Button 
             onClick={handleActivation} 
@@ -782,7 +793,9 @@ const Dataaddons: React.FC<DataaddonsProps> = ({ onBack, isMobile = false }) => 
               }
             }}
           >
+            <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
             Confirm Activation
+            </Typography>
           </Button>
         </DialogActions>
       </Dialog>

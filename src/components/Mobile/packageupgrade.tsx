@@ -273,39 +273,40 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
       }
     }}>
       {/* Back Button */}
-      <Button
-        startIcon={<ArrowBack />}
-        onClick={onBack}
-        sx={{
-          position: 'relative',
-          alignSelf: 'flex-start',
-          color: colorScheme.primaryDark,
-          zIndex: 2,
-          transition: 'all 0.3s ease',
-          padding: '8px 16px',
-          borderRadius: '8px',
-          backgroundColor: 'rgba(33, 150, 243, 0.1)',
-          border: '1px solid rgba(33, 150, 243, 0.3)',
-          textTransform: 'none',
-          fontSize: isMobile ? '0.9rem' : '1rem',
-          fontWeight: 600,
-          marginBottom: '2rem',
-          '&:hover': {
-            backgroundColor: 'rgba(33, 150, 243, 0.2)',
-            transform: 'translateX(-4px)',
-            boxShadow: '0 4px 12px rgba(33, 150, 243, 0.1)'
-          },
-          '& .MuiSvgIcon-root': {
-            transition: 'transform 0.3s ease',
-            color: colorScheme.primaryDark
-          },
-          '&:hover .MuiSvgIcon-root': {
-            transform: 'translateX(-4px)'
-          }
-        }}
-      >
-         Packages
-      </Button>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, position: 'relative' }}>
+          <Button
+            onClick={onBack}
+            sx={{
+              minWidth: 'auto',
+              p: 0.5,
+              mr: 2,
+              color: colorScheme.accent,
+              '&:hover': {
+                backgroundColor: 'transparent',
+                boxShadow: 'none'
+              }
+            }}
+          >
+            <ArrowBack fontSize="medium" />
+          </Button>
+
+          <Box sx={{ flex: 1, textAlign: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 700,
+                fontSize: '26px',
+                color: colorScheme.accent
+              }}
+            >
+              Packages
+            </Typography>
+          </Box>
+
+          {/* Right-side placeholder for symmetry */}
+          <Box sx={{ width: '40px' }} />
+        </Box>
+
     
       {/* Current Package Card */}
       <Box
@@ -367,7 +368,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
     </Box>
 
     <Typography
-      variant="subtitle1"
+      variant="body2"
       fontWeight="bold"
       sx={{
         color: colorScheme.primaryDark,
@@ -436,7 +437,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
     }
   }}>
     <Typography
-      variant="h6"
+      variant="body2"
       sx={{
         fontSize: isMobile ? "1.5rem" : "1.75rem",
         fontWeight: 700,
@@ -501,7 +502,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
       <Typography variant="body2" fontWeight="bold" color={colorScheme.secondaryAccent} sx={{ fontSize: '0.7rem' }}>
         STANDARD DATA
       </Typography>
-      <Typography variant="subtitle1" fontWeight="bold" color={colorScheme.primaryDark} sx={{ fontSize: '1.1rem' }}>
+      <Typography variant="body2" fontWeight="bold" color={colorScheme.primaryDark} sx={{ fontSize: '1.1rem' }}>
         {currentPackage?.standarD_GB}GB
       </Typography>
     </Box>
@@ -524,7 +525,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
       <Typography variant="body2" fontWeight="bold" color={colorScheme.secondaryAccent} sx={{ fontSize: '0.7rem' }}>
         BONUS DATA
       </Typography>
-      <Typography variant="subtitle1" fontWeight="bold" color={colorScheme.primaryDark} sx={{ fontSize: '1.1rem' }}>
+      <Typography variant="body2" fontWeight="bold" color={colorScheme.primaryDark} sx={{ fontSize: '1.1rem' }}>
         {currentPackage?.freE_GB}GB
       </Typography>
     </Box>
@@ -567,7 +568,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
   }}
 >
   {/* Title with subtle divider */}
-  <Typography variant="h6" sx={{
+  <Typography variant="body2" sx={{
     textAlign: 'center',
     mb: '1.5rem',
     fontWeight: 700,
@@ -621,8 +622,10 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
               'rgba(33, 150, 243, 0.1)'
           }
         }}
-      >
-        {tab}
+      > 
+       <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
+          {tab}
+       </Typography>
       </Button>
     ))}
   </Box>
@@ -776,7 +779,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
           )}
           
           <Typography
-            variant="subtitle1"
+            variant="body2"
             sx={{
               mb: "0.75rem",
               fontWeight: 700,
@@ -833,7 +836,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
               borderRadius: '6px',
               border: '1px solid rgba(33, 150, 243, 0.1)'
             }}>
-              <Typography variant="caption" sx={{ 
+              <Typography variant="body2" sx={{ 
                 color: colorScheme.secondaryAccent, 
                 fontWeight: 600,
                 display: 'block',
@@ -857,7 +860,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
               borderRadius: '6px',
               border: '1px solid rgba(33, 150, 243, 0.1)'
             }}>
-              <Typography variant="caption" sx={{ 
+              <Typography variant="body2" sx={{ 
                 color: colorScheme.secondaryAccent, 
                 fontWeight: 600,
                 display: 'block',
@@ -881,7 +884,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
             textAlign: 'left',
             mb: '0.75rem'
           }}>
-            <Typography variant="caption" sx={{ 
+            <Typography variant="body2" sx={{ 
               color: colorScheme.secondaryAccent,
               fontWeight: 600,
               mb: '0.2rem',
@@ -916,7 +919,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
             width: '100%'
           }}>
             <Typography
-              variant="h5"
+              variant="body2"
               sx={{ 
                 fontSize: isMobile ? "1.5rem" : "1.75rem", 
                 fontWeight: 800,
@@ -928,7 +931,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
               Rs.{item.MONTHLY_RENTAL}
             </Typography>
             <Typography
-              variant="caption"
+              variant="body2"
               sx={{ 
                 fontWeight: 500, 
                 color: colorScheme.textSecondary,
@@ -965,7 +968,9 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
             }}
             onClick={() => handleActivation(item)}
           >
+            <Typography variant="body2" sx={{fontWeight: 700, fontSize: '18px'}}>
             UPGRADE NOW
+            </Typography>
           </Button>
         </CardContent>
       </Card>
@@ -1014,7 +1019,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC<BroadbandPostPaidPackageUpgrade
         border: '1px solid rgba(33, 150, 243, 0.2)',
         boxShadow: colorScheme.cardShadow
       }}>
-        <Typography variant="h6" sx={{ 
+        <Typography variant="body2" sx={{ 
           color: colorScheme.secondaryAccent,
           mb: '1rem',
           fontWeight: 600,

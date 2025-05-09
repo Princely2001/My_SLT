@@ -186,65 +186,40 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
       }}
     >
       {/* Header with back button */}
-      <Box sx={{
-        width: '95%',
-        display: 'flex',
-        flexDirection: isMobile ? 'column' : 'row',
-        gap: isMobile ? 0.5 : 0,
-        mb: 1.5,
-        background: '#FFFFFF',
-        borderRadius: '8px',
-        padding: isMobile ? '8px' : '8px 16px',
-        justifyContent: 'space-between',
-        minHeight: '48px',
-        height: 'auto',
-        alignItems: 'center',
-        borderBottom: '1px solid #E0E0E0',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
-      }}>
-        <Button
-          startIcon={<ArrowBack />}
-          onClick={onBack}
-          sx={{
-            alignSelf: 'flex-start',
-            color: colorScheme.accent,
-            zIndex: 2,
-            transition: 'all 0.3s ease',
-            px: 2,
-            py: 1,
-            borderRadius: '10px',
-            backgroundColor: 'transparent',
-            textTransform: 'none',
-            fontSize: '1rem',
-            fontWeight: 700,
-            minWidth: 'auto',
-            '&:hover': {
-              backgroundColor: 'rgba(25, 118, 210, 0.1)',
-              transform: 'translateX(-5px)',
-              boxShadow: '0 0 12px rgba(25, 118, 210, 0.2)'
-            },
-            '& .MuiSvgIcon-root': {
-              transition: 'all 0.3s ease',
-              fontSize: '1.25rem',
-              color: colorScheme.accent
-            },
-            '&:hover .MuiSvgIcon-root': {
-              transform: 'translateX(-3px)'
-            },
-            '@media (max-width: 600px)': {
-              px: 1.5,
-              py: 0.75,
-              fontSize: '0.9rem',
-              '& .MuiSvgIcon-root': {
-                fontSize: '1.1rem'
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, position: 'relative' }}>
+          <Button
+            onClick={onBack}
+            sx={{
+              minWidth: 'auto',
+              p: 0.5,
+              mr: 2,
+              color: colorScheme.accent,
+              '&:hover': {
+                backgroundColor: 'transparent',
+                boxShadow: 'none'
               }
-            }
-          }}
-        >
-          Get Extra Data
-        </Button>
-        <Box sx={{ width: isMobile ? 0 : 100 }} /> {/* Spacer for alignment */}
-      </Box>
+            }}
+          >
+            <ArrowBack fontSize="medium" />
+          </Button>
+
+          <Box sx={{ flex: 1, textAlign: 'center' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontWeight: 700,
+                fontSize: '24px',
+                color: colorScheme.accent
+              }}
+            >
+              Get Extra GB
+            </Typography>
+          </Box>
+
+  {/* Right-side placeholder for symmetry */}
+  <Box sx={{ width: '40px' }} />
+</Box>
+
 
       {/* Main Content */}
       <Box
@@ -267,14 +242,15 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
             boxShadow: '0px 2px 6px rgba(0, 0, 0, 0.05)',
           }}
         >
-          <Typography variant="h6" sx={{ 
+          <Typography variant="body2" sx={{ 
             fontWeight: 600, 
+            fontSize: '20px',
             mb: 2,
             color: colorScheme.textPrimary,
             borderBottom: `1px solid ${colorScheme.divider}`,
             pb: 1,
           }}>
-            Price Plan
+            Price Plans
           </Typography>
           
           {dataPlans.map((plan, index) => (
@@ -376,14 +352,14 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
               border: `1px solid ${colorScheme.divider}`,
             }}
           >
-            <Typography variant="h5" sx={{ 
+            <Typography variant="body2" sx={{ 
               color: colorScheme.textPrimary,
               fontWeight: "bold",
               fontSize: "20px"
             }}>
               {selectedGB || "0"} GB
             </Typography>
-            <Typography variant="h6" sx={{ 
+            <Typography variant="body2" sx={{ 
               color: colorScheme.textPrimary,
               fontWeight: "bold",
               fontSize: "16px"
@@ -393,7 +369,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
           </Box>
 
           {/* Payment Options */}
-          <Typography variant="body1" sx={{ 
+          <Typography variant="body2" sx={{ 
             color: colorScheme.textPrimary,
             mb: 1,
             fontWeight: 500,
@@ -416,6 +392,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
                 py: 1,
                 borderRadius: '4px',
                 fontWeight: 600,
+                textTransform: 'capitalize',
                 fontSize: '14px',
                 ...(paymentMethod === "payNow" ? {
                   background: colorScheme.accent,
@@ -427,7 +404,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
                 })
               }}
             >
-              Pay Now
+              <Typography variant="body2" sx={{fontWeight: 700, fontSize: '18px'}}>Pay Now</Typography>
             </Button>
           </Box>
 
@@ -492,7 +469,10 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
               }}
               onClick={handleSubmit}
             >
+              <Typography variant="body2" sx={{fontWeight: 700, fontSize: '20px', textTransform:'capitalize'}}>
               {isLoading ? <CircularProgress size={20} color="inherit" /> : "Submit"}
+              </Typography>
+
             </Button>
           </Box>
         </Box>
@@ -523,11 +503,13 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
           fontSize: '18px',
           py: 2
         }}>
-          {errorMessage ? "Error" : "Success"}
+           <Typography variant="body2" sx={{fontWeight: 700, fontSize: '20px', textTransform:'capitalize'}}>
+             {errorMessage ? "Error" : "Success"}
+           </Typography>
         </DialogTitle>
         
         <DialogContent sx={{ py: 3, px: 3 }}>
-          <Typography sx={{ 
+          <Typography variant="body2" sx={{ 
             color: colorScheme.textPrimary, 
             fontSize: '15px',
             lineHeight: 1.6,
@@ -559,7 +541,9 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
               }
             }}
           >
-            Close
+            <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
+             Close
+           </Typography>
           </Button>
           
           {!errorMessage && (
@@ -579,7 +563,9 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName, onBack }) => {
                 }
               }}
             >
-              Continue
+              <Typography variant="body2" sx={{fontWeight: 700, fontSize: '16px', textTransform:'capitalize'}}>
+                 Continue
+              </Typography>
             </Button>
           )}
         </DialogActions>
