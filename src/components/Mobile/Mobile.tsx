@@ -183,11 +183,12 @@ const navbarItems = [
 ];
 
 const sidebarItems = [
-  { label: "Dashboard", icon: <DashboardIcon />, active: false },
-  { label: "Data Usage", icon: <DataUsageIcon />, active: true },
-  { label: "Add Data", icon: <AddBoxIcon />, active: false },
-  { label: "Upgrade", icon: <UpgradeIcon />, active: false },
-  { label: "Settings", icon: <SettingsIcon />, active: false },
+  { label: "Usage History", icon: <DashboardIcon />, active: true },
+  { label: "Reload", icon: <DataUsageIcon />, active: false },
+  { label: "Buy Data Bundle", icon: <AddBoxIcon />, active: false },
+  { label: "Add Minutes", icon: <UpgradeIcon />, active: false },
+  { label: "SMS Packages", icon: <AddBoxIcon />, active: false },
+  { label: "Payment", icon: <AddBoxIcon />, active: false },
 ];
 
 // Navigation Bar Component with white theme
