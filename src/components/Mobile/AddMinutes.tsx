@@ -8,7 +8,6 @@ interface AddMinutesProps {
   isMobile?: boolean;
 }
 
-// Sample voice minute packs
 const minuteBundles = [
   { name: "100 Minutes", price: "Rs.99.00", validity: "3 Days" },
   { name: "200 Minutes", price: "Rs.149.00", validity: "7 Days" },
@@ -26,122 +25,88 @@ const shimmer = keyframes`
 `;
 
 const colorScheme = {
-  glowEffect: 'rgba(46, 164, 245, 0.4)',
-  border: '1px solid rgba(46, 164, 245, 0.5)',
-  text: '#2ea4f5',
-  shimmer: 'linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.2) 50%, transparent 55%)',
+  primary: 'rgb(255, 255, 255)',
+  primaryLight: 'rgb(250, 250, 250)',
+  primaryDark: 'rgb(245, 245, 245)',
+  accent: 'rgb(0, 120, 212)',
+  secondaryAccent: 'rgb(0, 95, 184)',
+  highlight: 'rgba(0, 120, 212, 0.1)',
+  textPrimary: 'rgba(0, 0, 0, 0.87)',
+  textSecondary: 'rgba(0, 0, 0, 0.6)',
+  divider: 'rgba(0, 0, 0, 0.12)',
+  cardBg: 'rgba(255, 255, 255, 0.9)',
+  buttonGradient: 'linear-gradient(135deg, rgba(0, 120, 212, 0.9) 0%, rgba(0, 95, 184, 0.9) 100%)',
+  navbarBg: 'rgba(255, 255, 255, 0.95)',
+  glassEffect: 'rgba(255, 255, 255, 0.7)',
+  glowEffect: 'rgba(0, 120, 212, 0.2)',
+  shadow: '0 2px 10px rgba(0, 0, 0, 0.08)'
 };
 
 export default function AddMinutes({ onBack, isMobile = false }: AddMinutesProps) {
   return (
-    <Box sx={{ p: 3 }}>
-      {/* Top Bar */}
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={onBack}
-        sx={{
-          color: 'white',
-          mb: 3,
-          px: 2,
-          py: 1,
-          borderRadius: '8px',
-          backgroundColor: 'rgba(255, 255, 255, 0.05)',
-          textTransform: 'none',
-          fontSize: isMobile ? '0.875rem' : '1rem',
-          fontWeight: 600,
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          backdropFilter: 'blur(5px)',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 168, 232, 0.2)',
-            borderColor: 'rgba(0, 168, 232, 0.5)',
-            boxShadow: '0 0 15px rgba(0, 168, 232, 0.3)'
-          }
-        }}
-      >
-        Add Minutes
-      </Button>
+    <Box sx={{ display: 'flex', width: '100%', minHeight: '440px', height: '100%' }}>
+      <Box sx={{ flex: 1, p: 3, display: 'flex', justifyContent: 'center', backgroundColor: colorScheme.primaryDark }}>
+        <Box sx={{ width: '100%', maxWidth: '1300px', backgroundColor: colorScheme.primary, borderRadius: '12px', boxShadow: colorScheme.shadow, overflow: 'hidden', position: 'relative', p: 3 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 3, position: 'relative' }}>
+            <Button onClick={onBack} sx={{ minWidth: 'auto', p: 0.5, mr: 2, color: colorScheme.accent, '&:hover': { backgroundColor: 'transparent', boxShadow: 'none' } }}>
+              <ArrowBackIcon fontSize="medium" />
+            </Button>
+            <Box sx={{ flex: 1, textAlign: 'center' }}>
+              <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '24px', color: colorScheme.accent }}>Add Minutes</Typography>
+            </Box>
+            <Box sx={{ width: '40px' }} />
+          </Box>
 
-      {/* Bundle Cards */}
-      <Box
-        sx={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gap: 2
-        }}
-      >
-        {minuteBundles.map((bundle, index) => (
-          <Paper
-            key={index}
-            sx={{
-              height: 200,
-              background: 'rgba(255,255,255,0.05)',
-              color: 'white',
-              borderRadius: '12px',
-              p: 2,
-              backdropFilter: 'blur(8px)',
-              border: '1px solid rgba(255,255,255,0.1)',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                background: 'rgba(0, 168, 232, 0.1)',
-                transform: 'translateY(-4px)',
-                boxShadow: '0 8px 20px rgba(0,168,232,0.2)'
-              }
-            }}
-          >
-            <Box>
-              <Typography variant="h6" sx={{ fontWeight: 700 }}>
-                {bundle.name}
-              </Typography>
-              <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mt: 0.5 }}>
-                {bundle.validity}
-              </Typography>
-            </Box>
-            <Box>
-              <Typography variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
-                {bundle.price}
-              </Typography>
-              <Button
-                variant="outlined"
-                fullWidth
-                sx={{
-                  border: colorScheme.border,
-                  color: colorScheme.text,
-                  py: 1,
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  fontSize: isMobile ? '0.9rem' : '1rem',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  backgroundColor: 'transparent',
-                  '&:hover': {
-                    backgroundColor: 'rgba(46, 164, 245, 0.1)',
-                    transform: 'translateY(-2px)',
-                    boxShadow: `0 5px 15px ${colorScheme.glowEffect}`,
-                    '&::before': { opacity: 1 }
-                  },
-                  '&::before': {
-                    content: '""',
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    background: colorScheme.shimmer,
-                    opacity: 0,
-                    transition: 'opacity 0.5s ease',
-                    animation: `${shimmer} 2s infinite`
-                  }
-                }}
-                onClick={() => alert(`Activate ${bundle.name}`)}
-              >
-                Activate
-              </Button>
-            </Box>
-          </Paper>
-        ))}
+          <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 2, overflow: 'hidden', pr: 0 }}>
+            {minuteBundles.map((bundle, index) => (
+              <Paper key={index} sx={{ height: 200, background: colorScheme.cardBg, color: colorScheme.accent, borderRadius: '12px', p: 2, border: `1px solid ${colorScheme.highlight}`, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', transition: 'all 0.3s ease', '&:hover': { background: colorScheme.highlight, transform: 'translateY(-4px)', boxShadow: `0 8px 20px ${colorScheme.glowEffect}` } }}>
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '18px', color: colorScheme.secondaryAccent }}>{bundle.name}</Typography>
+                  <Typography variant="body2" sx={{ color: colorScheme.textSecondary, mt: 0.5 }}>{bundle.validity}</Typography>
+                </Box>
+                <Box>
+                  <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '20px', mb: 1, color: '#27ae60' }}>{bundle.price}</Typography>
+                  <Button
+                    variant="outlined"
+                    fullWidth
+                    sx={{
+                      border: `1px solid ${colorScheme.accent}`,
+                      color: colorScheme.accent,
+                      py: 1,
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      fontSize: isMobile ? '0.9rem' : '1rem',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      backgroundColor: 'transparent',
+                      '&:hover': {
+                        backgroundColor: colorScheme.highlight,
+                        transform: 'translateY(-2px)',
+                        boxShadow: `0 5px 15px ${colorScheme.glowEffect}`,
+                        '&::before': { opacity: 1 }
+                      },
+                      '&::before': {
+                        content: '""',
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        background: colorScheme.glassEffect,
+                        opacity: 0,
+                        transition: 'opacity 0.5s ease',
+                        animation: `${shimmer} 2s infinite`
+                      }
+                    }}
+                    onClick={() => alert(`Buy ${bundle.name}`)}
+                  >
+                    <Typography variant="body2" sx={{ fontWeight: 700, fontSize: '18px', color: colorScheme.accent, textTransform: 'capitalize' }}>Activate</Typography>
+                  </Button>
+                </Box>
+              </Paper>
+            ))}
+          </Box>
+        </Box>
       </Box>
     </Box>
   );

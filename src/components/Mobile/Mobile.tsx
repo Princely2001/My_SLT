@@ -10,7 +10,8 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Divider
+  Divider,
+  Paper
 } from "@mui/material";
 import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
@@ -25,6 +26,9 @@ import { keyframes } from '@emotion/react';
 import GetExtraGbPage from './GetExtraGB'; 
 import Dataaddons from './data_add_ons'; 
 import BroadbandPostPaidPackageUpgrader from './packageupgrade'; 
+import BuyDataBundle from './BuyDataBundle';
+import AddMinutes from './AddMinutes';
+import SmsPackages from './SmsPackages';
 
 // Define interfaces
 interface PostpaidUsageDetails {
@@ -262,16 +266,17 @@ const BroadbandNavbar = ({ navbarItems, onSelected, selected, isMobile }: {
             }
           }}
         >
-          <Typography sx={{ 
+          <Typography variant="body2" sx={{ 
             fontSize: isMobile ? '0.7rem' : '0.8rem',
-            fontWeight: 600,
+            fontWeight: 700,
             mb: 0.25,
             whiteSpace: 'nowrap',
-            lineHeight: 1.2
+            lineHeight: 1.2,
+            color: selected === item.label ? colorScheme.accent : colorScheme.textSecondary
           }}>
             {item.label}
           </Typography>
-          <Typography sx={{ 
+          <Typography variant="body2" sx={{ 
             fontSize: isMobile ? '0.6rem' : '0.7rem',
             color: selected === item.label ? colorScheme.accent : colorScheme.textSecondary,
             fontWeight: 500,
@@ -296,7 +301,10 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   const [showGetExtraGB, setShowGetExtraGB] = useState(false);
   const [showAddons, setShowAddons] = useState(false);
   const [showpackageupgrade, setpackageupgrade] = useState(false);
-  
+  const [showBuyDataBundle, setShowBuyDataBundle] = useState(false);
+  const [showAddMinutes, setShowAddMinutes] = useState(false);
+  const [showSmsPackages, setShowSmsPackages] = useState(false);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
@@ -404,6 +412,24 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
     );
   }
 
+  if (showBuyDataBundle) {
+    return (
+      <BuyDataBundle onBack={() => setShowBuyDataBundle(false)} />
+    );
+  }
+
+  if (showAddMinutes) {
+    return (
+      <AddMinutes onBack={() => setShowAddMinutes(false)} />
+    );
+  }
+
+  if (showSmsPackages) {
+    return (
+      <SmsPackages onBack={() => setShowSmsPackages(false)} />
+    );
+  }
+  
   return (
     <Box sx={{ 
       display: 'flex',
@@ -431,7 +457,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
           borderBottom: `1px solid ${colorScheme.divider}`
         }}>
           {!isTablet && (
-            <Typography variant="h6" sx={{ 
+            <Typography variant="body2" sx={{ 
               color: colorScheme.accent,
               fontWeight: 700,
               fontSize: '1rem',
@@ -453,6 +479,19 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
           {sidebarItems.map((item) => (
             <ListItem key={item.label} disablePadding>
               <ListItemButton
+                onClick={() => {
+                  if (item.label === "Buy Data Bundle") {
+                    setShowBuyDataBundle(true);
+                  }
+
+                  if (item.label === "Add Minutes") {
+                    setShowAddMinutes(true);
+                  }
+
+                  if (item.label === "SMS Packages") {
+                    setShowSmsPackages(true);
+                  }
+                }}
                 sx={{
                   borderRadius: '6px',
                   p: isTablet ? '12px 8px' : '12px 16px',
@@ -464,7 +503,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                   }
                 }}
               >
-                <ListItemIcon sx={{ 
+                <ListItemIcon sx={{
                   minWidth: 'auto',
                   mr: isTablet ? 0 : 2,
                   justifyContent: 'center',
@@ -473,11 +512,12 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                   {item.icon}
                 </ListItemIcon>
                 {!isTablet && (
-                  <ListItemText 
-                    primary={item.label} 
+                  <ListItemText
+                    primary={item.label}
                     primaryTypographyProps={{
+                      variant: 'body2',
                       fontSize: '0.9rem',
-                      fontWeight: item.active ? 600 : 500,
+                      fontWeight: item.active ? 700 : 500,
                       color: item.active ? colorScheme.accent : colorScheme.textPrimary
                     }}
                   />
@@ -486,9 +526,6 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
             </ListItem>
           ))}
         </List>
-
-        {/* Back Button */}
-       
       </Box>
 
       {/* Main Content */}
@@ -539,7 +576,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                 }
               }}
             >
-              Back
+              <Typography variant="body2" sx={{ fontWeight: 700 }}>Back</Typography>
             </Button>
           )}
 
@@ -569,7 +606,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
               mt: 1
             }}>
               {/* Left Panel - Usage Visualization */}
-              <Box sx={{
+              <Paper sx={{
                 flex: 1,
                 width: '10%',
                 display: 'flex',
@@ -579,13 +616,13 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                 p: isMobile ? 1.5 : 2,
                 background: colorScheme.cardBg,
                 borderRadius: '12px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
+                border: `1px solid ${colorScheme.highlight}`,
                 minHeight: sizes.panelHeight,
                 position: 'relative',
                 overflow: 'hidden',
                 transition: 'all 0.3s ease',
                 '&:hover': {
-                  boxShadow: '0 0 20px rgba(0, 120, 212, 0.05)'
+                  boxShadow: `0 0 20px ${colorScheme.glowEffect}`
                 }
               }}>
                 {isLoading ? (
@@ -609,8 +646,8 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                   </Box>
                 ) : selectedPackage?.usageDetails.length > 0 ? (
                   <>
-                    <Typography variant="h6" sx={{ 
-                      fontWeight: 600,
+                    <Typography variant="body2" sx={{ 
+                      fontWeight: 700,
                       textAlign: 'center',
                       color: colorScheme.accent,
                       fontSize: isMobile ? '1rem' : '1.1rem',
@@ -682,14 +719,14 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                       textAlign: 'center',
                       width: '100%'
                     }}>
-                      <Typography variant="h5" sx={{ 
+                      <Typography variant="body2" sx={{ 
                         fontWeight: 700,
                         mb: 1,
                         color: colorScheme.textPrimary,
                         fontSize: isMobile ? '1.25rem' : '1.5rem'
                       }}>
                         {`${selectedPackage.usageDetails[selectedIndex].used} GB`}
-                        <Typography component="span" sx={{ 
+                        <Typography component="span" variant="body2" sx={{ 
                           color: colorScheme.textSecondary,
                           fontSize: '0.6em',
                           ml: 1,
@@ -709,7 +746,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                           background: `linear-gradient(90deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 95, 184, 0.1) 100%)`,
                           fontSize: isMobile ? '0.75rem' : '0.875rem',
                           display: 'inline-block',
-                          border: '1px solid rgba(0, 120, 212, 0.2)',
+                          border: `1px solid ${colorScheme.highlight}`,
                           animation: `${borderGlow} 3s infinite ease-in-out`
                         }}
                       >
@@ -738,13 +775,13 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                       border: '2px dashed rgba(0, 0, 0, 0.1)',
                       animation: `${pulseAnimation} 2s infinite`
                     }}>
-                      <Typography variant="h4" sx={{ 
+                      <Typography variant="body2" sx={{ 
                         opacity: 0.3, 
                         fontSize: '2rem',
                         animation: `${floatAnimation} 3s ease-in-out infinite`
                       }}>∅</Typography>
                     </Box>
-                    <Typography variant="h6" sx={{ 
+                    <Typography variant="body2" sx={{ 
                       fontWeight: 500, 
                       fontSize: '1rem',
                       color: colorScheme.textSecondary,
@@ -754,24 +791,24 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                     </Typography>
                   </Box>
                 )}
-              </Box>
+              </Paper>
 
               {/* Right Panel - Account Details */}
-              <Box sx={{
+              <Paper sx={{
                 width: sizes.rightPanelWidth,
                 display: 'flex',
                 flexDirection: 'column',
                 gap: 1.5,
                 p: isMobile ? 1.5 : 2,
                 background: colorScheme.cardBg,
-                borderRadius: '5px',
-                border: '1px solid rgba(0, 0, 0, 0.08)',
+                borderRadius: '12px',
+                border: `1px solid ${colorScheme.highlight}`,
                 minHeight: sizes.panelHeight,
                 position: 'relative',
                 overflow: 'hidden'
               }}>
-                <Typography variant="h6" sx={{ 
-                  fontWeight: 600, 
+                <Typography variant="body2" sx={{ 
+                  fontWeight: 700, 
                   mb: 1,
                   color: colorScheme.textPrimary,
                   fontSize: isMobile ? '1rem' : '1.1rem',
@@ -823,14 +860,14 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                         }
                       }}
                     >
-                      <Typography variant="body1" sx={{ 
+                      <Typography variant="body2" sx={{ 
                         color: colorScheme.textSecondary,
                         fontSize: isMobile ? '0.75rem' : '0.875rem',
                         pl: 1
                       }}>
                         {item.label}:
                       </Typography>
-                      <Typography variant="body1" sx={{ 
+                      <Typography variant="body2" sx={{ 
                         fontWeight: 500,
                         color: item.highlight ? colorScheme.accent : colorScheme.textPrimary,
                         fontSize: isMobile ? '0.75rem' : '0.875rem',
@@ -864,7 +901,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                       }
                     }}
                   >
-                    Package Upgrade
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>Package Upgrade</Typography>
                   </Button>
                   
                   <Button
@@ -885,7 +922,7 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                       }
                     }}
                   >
-                    Get Extra GB
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>Get Extra GB</Typography>
                   </Button>
                   
                   <Button
@@ -906,10 +943,10 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                       }
                     }}
                   >
-                    Data Add-ons
+                    <Typography variant="body2" sx={{ fontWeight: 700 }}>Data Add-ons</Typography>
                   </Button>
                 </Box>
-              </Box>
+              </Paper>
             </Box>
           </Box>
         </Box>
