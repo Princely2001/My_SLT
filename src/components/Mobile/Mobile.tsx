@@ -29,6 +29,8 @@ import BroadbandPostPaidPackageUpgrader from './packageupgrade';
 import BuyDataBundle from './BuyDataBundle';
 import AddMinutes from './AddMinutes';
 import SmsPackages from './SmsPackages';
+import Reload from './Reload';
+
 
 // Define interfaces
 interface PostpaidUsageDetails {
@@ -304,6 +306,8 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
   const [showBuyDataBundle, setShowBuyDataBundle] = useState(false);
   const [showAddMinutes, setShowAddMinutes] = useState(false);
   const [showSmsPackages, setShowSmsPackages] = useState(false);
+  const [showReload, setShowReload] = useState(false);
+
 
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
@@ -429,6 +433,13 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
       <SmsPackages onBack={() => setShowSmsPackages(false)} />
     );
   }
+
+  if (showReload) {
+    return (
+      <Reload onBack={() => setShowReload(false)} />
+    );
+  }
+  
   
   return (
     <Box sx={{ 
@@ -491,6 +502,11 @@ const DataUsageDetails = ({ onBack }: { onBack: () => void }) => {
                   if (item.label === "SMS Packages") {
                     setShowSmsPackages(true);
                   }
+
+                  if (item.label === "Reload") {
+                    setShowReload(true);
+                  }
+
                 }}
                 sx={{
                   borderRadius: '6px',
