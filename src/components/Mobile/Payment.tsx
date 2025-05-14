@@ -8,68 +8,75 @@ import {
   TextField,
   Button,
   Grid,
-  Card,
-  CardMedia,
-  CardContent,
+  Paper,
   Divider,
-  useTheme,
+  InputAdornment,
   Fade,
-  Grow,
   Slide,
   Zoom,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
 import {
   CheckCircle,
-  Payment as PaymentIcon,
   CreditCard,
   Smartphone,
   Loyalty,
   QrCode,
+  ArrowBack,
 } from "@mui/icons-material";
+import { keyframes } from "@emotion/react";
 
-// Import the images for payment methods
 import visa from "../../assets/Images/MobileImages/visa.png";
 import mcash from "../../assets/Images/MobileImages/mcash.jpeg";
 import rewards from "../../assets/Images/MobileImages/rewards.png";
 import lankaQR from "../../assets/Images/MobileImages/lankaQR.jpg";
 
-// Light theme color scheme
+// Props
+interface PaymentProps {
+  onBack: () => void;
+}
+
+// Shimmer animation
+const shimmer = keyframes`
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+`;
+
+// Color scheme
 const colorScheme = {
-  primaryLight: "#FFFFFF",
-  primaryDark: "#F5F5F7",
-  accent: "#1976D2",
-  secondaryAccent: "#757575",
-  highlight: "rgba(25, 118, 210, 0.1)",
-  textPrimary: "#212121",
-  textSecondary: "#424242",
-  divider: "#E0E0E0",
-  cardBg: "#FFFFFF",
-  buttonGradient: "linear-gradient(135deg, #1976D2 0%, #2196F3 100%)",
-  white: {
-    pure: "#FFFFFF",
-    soft: "#FAFAFA",
-    muted: "rgba(255,255,255,0.9)",
-  },
-  black: {
-    pure: "#000000",
-    muted: "rgba(0,0,0,0.7)",
-  },
-  errorRed: "#D32F2F",
-  successGreen: "#388E3C",
-  pulseStart: "rgba(25, 118, 210, 0.2)",
-  pulseEnd: "rgba(25, 118, 210, 0)",
+  primary: "rgb(255, 255, 255)",
+  primaryLight: "rgb(250, 250, 250)",
+  primaryDark: "rgb(245, 245, 245)",
+  accent: "rgb(0, 120, 212)",
+  secondaryAccent: "rgb(0, 95, 184)",
+  highlight: "rgba(0, 120, 212, 0.1)",
+  textPrimary: "rgba(0, 0, 0, 0.87)",
+  textSecondary: "rgba(0, 0, 0, 0.6)",
+  divider: "rgba(0, 0, 0, 0.12)",
+  cardBg: "rgba(255, 255, 255, 0.9)",
+  buttonGradient:
+    "linear-gradient(135deg, rgba(0, 120, 212, 0.9) 0%, rgba(0, 95, 184, 0.9) 100%)",
+  navbarBg: "rgba(255, 255, 255, 0.95)",
+  glassEffect: "rgba(255, 255, 255, 0.7)",
+  glowEffect: "rgba(0, 120, 212, 0.2)",
+  shadow: "0 2px 10px rgba(0, 0, 0, 0.08)",
 };
 
-const Payment = () => {
+const Payment: React.FC<PaymentProps> = ({ onBack }) => {
   const [selectedNumber, setSelectedNumber] = useState("current");
   const [amount, setAmount] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentSuccess, setPaymentSuccess] = useState(false);
   const [showOtherNumberField, setShowOtherNumberField] = useState(false);
-  const theme = useTheme();
+
+  useEffect(() => {
+    if (selectedNumber === "other") {
+      setShowOtherNumberField(true);
+    } else {
+      const timer = setTimeout(() => setShowOtherNumberField(false), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [selectedNumber]);
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -84,42 +91,19 @@ const Payment = () => {
 
   const handleSubmit = () => {
     if (!amount || !paymentMethod) return;
-
     setIsProcessing(true);
-
-    // Simulate payment processing
     setTimeout(() => {
       setIsProcessing(false);
       setPaymentSuccess(true);
-
-      // Reset after showing success
-      setTimeout(() => {
-        setPaymentSuccess(false);
-      }, 3000);
+      setTimeout(() => setPaymentSuccess(false), 3000);
     }, 2000);
   };
 
-  useEffect(() => {
-    if (selectedNumber === "other") {
-      setShowOtherNumberField(true);
-    } else {
-      const timer = setTimeout(() => setShowOtherNumberField(false), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [selectedNumber]);
-
   const paymentMethodImages: { [key: string]: string } = {
-    visa: visa,
-    mcash: mcash,
-    rewards: rewards,
-    lankaQR: lankaQR,
-  };
-
-  const paymentMethodIcons: { [key: string]: JSX.Element } = {
-    visa: <CreditCard fontSize="small" />,
-    mcash: <Smartphone fontSize="small" />,
-    rewards: <Loyalty fontSize="small" />,
-    lankaQR: <QrCode fontSize="small" />,
+    visa,
+    mcash,
+    rewards,
+    lankaQR,
   };
 
   const paymentMethodLabels: { [key: string]: string } = {
@@ -132,457 +116,248 @@ const Payment = () => {
   return (
     <Box
       sx={{
-        padding: { xs: 2, sm: 3 },
-        maxWidth: "500px",
-        margin: "auto",
-        background: colorScheme.primaryLight,
-        borderRadius: "16px",
-        boxShadow: "0 8px 20px rgba(0, 0, 0, 0.08)",
-        border: `1px solid ${colorScheme.divider}`,
-        position: "relative",
-        overflow: "hidden",
+        display: "flex",
+        width: "100%",
+        minHeight: "440px",
+        height: "100%",
       }}
     >
-      {/* Subtle background pattern */}
       <Box
         sx={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background:
-            "repeating-linear-gradient(45deg, rgba(25, 118, 210, 0.03), rgba(25, 118, 210, 0.03) 10px, transparent 10px, transparent 20px)",
-          opacity: 0.5,
-          zIndex: 0,
-          pointerEvents: "none",
+          flex: 1,
+          p: 3,
+          display: "flex",
+          justifyContent: "center",
+          backgroundColor: colorScheme.primaryDark,
         }}
-      />
-
-      <Box position="relative" zIndex={1}>
-        {/* Payment header with animation */}
-        <Slide direction="down" in={true} mountOnEnter unmountOnExit>
-          <Box sx={{ textAlign: "center", mb: 3 }}>
-            <Typography
-              variant="h5"
+      >
+        <Box
+          sx={{
+            width: "100%",
+            maxWidth: "1300px",
+            backgroundColor: colorScheme.primary,
+            borderRadius: "12px",
+            boxShadow: colorScheme.shadow,
+            overflow: "hidden",
+            padding: 3,
+            position: "relative",
+          }}
+        >
+          {/* Header with Back Button */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              mb: 3,
+              position: "relative",
+            }}
+          >
+            <Button
+              onClick={onBack}
               sx={{
-                color: colorScheme.textPrimary,
-                fontWeight: 700,
-                letterSpacing: "1px",
-                position: "relative",
-                display: "inline-block",
-                "&:after": {
-                  content: '""',
-                  display: "block",
-                  width: "60%",
-                  height: "4px",
-                  background: `linear-gradient(90deg, ${colorScheme.accent}, transparent)`,
-                  margin: "8px auto 0",
-                  borderRadius: "3px",
+                minWidth: "auto",
+                p: 0.5,
+                color: colorScheme.accent,
+                "&:hover": {
+                  backgroundColor: "transparent",
+                  boxShadow: "none",
                 },
               }}
             >
-              PAYMENT GATEWAY
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                color: colorScheme.textSecondary,
-                mt: 1,
-                fontStyle: "italic",
-              }}
-            >
-              Secure and fast payment processing
-            </Typography>
+              <ArrowBack sx={{ fontSize: "1.5rem" }} />
+            </Button>
+            <Box sx={{ flex: 1, textAlign: "center" }}>
+              <Typography
+                variant="body2"
+                sx={{
+                  fontWeight: 700,
+                  fontSize: "24px",
+                  color: colorScheme.accent,
+                }}
+              >
+                Payment Gateway
+              </Typography>
+            </Box>
+            <Box sx={{ width: "40px" }} />
           </Box>
-        </Slide>
 
-        {/* Number selection section */}
-        <Grow in={true} timeout={500}>
-          <Box sx={{ mb: 3 }}>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                marginBottom: 1,
-                color: colorScheme.textPrimary,
-                fontWeight: 600,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <Smartphone fontSize="small" color="primary" /> Select Number
-            </Typography>
-            <RadioGroup
-              row
-              value={selectedNumber}
-              onChange={(e) => setSelectedNumber(e.target.value)}
-              sx={{
-                "& .MuiTypography-root": {
-                  color: colorScheme.textSecondary,
-                  fontSize: "0.9rem",
-                },
-              }}
-            >
-              <FormControlLabel
-                value="current"
-                control={
-                  <Radio
-                    color="primary"
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: colorScheme.highlight,
-                      },
-                    }}
-                  />
-                }
-                label="Current Number"
-              />
-              <FormControlLabel
-                value="other"
-                control={
-                  <Radio
-                    color="primary"
-                    sx={{
-                      "&:hover": {
-                        backgroundColor: colorScheme.highlight,
-                      },
-                    }}
-                  />
-                }
-                label="Other Number"
-              />
-            </RadioGroup>
+          {/* Radio Button Selection */}
+          <RadioGroup
+            row
+            value={selectedNumber}
+            onChange={(e) => setSelectedNumber(e.target.value)}
+          >
+            <FormControlLabel
+              value="current"
+              control={<Radio color="primary" />}
+              label="Current Number"
+            />
+            <FormControlLabel
+              value="other"
+              control={<Radio color="primary" />}
+              label="Other Number"
+            />
+          </RadioGroup>
 
+          {showOtherNumberField && (
             <Slide
               direction="up"
               in={showOtherNumberField}
               mountOnEnter
               unmountOnExit
             >
-              <Box sx={{ mt: 1 }}>
-                <TextField
-                  label="Enter Phone Number"
-                  variant="outlined"
-                  fullWidth
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      "& fieldset": {
-                        borderColor: colorScheme.divider,
-                        transition: "border-color 0.3s ease",
-                      },
-                      "&:hover fieldset": {
-                        borderColor: colorScheme.accent,
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: colorScheme.accent,
-                        boxShadow: `0 0 0 2px ${colorScheme.highlight}`,
-                      },
-                    },
-                    "& .MuiInputLabel-root": {
-                      color: colorScheme.secondaryAccent,
-                    },
-                    "& .MuiInputBase-input": {
-                      color: colorScheme.textPrimary,
-                    },
-                  }}
-                />
-              </Box>
+              <TextField
+                label="Enter Phone Number"
+                variant="outlined"
+                fullWidth
+                sx={{ mt: 2 }}
+              />
             </Slide>
-          </Box>
-        </Grow>
+          )}
 
-        {/* Amount input with pulse animation when focused */}
-        <Grow in={true} timeout={700}>
-          <Box sx={{ mb: 3 }}>
-            <TextField
-              label="Amount (LKR)"
-              variant="outlined"
-              type="text"
-              value={amount}
-              onChange={handleAmountChange}
-              fullWidth
-              sx={{
-                "& .MuiOutlinedInput-root": {
-                  "& fieldset": {
-                    borderColor: colorScheme.divider,
-                  },
-                  "&:hover fieldset": {
-                    borderColor: colorScheme.accent,
-                  },
-                  "&.Mui-focused fieldset": {
-                    borderColor: colorScheme.accent,
-                    animation: "pulse 2s infinite",
-                    "@keyframes pulse": {
-                      "0%": { boxShadow: `0 0 0 0 ${colorScheme.pulseStart}` },
-                      "70%": {
-                        boxShadow: `0 0 0 10px ${colorScheme.pulseEnd}`,
-                      },
-                      "100%": { boxShadow: `0 0 0 0 ${colorScheme.pulseEnd}` },
-                    },
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: colorScheme.secondaryAccent,
-                },
-                "& .MuiInputBase-input": {
-                  color: colorScheme.textPrimary,
-                  fontSize: "1.2rem",
-                  fontWeight: 500,
-                },
-              }}
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Typography
-                      sx={{
-                        color: colorScheme.textSecondary,
-                        fontWeight: 500,
-                      }}
-                    >
-                      Rs.
-                    </Typography>
-                  </InputAdornment>
-                ),
-              }}
-            />
-          </Box>
-        </Grow>
+          {/* Amount Input */}
+          <TextField
+            label="Amount (LKR)"
+            variant="outlined"
+            type="text"
+            value={amount}
+            onChange={handleAmountChange}
+            fullWidth
+            sx={{ mt: 3 }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Typography
+                    sx={{ color: colorScheme.textSecondary, fontWeight: 500 }}
+                  >
+                    Rs.
+                  </Typography>
+                </InputAdornment>
+              ),
+            }}
+          />
 
-        <Divider
-          sx={{
-            borderColor: colorScheme.divider,
-            my: 2,
-            borderBottomWidth: "1px",
-          }}
-        />
+          <Divider sx={{ my: 3 }} />
 
-        {/* Payment method selection with staggered animations */}
-        <Box sx={{ mb: 2 }}>
+          {/* Payment Method Grid */}
           <Typography
             variant="subtitle1"
-            sx={{
-              marginBottom: 2,
-              color: colorScheme.textPrimary,
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              gap: 1,
-            }}
+            sx={{ fontWeight: 600, mb: 2, color: colorScheme.textPrimary }}
           >
-            <PaymentIcon fontSize="small" color="primary" /> Select Payment
-            Method
+            Select Payment Method
           </Typography>
           <Grid container spacing={2}>
-            {["visa", "mcash", "rewards", "lankaQR"].map((method, index) => (
-              <Grid item xs={6} key={method}>
-                <Grow in={true} timeout={800 + index * 200}>
-                  <Card
+            {Object.keys(paymentMethodImages).map((method) => (
+              <Grid item xs={6} sm={3} key={method}>
+                <Paper
+                  onClick={() => handlePaymentMethodChange(method)}
+                  sx={{
+                    height: 200,
+                    background: colorScheme.cardBg,
+                    color: colorScheme.accent,
+                    borderRadius: "12px",
+                    p: 2,
+                    border: `1px solid ${colorScheme.highlight}`,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    transition: "all 0.3s ease",
+                    cursor: "pointer",
+                    "&:hover": {
+                      background: colorScheme.highlight,
+                      transform: "translateY(-4px)",
+                      boxShadow: `0 8px 20px ${colorScheme.glowEffect}`,
+                    },
+                  }}
+                >
+                  <img
+                    src={paymentMethodImages[method]}
+                    alt={method}
+                    style={{ height: 50, marginBottom: 8 }}
+                  />
+                  <Typography
+                    variant="body2"
                     sx={{
-                      cursor: "pointer",
-                      background: colorScheme.cardBg,
-                      border:
-                        method === paymentMethod
-                          ? `2px solid ${colorScheme.accent}`
-                          : `1px solid ${colorScheme.divider}`,
-                      borderRadius: "12px",
-                      transition: "all 0.3s ease",
-                      transform:
-                        method === paymentMethod ? "translateY(-5px)" : "none",
-                      boxShadow:
-                        method === paymentMethod
-                          ? `0 5px 15px ${colorScheme.highlight}`
-                          : "0 2px 8px rgba(0,0,0,0.05)",
-                      "&:hover": {
-                        transform: "translateY(-5px)",
-                        boxShadow: `0 5px 15px ${colorScheme.highlight}`,
-                        borderColor: colorScheme.accent,
-                      },
+                      fontWeight: 600,
+                      color: colorScheme.textPrimary,
+                      textAlign: "center",
                     }}
-                    onClick={() => handlePaymentMethodChange(method)}
                   >
-                    <Box
-                      sx={{
-                        position: "relative",
-                        height: 60,
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        sx={{
-                          height: method === "lankaQR" ? 50 : 40,
-                          objectFit: "contain",
-                          width: "auto",
-                          padding: method === "lankaQR" ? "5px" : "0",
-                          transition: "transform 0.3s ease",
-                          transform:
-                            method === paymentMethod
-                              ? "scale(1.1)"
-                              : "scale(1)",
-                        }}
-                        image={paymentMethodImages[method]}
-                        alt={method}
-                      />
-                      {method === paymentMethod && (
-                        <Box
-                          sx={{
-                            position: "absolute",
-                            top: 4,
-                            right: 4,
-                            width: 16,
-                            height: 16,
-                            borderRadius: "50%",
-                            bgcolor: colorScheme.accent,
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            boxShadow: `0 0 8px ${colorScheme.highlight}`,
-                          }}
-                        >
-                          <CheckCircle
-                            sx={{ color: colorScheme.white.pure, fontSize: 16 }}
-                          />
-                        </Box>
-                      )}
-                    </Box>
-                    <CardContent sx={{ padding: "8px 16px 16px !important" }}>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          color:
-                            method === paymentMethod
-                              ? colorScheme.accent
-                              : colorScheme.textPrimary,
-                          textAlign: "center",
-                          fontWeight: 500,
-                          fontSize: "0.8rem",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          gap: "4px",
-                        }}
-                      >
-                        {paymentMethodIcons[method]}{" "}
-                        {paymentMethodLabels[method]}
-                      </Typography>
-                    </CardContent>
-                  </Card>
-                </Grow>
+                    {paymentMethodLabels[method]}
+                  </Typography>
+                </Paper>
               </Grid>
             ))}
           </Grid>
-        </Box>
 
-        {/* Pay Now Button with loading and success states */}
-        <Box sx={{ mt: 3, position: "relative" }}>
-          <Zoom in={!paymentSuccess} timeout={300}>
-            <Button
-              variant="contained"
-              fullWidth
-              onClick={handleSubmit}
-              disabled={!amount || !paymentMethod || isProcessing}
-              sx={{
-                padding: "14px",
-                borderRadius: "10px",
-                background: colorScheme.buttonGradient,
-                color: colorScheme.white.pure,
-                fontWeight: 700,
-                fontSize: "1rem",
-                letterSpacing: "1px",
-                textTransform: "uppercase",
-                boxShadow: "0 4px 20px rgba(25, 118, 210, 0.2)",
-                transition: "all 0.3s ease",
-                position: "relative",
-                overflow: "hidden",
-                "&:hover": {
-                  opacity: 0.9,
-                  boxShadow: `0 0 20px ${colorScheme.highlight}`,
-                  transform: "translateY(-2px)",
-                },
-                "&:disabled": {
-                  background: colorScheme.divider,
-                  color: colorScheme.textSecondary,
-                  boxShadow: "none",
-                },
-                "&:after": {
-                  content: '""',
+          {/* Submit Button */}
+          <Box sx={{ mt: 4, position: "relative" }}>
+            <Zoom in={!paymentSuccess} timeout={300}>
+              <Button
+                variant="outlined"
+                fullWidth
+                onClick={handleSubmit}
+                disabled={!amount || !paymentMethod || isProcessing}
+                sx={{
+                  border: `1px solid ${colorScheme.accent}`,
+                  color: colorScheme.accent,
+                  py: 1,
+                  borderRadius: "8px",
+                  fontWeight: 600,
+                  fontSize: "1rem",
+                  position: "relative",
+                  overflow: "hidden",
+                  backgroundColor: "transparent",
+                  "&:hover": {
+                    backgroundColor: colorScheme.highlight,
+                    transform: "translateY(-2px)",
+                    boxShadow: `0 5px 15px ${colorScheme.glowEffect}`,
+                    "&::before": { opacity: 1 },
+                  },
+                  "&::before": {
+                    content: '""',
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                    background: colorScheme.glassEffect,
+                    opacity: 0,
+                    transition: "opacity 0.5s ease",
+                    animation: `${shimmer} 2s infinite`,
+                  },
+                }}
+              >
+                {isProcessing ? "Processing..." : "Pay Now"}
+              </Button>
+            </Zoom>
+
+            <Fade in={paymentSuccess} timeout={500}>
+              <Box
+                sx={{
                   position: "absolute",
                   top: 0,
                   left: 0,
-                  width: isProcessing ? "100%" : "0%",
-                  height: "100%",
-                  background: "rgba(255,255,255,0.3)",
-                  transition: isProcessing ? "none" : "width 0.3s ease",
-                  animation: isProcessing ? "shimmer 2s infinite" : "none",
-                  "@keyframes shimmer": {
-                    "0%": { transform: "translateX(-100%)" },
-                    "100%": { transform: "translateX(100%)" },
-                  },
-                },
-              }}
-            >
-              {isProcessing ? "Processing..." : "Pay Now"}
-            </Button>
-          </Zoom>
-
-          {/* Success message */}
-          <Fade in={paymentSuccess} timeout={500}>
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                background: colorScheme.successGreen,
-                borderRadius: "10px",
-                color: colorScheme.white.pure,
-                fontWeight: 700,
-                fontSize: "1rem",
-                letterSpacing: "1px",
-                textTransform: "uppercase",
-                boxShadow: `0 0 20px rgba(56, 142, 60, 0.3)`,
-              }}
-            >
-              <CheckCircle sx={{ mr: 1 }} /> Payment Successful!
-            </Box>
-          </Fade>
+                  right: 0,
+                  bottom: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  background: "#27ae60",
+                  borderRadius: "10px",
+                  color: "#fff",
+                  fontWeight: 700,
+                  fontSize: "1rem",
+                  letterSpacing: "1px",
+                }}
+              >
+                <CheckCircle sx={{ mr: 1 }} /> Payment Successful!
+              </Box>
+            </Fade>
+          </Box>
         </Box>
-
-        {/* Security footer */}
-        <Fade in={true} timeout={1000}>
-          <Typography
-            variant="caption"
-            sx={{
-              display: "block",
-              textAlign: "center",
-              color: colorScheme.textSecondary,
-              mt: 3,
-              fontSize: "0.7rem",
-              letterSpacing: "0.5px",
-            }}
-          >
-            <Box
-              component="span"
-              sx={{ borderBottom: `1px dashed ${colorScheme.textSecondary}` }}
-            >
-              Secure SSL Encryption
-            </Box>
-            {" • "}
-            <Box
-              component="span"
-              sx={{ borderBottom: `1px dashed ${colorScheme.textSecondary}` }}
-            >
-              PCI Compliant
-            </Box>
-          </Typography>
-        </Fade>
       </Box>
     </Box>
   );
