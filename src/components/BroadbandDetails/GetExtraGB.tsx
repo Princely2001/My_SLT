@@ -152,7 +152,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           CustEmail: storedEmail,
           ContactNumber:selectedTelephone,
           subscriberID: serviceID,
-          prepaidID:serviceID,
+          prepaidID:"EGB",
           reciever:  serviceID,
           packageId: selectedPlan.packageId,
           channel: "SLTPRE",
