@@ -57,8 +57,8 @@ const MenuLeft: React.FC = () => {
 
   useEffect(() => {
     if (isPrepaid && selectedNavbarItem === "Broadband") {
-      setSelectedItem("Main Packages");
-      setLeftMenuItem("Main Packages");
+      setSelectedItem("");
+      setLeftMenuItem("Summary");  
     } else if (!isPrepaid && selectedNavbarItem === "Broadband") {
       setSelectedItem("Summary");
       setLeftMenuItem("Summary");
@@ -71,7 +71,6 @@ const MenuLeft: React.FC = () => {
     }
     
   }, [isPrepaid]);
-
   useEffect(() => {
     setSelectedItem(selectedLeftMenuItem);
   }, [selectedLeftMenuItem]);
