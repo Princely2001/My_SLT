@@ -27,11 +27,11 @@ const CircularProgressBar = ({ percentage }: CircularProgressBarProps) => {
         series={[
           {
             data: [
-              { id: 0, value, label: "Used", color: "#40E734" }, // Used color for the filled portion
+              { id: 0, value, label: "Remaining", color: "#40E734" }, // Used color for the filled portion
               {
                 id: 1,
                 value: remainingValue,
-                label: "Remaining",
+                label: "Used",
                 color: "#EAEAEA",
               }, // Remaining portion color
             ],
