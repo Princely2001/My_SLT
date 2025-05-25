@@ -18,17 +18,13 @@ import useStore from "../../services/useAppStore";
 import { BroadbandPrepaidAddOnPackageDetails } from "../../types/types";
 
 const BroadbandPrepaidAddOnPackages: React.FC = () => {
-  const { selectedTelephone,setLeftMenuItem,setPackageListUpdate } = useStore();
-  const [packages, setPackages] = useState<
-    BroadbandPrepaidAddOnPackageDetails[]
-  >([]);
+  const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } = useStore();
+  const [packages, setPackages] = useState<BroadbandPrepaidAddOnPackageDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedPackageIndex, setSelectedPackageIndex] = useState<
-    number | null
-  >(null);
+  const [selectedPackageIndex, setSelectedPackageIndex] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -56,10 +52,12 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
   };
 
   const handleConfirmActivation = async () => {
+    if (selectedPackageIndex === null) return;
+    
     const telephoneNo = selectedTelephone.toString();
-    const offeringId = packages[selectedPackageIndex!]?.OFFERING_ID;
-    const pkgName = packages[selectedPackageIndex!]?.OFFERING_NAME;
-    await addBroadbandPackage(telephoneNo,offeringId,pkgName);
+    const offeringId = packages[selectedPackageIndex]?.OFFERING_ID;
+    const pkgName = packages[selectedPackageIndex]?.OFFERING_NAME;
+    await addBroadbandPackage(telephoneNo, offeringId, pkgName);
     setPackageListUpdate();
     setDialogOpen(false);
     setLeftMenuItem("Data Add-Ons");
@@ -95,11 +93,34 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
   };
 
   if (loading) {
-    return <CircularProgress />;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
   }
 
   if (error) {
-    console.log(error);
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          color: "error.main",
+        }}
+      >
+        <Typography variant="h6">{error}</Typography>
+      </Box>
+    );
   }
 
   return (
@@ -261,17 +282,17 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
       </Box>
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle>
-        <Typography variant="body2" fontSize={23}>
-          Confirm Activation
+          <Typography variant="body2" fontSize={23}>
+            Confirm Activation
           </Typography>
-          </DialogTitle>
+        </DialogTitle>
         <DialogContent>
           <DialogContentText>
-          <Typography variant="body2">
-            Are you sure you want to activate the{" "}
-            {selectedPackageIndex !== null &&
-              packages[selectedPackageIndex]?.ADDON_NAME}{" "}
-            package?
+            <Typography variant="body2">
+              Are you sure you want to activate the{" "}
+              {selectedPackageIndex !== null &&
+                packages[selectedPackageIndex]?.ADDON_NAME}{" "}
+              package?
             </Typography>
           </DialogContentText>
         </DialogContent>

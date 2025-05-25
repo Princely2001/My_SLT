@@ -1,18 +1,17 @@
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import React, { useEffect, useState } from "react";
-import { parseTime } from "../services/helperFunctions"; // Adjust the import path as needed
-import fetchBillingDetails from "../services/postpaid/fetchBillingDetails"; // Import your billing fetch function
+import { parseTime } from "../services/helperFunctions";
+import fetchBillingDetails from "../services/postpaid/fetchBillingDetails";
 import fetchWalletDetail from "../services/prepaid/fetchWalletDetails";
 import useStore from "../services/useAppStore";
 
 const AccountBalance: React.FC = () => {
   const { serviceDetails, selectedTelephone, setLeftMenuItem } = useStore();
   const [amount, setAmount] = useState("");
-  const [expireTime, setExpireTime] = useState(""); // State for expire time
-  const [billingAmount, setBillingAmount] = useState<string | null>(null); // State for billing amount
-  const isPrepaid =
-    serviceDetails?.promotionType === "Prepaid"
+  const [expireTime, setExpireTime] = useState("");
+  const [billingAmount, setBillingAmount] = useState<string | null>(null);
+  const isPrepaid = serviceDetails?.promotionType === "Prepaid";
 
   useEffect(() => {
     const fetchData = async () => {
@@ -26,8 +25,8 @@ const AccountBalance: React.FC = () => {
       setAmount(formattedAmount);
 
       // Set expire time
-      const walletExpireTime = walletDetails?.expireTime; // This can be undefined
-      const formattedTime = walletExpireTime ? parseTime(walletExpireTime) : null; // Only call parseTime if walletExpireTime is defined
+      const walletExpireTime = walletDetails?.expireTime;
+      const formattedTime = walletExpireTime ? parseTime(walletExpireTime) : null;
       const formattedExpireDate = formattedTime
         ? formattedTime.toLocaleDateString("en-GB", {
             year: "numeric",
@@ -40,16 +39,34 @@ const AccountBalance: React.FC = () => {
 
       // Fetch billing details
       if (selectedTelephone && serviceDetails?.accountNo) {
-        const billingInquiry = await fetchBillingDetails(selectedTelephone, serviceDetails.accountNo);
+        const billingInquiry = await fetchBillingDetails(
+          selectedTelephone,
+          serviceDetails.accountNo
+        );
         if (billingInquiry && billingInquiry.length > 0) {
-          // Set billing amount
-          setBillingAmount(billingInquiry[0].billAmount); // Ensure billAmount is part of your BillingInquiry type
+          // Format billing amount with thousand separators
+          const billAmount = parseFloat(billingInquiry[0].billAmount || "0");
+          const formattedBillAmount = billAmount.toLocaleString("en-US", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          });
+          setBillingAmount(formattedBillAmount);
         }
       }
     };
 
     fetchData();
   }, [selectedTelephone, serviceDetails]);
+
+  // Function to format amount with thousand separators
+  const formatAmount = (value: string) => {
+    if (!value) return "0.00";
+    const num = parseFloat(value.replace(/,/g, ''));
+    return num.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
 
   return (
     <Box
@@ -92,7 +109,7 @@ const AccountBalance: React.FC = () => {
         variant="body2"
         sx={{ color: "#0056A2", fontSize: 25, fontWeight: "900" }}
       >
-        Rs.{isPrepaid ? amount : billingAmount || "0.00"}
+        Rs. {isPrepaid ? amount : billingAmount ? formatAmount(billingAmount) : "0.00"}
       </Typography>
 
       <Button

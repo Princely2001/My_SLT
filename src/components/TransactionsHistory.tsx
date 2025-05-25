@@ -8,210 +8,353 @@ import {
   TableHead,
   TableRow,
   Typography,
+  CircularProgress,
+  Alert,
+  TextField,
+  Button,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import fetchTransactionHistory from "../services/prepaid/fetchTransactionHistory";
 import { parseTime } from "../services/helperFunctions";
 import { Transaction } from "../types/types";
+import useStore from "../services/useAppStore";
 
 interface TransactionsHistoryProps {
-serviceId: string;
+  serviceId: string;
 }
 
 const formatTxnDate = (timestamp: string): string => {
-const date = parseTime(timestamp);
-return date ? date.toISOString().slice(0, 10) : ""; // Format as YYYY-MM-DD
+  const date = parseTime(timestamp);
+  return date ? date.toLocaleDateString() : "";
 };
 
 const formatTxnTime = (timestamp: string): string => {
-const date = parseTime(timestamp);
-return date ? date.toISOString().slice(11, 19) : ""; // Format as HH:MM:SS
+  const date = parseTime(timestamp);
+  return date ? date.toLocaleTimeString() : "";
 };
 
 const TransactionsHistory: React.FC<TransactionsHistoryProps> = ({ serviceId }) => { 
-const [transactions, setTransactions] = useState<Transaction[]>([]);
-const [error, setError] = useState<string | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { serviceDetails } = useStore();
+  const subscriberID = serviceDetails?.listofBBService[0]?.serviceID;
 
-const toDate = new Date();
-const fromDate = new Date(toDate);
-fromDate.setMonth(fromDate.getMonth() - 1);
+  // Initialize date range state (last month to today)
+  const initialToDate = new Date();
+  const initialFromDate = new Date(initialToDate);
+  initialFromDate.setMonth(initialFromDate.getMonth() - 1);
 
-const formatDate = (date: Date) => {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}${month}${day}`;
-};
+  const [fromDate, setFromDate] = useState<string>(
+    initialFromDate.toISOString().slice(0, 10)
+  );
+  const [toDate, setToDate] = useState<string>(
+    initialToDate.toISOString().slice(0, 10)
+  );
 
-const formattedFromDate = formatDate(fromDate);
-const formattedToDate = formatDate(toDate);
+  const formatDateForApi = (dateString: string) => {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}${month}${day}`;
+  };
 
-useEffect(() => {
-  const fetchTransactions = async () => {
+  const fetchTransactions = async (fromDateStr: string, toDateStr: string) => {
     try {
+      setLoading(true);
+      setError(null);
+      
       const data: Transaction[] | null = await fetchTransactionHistory(
         serviceId,
-        formattedFromDate,
-        formattedToDate
+        formatDateForApi(fromDateStr),
+        formatDateForApi(toDateStr)
       );
+      
       if (data) {
-        const sortedTransactions = data.sort((a, b) => b.txnTime.localeCompare(a.txnTime));
+        const sortedTransactions = [...data].sort((a, b) => 
+          b.txnTime.localeCompare(a.txnTime)
+        );
         setTransactions(sortedTransactions);
-        setError(null);
       } else {
-        setError("Failed to fetch transaction history or data not found.");
+        setError("No transaction history found for this period.");
       }
     } catch (fetchError) {
-      setError(`An error occurred while fetching transaction history.${fetchError} `);
+      setError("Failed to load transaction history. Please try again later.");
+      console.error("Transaction history error:", fetchError);
+    } finally {
+      setLoading(false);
     }
   };
 
-  fetchTransactions();
-}, [serviceId, formattedFromDate, formattedToDate]);
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Validate date range
+    const fromDateObj = new Date(fromDate);
+    const toDateObj = new Date(toDate);
+    
+    if (fromDateObj > toDateObj) {
+      setError("From date cannot be after to date");
+      return;
+    }
+    
+    fetchTransactions(fromDate, toDate);
+  };
 
-return (
-  <Box
-    sx={{
-      display: "flex",
-      gap: 1,
-      flexDirection: "column",
-      alignItems: "center",
-      backgroundColor: "#FFFFFF",
-      color: "#FFFFFF1A",
-      padding: 1.5,
-      borderRadius: "10px",
-      height: "100%",
-      boxShadow: "0px 3px 3px #0000004A",
-      overflow: "hidden",
-    }}
-  >
-    <Box sx={{ padding: 1, width: "100%" }}>
-      <Typography
-        variant="body2"
-        align="center"
-        sx={{ fontSize:23, fontWeight: "bold", color: "#0056A2", marginBottom: 2 }}
-      >
-        ── Transactions History ──
-      </Typography>
+  // Load initial data on mount
+  useEffect(() => {
+    fetchTransactions(fromDate, toDate);
+  }, [subscriberID]);
 
-      {error ? (
-        <Typography color="error" align="center" sx={{ marginY: 2 }}>
-          {error}
-        </Typography>
-      ) : (
-        <TableContainer
-          component={Paper}
-          sx={{
-            borderRadius: 2,
-            overflow: "auto",
-            maxHeight: 335,
-            paddingRight: 0.5,
-            "&::-webkit-scrollbar": {
-              width: "8px",
-              height: "8px",
-            },
-            "&::-webkit-scrollbar-track": {
-              backgroundColor: "#f1f1f1",
-              borderRadius: "10px",
-            },
-            "&::-webkit-scrollbar-thumb": {
-              backgroundColor: "#0D67A6",
-              borderRadius: "10px",
-            },
-            "&::-webkit-scrollbar-thumb:hover": {
-              backgroundColor: "#0056A2",
-            },
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        padding: 2,
+        borderRadius: "10px",
+        height: "100%",
+        boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.29)",
+        overflow: "hidden",
+      }}
+    >
+      <Box sx={{ width: "100%" }}>
+        <Typography
+          variant="h6"
+          align="center"
+          sx={{ 
+            fontWeight: "bold", 
+            color: "#0056A2", 
+            mb: 2,
+            "&:before, &:after": {
+              content: '"──"',
+              mx: 1,
+              color: "rgba(0, 86, 162, 0.5)"
+            }
           }}
         >
-          <Table>
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "#0056A2" }}>
-                <TableCell
-                  sx={{
-                    color: "#FFFFFF",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  Date
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#FFFFFF",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  Time
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#FFFFFF",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  Status
-                </TableCell>
-                <TableCell
-                  sx={{
-                    color: "#FFFFFF",
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
-                >
-                  Reload Amount
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {transactions.map((transaction) => (
-                <TableRow
-                  key={transaction.id}
-                  sx={{
-                    backgroundColor: "#0D67A6",
-                    borderRadius: 2,
-                    marginY: 1,
-                  }}
-                >
+          Transactions History
+        </Typography>
+
+        {/* Date range form */}
+       <Box sx={{ 
+  display: "flex", 
+  alignItems: "center", 
+  gap: 2, 
+  p: 2, 
+  borderRadius: "10px", 
+  backgroundColor: "#B3EDFF8A", 
+  width: "95%", 
+  mb: 2 
+}}>
+  <Box sx={{ display: "flex", alignItems: "center", gap: 2, flex: 1 }}>
+    <Box sx={{ minWidth: "140px" }}>
+      <Typography variant="body2" sx={{ 
+        fontSize: "14px", 
+        fontWeight: 700, 
+        color: "#0056A2", 
+        mb: 0.5 
+      }}>
+        From:
+      </Typography>
+      <TextField
+        type="date"
+        value={fromDate}
+        onChange={(e) => setFromDate(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+        size="small"
+        fullWidth
+        sx={{ 
+          "& .MuiOutlinedInput-root": { 
+            borderRadius: "8px", 
+            backgroundColor: "white" 
+          } 
+        }}
+      />
+    </Box>
+
+    <Box sx={{ minWidth: "140px" }}>
+      <Typography variant="body2" sx={{ 
+        fontSize: "14px", 
+        fontWeight: 700, 
+        color: "#0056A2", 
+        mb: 0.5 
+      }}>
+        To:
+      </Typography>
+      <TextField
+        type="date"
+        value={toDate}
+        onChange={(e) => setToDate(e.target.value)}
+        InputLabelProps={{ shrink: true }}
+        size="small"
+        fullWidth
+        sx={{ 
+          "& .MuiOutlinedInput-root": { 
+            borderRadius: "8px", 
+            backgroundColor: "white" 
+          } 
+        }}
+      />
+    </Box>
+  </Box>
+
+  <Button 
+    variant="contained" 
+    onClick={handleSubmit}
+    disabled={loading}
+    sx={{ 
+      minWidth: "120px", 
+      height: "40px", 
+      backgroundColor: "#0056A2", 
+      color: "white", 
+      borderRadius: "8px", 
+      "&:hover": { 
+        backgroundColor: "#004b8c" 
+      },
+      "&:disabled": {
+        backgroundColor: "#cccccc",
+        color: "#666666"
+      }
+    }}
+  >
+    <Typography variant="body2" sx={{ 
+      fontSize: "16px", 
+      fontWeight: 600, 
+      textTransform: "none" 
+    }}>
+      {loading ? "Searching..." : "Search"}
+    </Typography>
+  </Button>
+</Box>
+
+        {loading ? (
+          <Box display="flex" justifyContent="center" py={4}>
+            <CircularProgress color="primary" />
+          </Box>
+        ) : error ? (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        ) : transactions.length === 0 ? (
+          <Alert severity="info" sx={{ mb: 2 }}>
+            No transactions found for the selected period
+          </Alert>
+        ) : (
+          <TableContainer
+            component={Paper}
+            sx={{
+              borderRadius: 2,
+              overflow: "auto",
+              maxHeight: 400,
+              "&::-webkit-scrollbar": {
+                width: 8,
+                height: 8,
+              },
+              "&::-webkit-scrollbar-track": {
+                backgroundColor: "#f1f1f1",
+              },
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#0D67A6",
+                borderRadius: 1,
+                "&:hover": {
+                  backgroundColor: "#0056A2",
+                },
+              },
+            }}
+          >
+            <Table stickyHeader aria-label="transaction history table">
+              <TableHead>
+                <TableRow>
                   <TableCell
+                    align="center"
                     sx={{
+                      backgroundColor: "#0056A2",
                       color: "#FFFFFF",
-                      textAlign: "center",
-                      whiteSpace: "pre-line",
-                    }}
-                  >
-                    {formatTxnDate(transaction.txnTime)}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: "#FFFFFF",
-                      textAlign: "center",
-                    }}
-                  >
-                    {formatTxnTime(transaction.txnTime)}
-                  </TableCell>
-                  <TableCell sx={{ color: "#FFFFFF", textAlign: "center" }}>
-                    {transaction.statusCode === "1001" ? "Recharge Success" : "Recharge Failed"}
-                  </TableCell>
-                  <TableCell
-                    sx={{
-                      color: "#FFFFFF",
-                      textAlign: "center",
                       fontWeight: "bold",
                     }}
                   >
-                    Rs. {transaction.txnAmount}
+                    Date
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      backgroundColor: "#0056A2",
+                      color: "#FFFFFF",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Time
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      backgroundColor: "#0056A2",
+                      color: "#FFFFFF",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Status
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      backgroundColor: "#0056A2",
+                      color: "#FFFFFF",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    Amount
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+              </TableHead>
+              <TableBody>
+                {transactions.map((transaction) => (
+                  <TableRow
+                    key={transaction.id}
+                    hover
+                    sx={{
+                      "&:nth-of-type(even)": { backgroundColor: "#f5f9fd" },
+                      "&:last-child td": { borderBottom: 0 },
+                    }}
+                  >
+                    <TableCell align="center">
+                      {formatTxnDate(transaction.txnTime)}
+                    </TableCell>
+                    <TableCell align="center">
+                      {formatTxnTime(transaction.txnTime)}
+                    </TableCell>
+                    <TableCell 
+                      align="center"
+                      sx={{
+                        color: transaction.statusCode === "1001" 
+                          ? "success.main" 
+                          : "error.main",
+                        fontWeight: "medium"
+                      }}
+                    >
+                      {transaction.statusCode === "1001" 
+                        ? "Success" 
+                        : "Failed"}
+                    </TableCell>
+                    <TableCell 
+                      align="center"
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      Rs. {transaction.txnAmount.toLocaleString()}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Box>
     </Box>
-  </Box>
-);
+  );
 };
 
 export default TransactionsHistory;

@@ -503,33 +503,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
       </Box>
 
       {/* Result Dialog */}
-      <Dialog open={openDialog} onClose={handleDialogClose}>
-        <DialogTitle sx={{ 
-          color: errorMessage ? "error.main" : "success.main",
-          fontWeight: "bold"
-        }}>
-          {errorMessage ? "Error" : "Success"}
-        </DialogTitle>
-        <DialogContent>
-          <Typography>
-            {errorMessage || successMessage}
-          </Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button 
-            onClick={handleDialogClose} 
-            sx={{ 
-              color: "#0056A2", 
-              fontWeight: "bold",
-              "&:hover": {
-                backgroundColor: "rgba(0, 86, 162, 0.1)"
-              }
-            }}
-          >
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
+     
     </Box>
   );
 };
