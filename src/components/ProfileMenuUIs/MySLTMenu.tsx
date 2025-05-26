@@ -1,10 +1,9 @@
-import { Avatar, Box, MenuItem, Typography, Select, FormControl, InputLabel } from "@mui/material";
+import { Avatar, Box, MenuItem, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useStore from "../../services/useAppStore";
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import LanguageIcon from "@mui/icons-material/Language";
 
-// Declare global for Google Translate
 declare global {
   interface Window {
     googleTranslateElementInit: () => void;
@@ -19,29 +18,23 @@ interface MySLTMenuProps {
 const MySLTMenu = ({ onMenuClick }: MySLTMenuProps) => {
   const { selectedTelephone, setLeftMenuItem } = useStore();
   const navigate = useNavigate();
-  const [language, setLanguage] = useState('en');
+  const translateElementRef = useRef<HTMLDivElement>(null);
+  const scriptLoadedRef = useRef(false);
 
-  // Initialize Google Translate
   useEffect(() => {
-    const addGoogleTranslateScript = () => {
-      const script = document.createElement("script");
-      script.src = "//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
-      script.async = true;
-      document.body.appendChild(script);
-
-      window.googleTranslateElementInit = () => {
+    const initializeGoogleTranslate = () => {
+      if (window.google && window.google.translate && translateElementRef.current) {
         new window.google.translate.TranslateElement(
           {
             pageLanguage: "en",
             includedLanguages: "si,ta,en",
             layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false,
-            gaTrack: false,
           },
           "google_translate_element"
         );
-        
-        // Custom styling for Google Translate
+
+        // Add styles for Google Translate
         const style = document.createElement('style');
         style.innerHTML = `
           .goog-te-gadget {
@@ -56,33 +49,73 @@ const MySLTMenu = ({ onMenuClick }: MySLTMenuProps) => {
             color: #333;
             font-size: 14px;
             width: 100%;
+            cursor: pointer;
           }
           .goog-te-gadget-simple {
             background: transparent !important;
             border: none !important;
+            padding: 0 !important;
+          }
+          .goog-te-menu-value {
+            display: none !important;
           }
           .goog-te-menu-value span {
             display: none !important;
           }
-          .goog-te-menu-value:before {
-            content: "🌐 Language" !important;
-            color: #333 !important;
+          .goog-te-banner-frame {
+            display: none !important;
+          }
+          .skiptranslate {
+            display: none !important;
+          }
+          body {
+            top: 0 !important;
+          }
+          .goog-te-combo {
+            margin: 0 !important;
           }
         `;
         document.head.appendChild(style);
-      };
+      }
+    };
+
+    const loadGoogleTranslateScript = () => {
+      if (scriptLoadedRef.current) return;
+      scriptLoadedRef.current = true;
+
+      const script = document.createElement("script");
+      script.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      script.async = true;
+      document.body.appendChild(script);
+
+      window.googleTranslateElementInit = initializeGoogleTranslate;
     };
 
     if (!window.google?.translate) {
-      addGoogleTranslateScript();
+      loadGoogleTranslateScript();
     } else {
-      window.googleTranslateElementInit();
+      initializeGoogleTranslate();
     }
+
+    return () => {
+      // Clean up Google Translate elements when component unmounts
+      const googleBanner = document.querySelector('.goog-te-banner-frame');
+      if (googleBanner) {
+        googleBanner.remove();
+      }
+      const googleTranslatedElements = document.querySelectorAll('.goog-te-gadget');
+      googleTranslatedElements.forEach(el => el.remove());
+    };
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("accessToken");
     navigate("/login");
+  };
+
+  const handleMenuClick = (menuItem: string) => {
+    setLeftMenuItem(menuItem);
+    onMenuClick();
   };
 
   return (
@@ -95,6 +128,8 @@ const MySLTMenu = ({ onMenuClick }: MySLTMenuProps) => {
         overflow: "hidden",
         boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
         margin: "0 auto",
+        position: "relative",
+        zIndex: 1300,
       }}
     >
       {/* Header Section */}
@@ -116,26 +151,13 @@ const MySLTMenu = ({ onMenuClick }: MySLTMenuProps) => {
         </Box>
       </Box>
 
-      {/* Language Selector - Always Visible */}
-      <Box sx={{ 
-        padding: "8px 16px",
-        borderBottom: "1px solid #f0f0f0",
-        display: "flex",
-        alignItems: "center"
-      }}>
-        <LanguageIcon sx={{ color: "#005792", mr: 1 }} />
-        <Box sx={{ flexGrow: 1 }}>
-          <div id="google_translate_element" style={{ width: '100%' }}></div>
-        </Box>
-      </Box>
+      {/* Language Selector */}
+     
 
       {/* Menu Items */}
-      <Box sx={{ padding: "8px" }}>
+      <Box sx={{ padding: "8px", position: "relative", zIndex: 1 }}>
         <MenuItem
-          onClick={() => {
-            setLeftMenuItem("My Profile");
-            onMenuClick();
-          }}
+          onClick={() => handleMenuClick("My Profile")}
           sx={{
             padding: "12px",
             borderRadius: "4px",
@@ -146,10 +168,7 @@ const MySLTMenu = ({ onMenuClick }: MySLTMenuProps) => {
           <Typography variant="body2">My Profile</Typography>
         </MenuItem>
         <MenuItem
-          onClick={() => {
-            setLeftMenuItem("Manage Connections");
-            onMenuClick();
-          }}
+          onClick={() => handleMenuClick("Manage Connections")}
           sx={{
             padding: "12px",
             borderRadius: "4px",
