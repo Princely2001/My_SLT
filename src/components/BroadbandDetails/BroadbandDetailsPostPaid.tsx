@@ -85,7 +85,7 @@ const ActionButton = ({
 );
 
 const BroadbandDetailsPostPaid = () => {
-  const { selectedTelephone,setLeftMenuItem } = useStore();
+  const { selectedTelephone, setLeftMenuItem, serviceDetails } = useStore();
   const [serviceData, setServiceData] =
     useState<ServiceDetailsAPIResponse | null>(null);
   const [usageDetails, setUsageDetails] = useState<{
@@ -106,6 +106,7 @@ const BroadbandDetailsPostPaid = () => {
     serviceData?.listofBBService[0]?.serviceStatus || "Loading...";
   const packageName =
     serviceData?.listofBBService[0]?.packageName || "Loading...";
+  const isPrepaid = serviceDetails?.promotionType === "Prepaid" || serviceDetails?.promotionType === null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -193,6 +194,7 @@ const BroadbandDetailsPostPaid = () => {
       setSelectedPackage(usageDetails?.freeDataDetails || null);
     }
   }, [selectedItem, usageDetails]);
+
   return (
     <Box
       sx={{
@@ -208,18 +210,16 @@ const BroadbandDetailsPostPaid = () => {
         boxShadow: "0px 3px 3px #0000004A",
       }}
     >
-      {
-        <BroadbandNavbar
-          navbarItems={navbarItems}
-          onSelected={setSelectedItem}
-          type="Summary"
-          selected="My Package"
-        />
-      }
+      <BroadbandNavbar
+        navbarItems={navbarItems}
+        onSelected={setSelectedItem}
+        type="Summary"
+        selected="My Package"
+      />
 
       <Box sx={{ height: "100%", display: "flex", justifyContent: "end" }}>
         {loading ? (
-          <Box //this box
+          <Box
             sx={{
               width: "90%",
               maxWidth: "400px",
@@ -238,7 +238,7 @@ const BroadbandDetailsPostPaid = () => {
             <CircularProgress />
           </Box>
         ) : (
-          <Box //this box
+          <Box
             sx={{
               width: "90%",
               maxWidth: "400px",
@@ -388,27 +388,49 @@ const BroadbandDetailsPostPaid = () => {
             <CustomSection label="Username" value={serviceID} />
           </Box>
 
-          <ActionButton
-            text="Package Upgrade"
-            variant="outlined"
-            onClick={() => {
-              setLeftMenuItem("PostPaidPackageUpgrade");
-            }}
-          />
-          <ActionButton
-            text="Get Extra GB"
-            variant="contained"
-            onClick={() => {
-              setLeftMenuItem("GetExtraGB");
-            }}
-          />
-          <ActionButton
-            text="Get Data Add-ons"
-            variant="contained"
-            onClick={() => {
-              setLeftMenuItem("GetPostpaidAddOnPackages");
-            }}
-          />
+          {isPrepaid ? (
+            <>
+              <ActionButton
+                text="Get Main Package"
+                variant="contained"
+                onClick={() => {
+                  setLeftMenuItem("GetBroadbandMainPackage");
+                }}
+              />
+              <ActionButton
+                text="Get Data Add-ons"
+                variant="contained"
+                onClick={() => {
+                  setLeftMenuItem("GetBroadbandAddOnPackage");
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <ActionButton
+                text="Package Upgrade"
+                variant="outlined"
+                onClick={() => {
+                  setLeftMenuItem("PostPaidPackageUpgrade");
+                }}
+              />
+              <ActionButton
+                text="Get Extra GB"
+                variant="contained"
+                onClick={() => {
+                  setLeftMenuItem("GetExtraGB");
+                }}
+              />
+              <ActionButton
+                text="Get Data Add-ons"
+                variant="contained"
+                onClick={() => {
+                  setLeftMenuItem("GetPostpaidAddOnPackages");
+                }}
+              />
+            </>
+          )}
+
           <Box
             sx={{ position: "absolute", zIndex: 1, right: "1%", bottom: "1%" }}
           >

@@ -133,7 +133,7 @@ const BroadbandPostPaidGetAddOns = () => {
 
     if (correctedPackage) {
       try {
-        const result = await purchaseAddons(correctedPackage.id,subscriberID);
+        const result = await purchaseAddons(correctedPackage.id,subscriberID,correctedPackage.name);
         console.log("Package fetched successfully:", result);
       } catch (error) {
         console.error("Error fetching package:", error);

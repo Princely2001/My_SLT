@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -36,6 +36,45 @@ const SocialMediaLoginInner = () => {
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [googleUser, setGoogleUser] = useState<any>(null);
   const navigate = useNavigate();
+
+  // Load Google Translate script
+  useEffect(() => {
+    const addGoogleTranslateScript = () => {
+      const script = document.createElement('script');
+      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      script.async = true;
+      document.body.appendChild(script);
+
+      // @ts-ignore
+      window.googleTranslateElementInit = () => {
+        // @ts-ignore
+        new window.google.translate.TranslateElement(
+          {
+            pageLanguage: 'en',
+            includedLanguages: 'en,si,ta', // English, Sinhala, Tamil
+            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+          },
+          'google_translate_element'
+        );
+      };
+    };
+
+    addGoogleTranslateScript();
+
+    return () => {
+      // Cleanup function
+      const script = document.querySelector('script[src*="translate.google.com"]');
+      if (script) {
+        document.body.removeChild(script);
+      }
+      // @ts-ignore
+      if (window.googleTranslateElementInit) {
+        // @ts-ignore
+        delete window.googleTranslateElementInit;
+      }
+    };
+  }, []);
 
   // Google Login Handler
   const loginWithGoogle = useGoogleLogin({
@@ -94,51 +133,87 @@ const SocialMediaLoginInner = () => {
         Or sign in with
       </Typography>
 
-      <Box sx={{ display: "flex", alignItems: "center", gap: 2, position: "relative" }}>
-        {/* Google Login */}
-        <Box
-          component="img"
-          src={GoogleLogo}
-          alt="Google Login"
-          onClick={() => loginWithGoogle()}
-          sx={{
-            width: 37,
-            height: 37,
-            cursor: "pointer",
-            borderRadius: "50%",
-            transition: "0.3s",
-            "&:hover": { transform: "scale(1.1)" },
-          }}
-        />
+      <Box sx={{ 
+        display: "flex", 
+        alignItems: "center", 
+        gap: 2, 
+        position: "relative",
+        width: "100%",
+        justifyContent: "center"
+      }}>
+        {/* Social Media Buttons */}
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          {/* Google Login */}
+          <Box
+            component="img"
+            src={GoogleLogo}
+            alt="Google Login"
+            onClick={() => loginWithGoogle()}
+            sx={{
+              width: 37,
+              height: 37,
+              cursor: "pointer",
+              borderRadius: "50%",
+              transition: "0.3s",
+              "&:hover": { transform: "scale(1.1)" },
+            }}
+          />
 
-        {/* Facebook Login */}
-        <FacebookLogin
-          appId="515088714636776"
-          onSuccess={handleFacebookSuccess}
-          onFail={handleFacebookFailure}
-          onProfileSuccess={handleFacebookProfile}
-          useRedirect={false}
-          render={({ onClick }) => (
-            <Box
-              component="img"
-              src={FacebookLogo}
-              alt="Facebook Login"
-              onClick={(e) => {
-                e.preventDefault();
-                setIsFacebookLoading(true);
-                onClick();
-              }}
-              sx={{
-                width: 37,
-                height: 37,
-                cursor: "pointer",
-                borderRadius: "50%",
-                opacity: isFacebookLoading ? 0.6 : 1,
-                transition: "0.3s",
-                "&:hover": { transform: "scale(1.1)" },
-              }}
-            />
-          )}
+          {/* Facebook Login */}
+          <FacebookLogin
+            appId="515088714636776"
+            onSuccess={handleFacebookSuccess}
+            onFail={handleFacebookFailure}
+            onProfileSuccess={handleFacebookProfile}
+            useRedirect={false}
+            render={({ onClick }) => (
+              <Box
+                component="img"
+                src={FacebookLogo}
+                alt="Facebook Login"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsFacebookLoading(true);
+                  onClick();
+                }}
+                sx={{
+                  width: 37,
+                  height: 37,
+                  cursor: "pointer",
+                  borderRadius: "50%",
+                  opacity: isFacebookLoading ? 0.6 : 1,
+                  transition: "0.3s",
+                  "&:hover": { transform: "scale(1.1)" },
+                }}
+              />
+            )}
+          />
+        </Box>
+
+        {/* Google Translate Button - English, Sinhala, Tamil only */}
+        <Box 
+          id="google_translate_element" 
+          sx={{ 
+            ml: 2,
+            '& .goog-te-combo': {
+              padding: '5px 10px',
+              borderRadius: '4px',
+              border: '1px solid #ddd',
+              backgroundColor: '#f8f8f8',
+              cursor: 'pointer',
+              fontSize: '14px',
+              '&:hover': {
+                backgroundColor: '#e8e8e8'
+              }
+            },
+            '& .goog-te-menu-value span': {
+              display: 'none' // Hide the default "Select Language" text
+            },
+            '& .goog-te-menu-value:before': {
+              content: '"🌐"', // Add a globe icon
+              marginRight: '5px'
+            }
+          }} 
         />
 
         {/* Loading Indicator */}

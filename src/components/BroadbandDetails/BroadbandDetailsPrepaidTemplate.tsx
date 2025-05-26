@@ -85,18 +85,31 @@ const BroadbandDetailsPrepaidTemplate = ({
   dataBalance,
   isMain,
 }: BroadbandDetailsPrepaidTemplateProps) => {
+  console.log("Component rendering with props:", { dataBalance, isMain });
+  
   const { setLeftMenuItem, selectedTelephone } = useStore();
-  const [serviceDetails, setServiceDetails] =
-    useState<ServiceDetailsAPIResponse | null>(null);
+  console.log("Store values:", { selectedTelephone });
+
+  const [serviceDetails, setServiceDetails] = useState<ServiceDetailsAPIResponse | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
+    console.log("useEffect triggered for selectedTelephone:", selectedTelephone);
     if (selectedTelephone) {
+      console.log("Fetching service details for telephone:", selectedTelephone);
       const fetchDetails = async () => {
-        const details = await fetchServiceDetailByTelephone(selectedTelephone);
-        setServiceDetails(details);
+        try {
+          const details = await fetchServiceDetailByTelephone(selectedTelephone);
+          console.log("Service details fetched:", details);
+          setServiceDetails(details);
+        } catch (error) {
+          console.error("Error fetching service details:", error);
+          setServiceDetails(null);
+        }
       };
       fetchDetails();
+    } else {
+      console.log("No selected telephone, skipping service details fetch");
     }
   }, [selectedTelephone]);
 
@@ -106,6 +119,7 @@ const BroadbandDetailsPrepaidTemplate = ({
           parseFloat(dataBalance[selectedIndex]?.initialAmount)) *
         100
       : 0;
+  console.log("Percentage calculation:", { percentage, selectedIndex });
 
   const initialAmount =
     dataBalance.length > 0
@@ -128,6 +142,25 @@ const BroadbandDetailsPrepaidTemplate = ({
     serviceDetails?.listofBBService[0]?.serviceID || "Loading...";
   const serviceStatus =
     serviceDetails?.listofBBService[0]?.serviceStatus || "Loading...";
+
+  console.log("Derived values:", {
+    initialAmount,
+    currentAmount,
+    expireTime,
+    formattedExpireTime,
+    serviceID,
+    serviceStatus
+  });
+
+  const handlePackageChange = (newIndex: number) => {
+    console.log("Changing package from", selectedIndex, "to", newIndex);
+    setSelectedIndex(newIndex);
+  };
+
+  const handleNavigation = (menuItem: string) => {
+    console.log("Navigating to:", menuItem);
+    setLeftMenuItem(menuItem);
+  };
 
   return (
     <Box
@@ -189,7 +222,7 @@ const BroadbandDetailsPrepaidTemplate = ({
                   }}
                   onClick={() => {
                     if (selectedIndex > 0) {
-                      setSelectedIndex(selectedIndex - 1);
+                      handlePackageChange(selectedIndex - 1);
                     }
                   }}
                 />
@@ -203,7 +236,7 @@ const BroadbandDetailsPrepaidTemplate = ({
                 >
                   {dataBalance.map((item, index) => (
                     <Box
-                    id = {item.packageName}
+                      id={item.packageName}
                       key={index}
                       sx={{
                         minWidth: "100%",
@@ -225,7 +258,7 @@ const BroadbandDetailsPrepaidTemplate = ({
                   }}
                   onClick={() => {
                     if (selectedIndex < dataBalance.length - 1) {
-                      setSelectedIndex(selectedIndex + 1);
+                      handlePackageChange(selectedIndex + 1);
                     }
                   }}
                 />
@@ -315,23 +348,19 @@ const BroadbandDetailsPrepaidTemplate = ({
               {isMain ? "Main Package" : "Data Add-ons"}
             </Typography>
           </Box>
-          <ActionButton
-            text="Data Usage"
-            variant="outlined"
-            onClick={() => {}}
-          />
+         
           <ActionButton
             text="Get Main Package"
             variant="contained"
             onClick={() => {
-              setLeftMenuItem("GetBroadbandMainPackage");
+              handleNavigation("GetBroadbandMainPackage");
             }}
           />
           <ActionButton
             text="Get Data Add-ons"
             variant="contained"
             onClick={() => {
-              setLeftMenuItem("GetBroadbandAddOnPackage");
+              handleNavigation("GetBroadbandAddOnPackage");
             }}
           />
           <Box

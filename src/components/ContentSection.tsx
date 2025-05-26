@@ -42,6 +42,7 @@ import DisableDetailedReport from "./BroadbandDetails/DisableDetailedReport";
 import Box from "@mui/material/Box";
 import VideoOnDemand from "./PeoTV/VideoOnDemand";
 import fetchPurchaseHistory from "../services/postpaid/fetchhistorydetails";
+import BroadbandDetailsPrepaidSummary from "./BroadbandDetails/BroadbandDetailsPrepaidSummary";
 
 import History from "./DataAddonHistory";
 
@@ -197,6 +198,7 @@ const ContentSection = () => {
 
 
         {/*Prepaid*/}
+        
         {selectedLeftMenuItem === "Main Packages" && (
           <BroadbandDetailsPrePaid dataBalance={mainData} />
         )}
