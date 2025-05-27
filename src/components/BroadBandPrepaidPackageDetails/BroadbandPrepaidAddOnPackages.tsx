@@ -18,21 +18,26 @@ import addBroadbandPackage from "../../services/prepaid/addBroadbandPackage";
 import { fetchLTEPrepaidAddOnPackages } from "../../services/prepaid/fetchLTEPrepaidAddOnPackages";
 import useStore from "../../services/useAppStore";
 import { BroadbandPrepaidAddOnPackageDetails } from "../../types/types";
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const BroadbandPrepaidAddOnPackages: React.FC = () => {
   const theme = useTheme();
-  const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } = useStore();
-  const [packages, setPackages] = useState<BroadbandPrepaidAddOnPackageDetails[]>([]);
+  const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } =
+    useStore();
+  const [packages, setPackages] = useState<
+    BroadbandPrepaidAddOnPackageDetails[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeDot, setActiveDot] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedPackageIndex, setSelectedPackageIndex] = useState<number | null>(null);
+  const [selectedPackageIndex, setSelectedPackageIndex] = useState<
+    number | null
+  >(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Calculate how many cards are visible at once
@@ -65,9 +70,9 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
     const handleScroll = () => {
       // Calculate which card is currently most visible
       const cardWidth = container.scrollWidth / packages.length;
-      const scrollPosition = container.scrollLeft + (container.clientWidth / 2);
+      const scrollPosition = container.scrollLeft + container.clientWidth / 2;
       const newActiveDot = Math.floor(scrollPosition / cardWidth);
-      
+
       if (newActiveDot >= 0 && newActiveDot < packages.length) {
         setActiveDot(newActiveDot);
       }
@@ -79,16 +84,17 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
       );
     };
 
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
+    container.addEventListener("scroll", handleScroll);
+    return () => container.removeEventListener("scroll", handleScroll);
   }, [packages]);
 
   const scrollToDot = (index: number) => {
     if (scrollContainerRef.current) {
-      const cardWidth = scrollContainerRef.current.scrollWidth / packages.length;
+      const cardWidth =
+        scrollContainerRef.current.scrollWidth / packages.length;
       scrollContainerRef.current.scrollTo({
         left: index * cardWidth,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -120,7 +126,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
 
   const handleConfirmActivation = async () => {
     if (selectedPackageIndex === null) return;
-    
+
     const telephoneNo = selectedTelephone.toString();
     const offeringId = packages[selectedPackageIndex]?.OFFERING_ID;
     const pkgName = packages[selectedPackageIndex]?.OFFERING_NAME;
@@ -132,15 +138,26 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
 
   if (loading) {
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-        <CircularProgress sx={{ color: '#3076B2' }} size={60} thickness={4} />
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <CircularProgress sx={{ color: "#3076B2" }} size={60} thickness={4} />
       </Box>
     );
   }
 
   if (error) {
     return (
-      <Typography variant="h6" color="error" sx={{ textAlign: 'center', mt: 4 }}>
+      <Typography
+        variant="h6"
+        color="error"
+        sx={{ textAlign: "center", mt: 4 }}
+      >
         {error}
       </Typography>
     );
@@ -158,7 +175,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
         height: "100%",
         boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.1)",
         overflow: "hidden",
-        position: 'relative'
+        position: "relative",
       }}
     >
       {/* Back Button */}
@@ -166,52 +183,54 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
         startIcon={<ArrowBackIcon />}
         onClick={handleBackToMain}
         sx={{
-          alignSelf: 'flex-start',
+          alignSelf: "flex-start",
           mb: 2,
-          color: '#0056A2',
+          color: "#0056A2",
           fontWeight: 600,
-          fontSize: '1rem',
-          '&:hover': {
-            backgroundColor: 'rgba(0, 86, 162, 0.05)',
-            transform: 'translateX(-4px)'
+          fontSize: "1rem",
+          "&:hover": {
+            backgroundColor: "rgba(0, 86, 162, 0.05)",
+            transform: "translateX(-4px)",
           },
-          transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
-          padding: '8px 16px',
-          borderRadius: '8px'
+          transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
+          padding: "8px 16px",
+          borderRadius: "8px",
         }}
       >
         Back to Data Add-Ons
       </Button>
 
       {/* Cards Container with Navigation Arrows */}
-      <Box sx={{ 
-        display: 'flex', 
-        alignItems: 'center', 
-        width: '100%',
-        position: 'relative',
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          width: "100%",
+          position: "relative",
+        }}
+      >
         {/* Left Arrow */}
         {showLeftArrow && (
           <IconButton
             onClick={scrollLeft}
             sx={{
-              position: 'absolute',
+              position: "absolute",
               left: 10,
               zIndex: 2,
-              backgroundColor: 'white',
-              color: '#0056A2',
+              backgroundColor: "white",
+              color: "#0056A2",
               width: 48,
               height: 48,
-              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                background: 'linear-gradient(90deg, #3076B2 0%, #0056A2 100%)',
-                color: 'white',
-                transform: 'scale(1.1)'
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                background: "linear-gradient(90deg, #3076B2 0%, #0056A2 100%)",
+                color: "white",
+                transform: "scale(1.1)",
               },
-              '&:active': {
-                transform: 'scale(0.95)'
-              }
+              "&:active": {
+                transform: "scale(0.95)",
+              },
             }}
           >
             <ChevronLeftIcon fontSize="large" />
@@ -230,7 +249,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
             scrollbarWidth: "none",
             "&::-webkit-scrollbar": { display: "none" },
             "-ms-overflow-style": "none",
-            scrollBehavior: 'smooth'
+            scrollBehavior: "smooth",
           }}
         >
           {packages.map((pkg, index) => (
@@ -242,18 +261,24 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                 color: "white",
                 borderRadius: "12px",
                 transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
-                boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
                 "&:hover": {
                   backgroundColor: "#0056A2",
                   transform: "scale(1.05)",
                   marginLeft: "12px",
                   marginRight: "12px",
-                  boxShadow: '0px 8px 16px rgba(0, 86, 162, 0.3)'
+                  boxShadow: "0px 8px 16px rgba(0, 86, 162, 0.3)",
                 },
               }}
             >
-              <CardContent sx={{ padding: '20px' }}>
-                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <CardContent sx={{ padding: "20px" }}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                  }}
+                >
                   <Typography
                     variant="h6"
                     sx={{
@@ -261,8 +286,8 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                       textAlign: "center",
                       fontWeight: "bold",
                       fontSize: "1.2rem",
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px'
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
                     }}
                   >
                     {pkg.ADDON_NAME}
@@ -275,22 +300,22 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                       border: "3px solid white",
                       padding: 2,
                       borderRadius: 3,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      background: 'rgba(255, 255, 255, 0.1)',
-                      transition: 'all 0.3s ease',
+                      justifyContent: "center",
+                      alignItems: "center",
+                      background: "rgba(255, 255, 255, 0.1)",
+                      transition: "all 0.3s ease",
                       "&:hover": {
-                        background: 'rgba(255, 255, 255, 0.2)',
-                        transform: 'scale(1.05)'
+                        background: "rgba(255, 255, 255, 0.2)",
+                        transform: "scale(1.05)",
                       },
                     }}
                   >
                     <Typography
-                      sx={{ 
-                        margin: "auto", 
+                      sx={{
+                        margin: "auto",
                         fontSize: "2.2rem",
-                        fontWeight: 'bold',
-                        lineHeight: 1
+                        fontWeight: "bold",
+                        lineHeight: 1,
                       }}
                       variant="body2"
                     >
@@ -300,26 +325,29 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
 
                   <Typography
                     variant="h5"
-                    sx={{ 
-                      mt: 2, 
+                    sx={{
+                      mt: 2,
                       fontWeight: "bold",
-                      fontSize: "1.8rem"
+                      fontSize: "1.8rem",
                     }}
                   >
                     Rs.{pkg.PRICE_LKR_WITH_TAX} /-
                   </Typography>
-                  <Typography variant="body2" sx={{ mb: 1, fontWeight: "bold", opacity: 0.9 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ mb: 1, fontWeight: "bold", opacity: 0.9 }}
+                  >
                     (With Tax)
                   </Typography>
 
-                  <Typography 
-                    variant="body1" 
-                    sx={{ 
+                  <Typography
+                    variant="body1"
+                    sx={{
                       mb: 2,
-                      fontWeight: '500',
-                      '& strong': {
-                        color: '#FFD700'
-                      }
+                      fontWeight: "500",
+                      "& strong": {
+                        color: "#FFD700",
+                      },
                     }}
                   >
                     Validity: <strong>{pkg.VALIDITY} Days</strong>
@@ -329,25 +357,27 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                     variant="contained"
                     sx={{
                       mt: 1,
-                      background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
+                      background:
+                        "linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)",
                       color: "white",
                       borderRadius: "8px",
                       width: "70%",
                       padding: "12px",
                       fontSize: "1.1rem",
-                      fontWeight: 'bold',
-                      textTransform: 'uppercase',
-                      letterSpacing: '0.5px',
-                      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
-                      transition: 'all 0.3s ease',
+                      fontWeight: "bold",
+                      textTransform: "uppercase",
+                      letterSpacing: "0.5px",
+                      boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+                      transition: "all 0.3s ease",
                       "&:hover": {
-                        background: 'linear-gradient(135deg, #43A047 0%, #1B5E20 100%)',
+                        background:
+                          "linear-gradient(135deg, #43A047 0%, #1B5E20 100%)",
                         transform: "translateY(-3px)",
-                        boxShadow: '0px 6px 12px rgba(0, 0, 0, 0.3)'
+                        boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
                       },
                       "&:active": {
-                        transform: "translateY(0)"
-                      }
+                        transform: "translateY(0)",
+                      },
                     }}
                     onClick={() => handleButtonPress(index)}
                   >
@@ -364,23 +394,23 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
           <IconButton
             onClick={scrollRight}
             sx={{
-              position: 'absolute',
+              position: "absolute",
               right: 10,
               zIndex: 2,
-              backgroundColor: 'white',
-              color: '#0056A2',
+              backgroundColor: "white",
+              color: "#0056A2",
               width: 48,
               height: 48,
-              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
-              transition: 'all 0.3s ease',
-              '&:hover': {
-                background: 'linear-gradient(90deg, #3076B2 0%, #0056A2 100%)',
-                color: 'white',
-                transform: 'scale(1.1)'
+              boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.15)",
+              transition: "all 0.3s ease",
+              "&:hover": {
+                background: "linear-gradient(90deg, #3076B2 0%, #0056A2 100%)",
+                color: "white",
+                transform: "scale(1.1)",
               },
-              '&:active': {
-                transform: 'scale(0.95)'
-              }
+              "&:active": {
+                transform: "scale(0.95)",
+              },
             }}
           >
             <ChevronRightIcon fontSize="large" />
@@ -389,34 +419,36 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
       </Box>
 
       {/* Interactive Pagination Dots */}
-      <Box sx={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        mt: 3,
-        gap: 1
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          mt: 3,
+          gap: 1,
+        }}
+      >
         {packages.map((_, index) => (
           <IconButton
             key={index}
             onClick={() => scrollToDot(index)}
             sx={{
               p: 0,
-              '&:hover': {
-                transform: 'scale(1.3)'
+              "&:hover": {
+                transform: "scale(1.3)",
               },
-              transition: 'transform 0.2s'
+              transition: "transform 0.2s",
             }}
           >
             <Box
               sx={{
                 width: index === activeDot ? 12 : 8,
                 height: index === activeDot ? 12 : 8,
-                borderRadius: '50%',
-                bgcolor: index === activeDot ? '#0056A2' : '#E0E0E0',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  bgcolor: index === activeDot ? '#003D7A' : '#BDBDBD',
-                }
+                borderRadius: "50%",
+                bgcolor: index === activeDot ? "#0056A2" : "#E0E0E0",
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  bgcolor: index === activeDot ? "#003D7A" : "#BDBDBD",
+                },
               }}
             />
           </IconButton>
@@ -424,75 +456,95 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
       </Box>
 
       {/* Enhanced Confirmation Dialog */}
-      <Dialog 
-        open={dialogOpen} 
+      <Dialog
+        open={dialogOpen}
         onClose={() => setDialogOpen(false)}
         PaperProps={{
           sx: {
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: '0px 8px 24px rgba(0, 86, 162, 0.2)',
-            maxWidth: '450px',
-            width: '100%'
-          }
+            borderRadius: "16px",
+            overflow: "hidden",
+            boxShadow: "0px 8px 24px rgba(0, 86, 162, 0.2)",
+            maxWidth: "450px",
+            width: "100%",
+          },
         }}
       >
-        <DialogTitle sx={{ 
-          background: 'linear-gradient(90deg, #3076B2 0%, #0056A2 100%)',
-          color: 'white',
-          padding: '20px 24px',
-          textAlign: 'center'
-        }}>
+        <DialogTitle
+          sx={{
+            background: "linear-gradient(90deg, #3076B2 0%, #0056A2 100%)",
+            color: "white",
+            padding: "20px 24px",
+            textAlign: "center",
+          }}
+        >
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
             Confirm Package Activation
           </Typography>
         </DialogTitle>
-        <DialogContent sx={{ padding: '24px' }}>
-          <Box sx={{ textAlign: 'center', mb: 2 }}>
-            <Typography variant="body1" sx={{ fontSize: '1.1rem', color: '#333' }}>
+        <DialogContent sx={{ padding: "24px" }}>
+          <Box sx={{ textAlign: "center", mb: 2 }}>
+            <Typography
+              variant="body1"
+              sx={{ fontSize: "1.1rem", color: "#333" }}
+            >
               You're about to activate:
             </Typography>
-            <Typography 
-              variant="h6" 
-              sx={{ 
+            <Typography
+              variant="h6"
+              sx={{
                 mt: 1,
-                color: '#0056A2',
+                color: "#0056A2",
                 fontWeight: 700,
-                fontSize: '1.3rem'
+                fontSize: "1.3rem",
               }}
             >
-              {selectedPackageIndex !== null && packages[selectedPackageIndex]?.ADDON_NAME}
+              {selectedPackageIndex !== null &&
+                packages[selectedPackageIndex]?.ADDON_NAME}
             </Typography>
           </Box>
-          <Box sx={{ 
-            background: '#F5F9FF',
-            borderRadius: '8px',
-            padding: '16px',
-            mt: 2
-          }}>
-            <Typography variant="body2" sx={{ color: '#555', textAlign: 'center' }}>
-              <strong>Details:</strong> {selectedPackageIndex !== null && packages[selectedPackageIndex]?.DATA_VOLUME_GB}GB | 
-              Rs.{selectedPackageIndex !== null && packages[selectedPackageIndex]?.PRICE_LKR_WITH_TAX} | 
-              {selectedPackageIndex !== null && packages[selectedPackageIndex]?.VALIDITY} Days
+          <Box
+            sx={{
+              background: "#F5F9FF",
+              borderRadius: "8px",
+              padding: "16px",
+              mt: 2,
+            }}
+          >
+            <Typography
+              variant="body2"
+              sx={{ color: "#555", textAlign: "center" }}
+            >
+              <strong>Details:</strong>{" "}
+              {selectedPackageIndex !== null &&
+                packages[selectedPackageIndex]?.DATA_VOLUME_GB}
+              GB | Rs.
+              {selectedPackageIndex !== null &&
+                packages[selectedPackageIndex]?.PRICE_LKR_WITH_TAX}{" "}
+              |
+              {selectedPackageIndex !== null &&
+                packages[selectedPackageIndex]?.VALIDITY}{" "}
+              Days
             </Typography>
           </Box>
         </DialogContent>
-        <DialogActions sx={{ 
-          padding: '16px 24px',
-          justifyContent: 'space-between'
-        }}>
+        <DialogActions
+          sx={{
+            padding: "16px 24px",
+            justifyContent: "space-between",
+          }}
+        >
           <Button
             variant="outlined"
             sx={{
-              borderColor: '#0056A2',
-              color: '#0056A2',
+              borderColor: "#0056A2",
+              color: "#0056A2",
               borderRadius: "8px",
-              padding: '8px 24px',
+              padding: "8px 24px",
               fontWeight: 600,
-              '&:hover': {
-                backgroundColor: 'rgba(0, 86, 162, 0.08)',
-                borderColor: '#004494'
-              }
+              "&:hover": {
+                backgroundColor: "rgba(0, 86, 162, 0.08)",
+                borderColor: "#004494",
+              },
             }}
             onClick={() => setDialogOpen(false)}
           >
@@ -501,16 +553,16 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
           <Button
             variant="contained"
             sx={{
-              background: 'linear-gradient(90deg, #3076B2 0%, #0056A2 100%)',
+              background: "linear-gradient(90deg, #3076B2 0%, #0056A2 100%)",
               color: "white",
               borderRadius: "8px",
-              padding: '8px 24px',
+              padding: "8px 24px",
               fontWeight: 600,
-              boxShadow: 'none',
-              '&:hover': {
-                background: 'linear-gradient(90deg, #004494 0%, #002D62 100%)',
-                boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.2)'
-              }
+              boxShadow: "none",
+              "&:hover": {
+                background: "linear-gradient(90deg, #004494 0%, #002D62 100%)",
+                boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.2)",
+              },
             }}
             onClick={handleConfirmActivation}
             autoFocus
