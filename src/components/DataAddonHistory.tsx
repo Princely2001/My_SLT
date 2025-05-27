@@ -24,39 +24,32 @@ const PurchaseHistoryComponent: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState<number>(0);
   const [showTable, setShowTable] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
+  
+  // Single shared date range state for all tabs
+  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({
+    from: new Date(new Date().setDate(new Date().getDate() - 30)), // Default to last 30 days
+    to: new Date()
+  });
 
   const { serviceDetails } = useStore();
   const subscriberID = serviceDetails?.listofBBService[0]?.serviceID;
   const today = new Date();
 
-  const [dateRanges, setDateRanges] = useState<{
-    [key: string]: { from: Date | null; to: Date | null };
-  }>({
-    all: { from: new Date(), to: new Date() },
-    "extra gb": { from: new Date(), to: new Date() },
-    "add-on": { from: new Date(), to: new Date() },
-  });
-
-  const handleDateChange = useCallback(
-    (field: "from" | "to", date: Date | null) => {
-      const tabKey = ["all", "extra gb", "add-on"][selectedTab];
-      setDateRanges((prev) => ({
-        ...prev,
-        [tabKey]: {
-          ...prev[tabKey],
-          [field]: date,
-        },
-      }));
-      setShowTable(false);
-    },
-    [selectedTab]
-  );
+  const handleDateChange = useCallback((field: "from" | "to", date: Date | null) => {
+    setDateRange(prev => ({
+      ...prev,
+      [field]: date
+    }));
+    setShowTable(false);
+  }, []);
 
   const handleSearch = async () => {
-    const tabKey = ["all", "extra gb", "add-on"][selectedTab];
-    const { from, to } = dateRanges[tabKey];
+    const { from, to } = dateRange;
 
-    if (!from || !to) return;
+    if (!from || !to) {
+      setError("Please select both date ranges");
+      return;
+    }
     if (!subscriberID) {
       setError("Subscriber ID not found.");
       return;
@@ -76,10 +69,10 @@ const PurchaseHistoryComponent: React.FC = () => {
       
       const data = await fetchPurchaseHistory(subscriberID, formattedFrom, formattedTo);
       setAllPurchaseHistory(data && data.length > 0 ? data : []);
-      
       setShowTable(true);
-    } catch {
+    } catch (err) {
       setError("Failed to fetch purchase history. Please try again.");
+      console.error("Error fetching purchase history:", err);
     } finally {
       setLoading(false);
     }
@@ -88,14 +81,15 @@ const PurchaseHistoryComponent: React.FC = () => {
   const filterByTab = (data: DataBundle[] | null, tab: number): DataBundle[] => {
     if (!data) return [];
     switch (tab) {
-      case 1: // Extra GB tab - strict filtering
+      case 1: // Extra GB tab
         return data.filter((item) => {
           const lowerType = item.vasType?.toLowerCase() || '';
           const lowerPackage = item.vasPackage?.toLowerCase() || '';
           return (
-            (lowerType === "extra gb" || 
-            lowerPackage.includes("extra gb") ||
-            lowerPackage.includes("extragb")) &&
+            (lowerType.includes("extra") || 
+            lowerPackage.includes("extra") ||
+            lowerType.includes("gb") ||
+            lowerPackage.includes("gb")) &&
             !lowerType.includes("add-on") &&
             !lowerPackage.includes("add-on")
           );
@@ -107,8 +101,10 @@ const PurchaseHistoryComponent: React.FC = () => {
           return (
             (lowerType.includes("add-on") ||
             lowerPackage.includes("add-on")) &&
-            !lowerType.includes("extra gb") &&
-            !lowerPackage.includes("extra gb")
+            !lowerType.includes("extra") &&
+            !lowerPackage.includes("extra") &&
+            !lowerType.includes("gb") &&
+            !lowerPackage.includes("gb")
           );
         });
       default: // All tab
@@ -116,8 +112,6 @@ const PurchaseHistoryComponent: React.FC = () => {
     }
   };
 
-  const currentTabKey = ["all", "extra gb", "add-on"][selectedTab];
-  const { from: historyFrom, to: historyTo } = dateRanges[currentTabKey];
   const filteredHistory = filterByTab(allPurchaseHistory, selectedTab);
 
   const handleViewModeChange = (
@@ -218,10 +212,10 @@ const PurchaseHistoryComponent: React.FC = () => {
               From:
             </Typography>
             <DatePicker 
-              selected={historyFrom} 
+              selected={dateRange.from} 
               onChange={(date) => handleDateChange("from", date)} 
               dateFormat="yyyy-MM-dd" 
-              maxDate={historyTo || today} 
+              maxDate={dateRange.to || today} 
               customInput={
                 <TextField 
                   variant="outlined" 
@@ -248,11 +242,11 @@ const PurchaseHistoryComponent: React.FC = () => {
               To:
             </Typography>
             <DatePicker 
-              selected={historyTo} 
+              selected={dateRange.to} 
               onChange={(date) => handleDateChange("to", date)} 
               dateFormat="yyyy-MM-dd" 
               maxDate={today} 
-              minDate={historyFrom} 
+              minDate={dateRange.from} 
               customInput={
                 <TextField 
                   variant="outlined" 
@@ -273,6 +267,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         <Button 
           variant="contained" 
           onClick={handleSearch} 
+          disabled={loading}
           sx={{ 
             minWidth: "120px", 
             height: "40px", 
@@ -281,16 +276,23 @@ const PurchaseHistoryComponent: React.FC = () => {
             borderRadius: "8px", 
             "&:hover": { 
               backgroundColor: "#004b8c" 
-            } 
+            },
+            "&:disabled": {
+              backgroundColor: "#cccccc"
+            }
           }}
         >
-          <Typography variant="body2" sx={{ 
-            fontSize: "16px", 
-            fontWeight: 600, 
-            textTransform: "none" 
-          }}>
-            Search
-          </Typography>
+          {loading ? (
+            <CircularProgress size={24} sx={{ color: "white" }} />
+          ) : (
+            <Typography variant="body2" sx={{ 
+              fontSize: "16px", 
+              fontWeight: 600, 
+              textTransform: "none" 
+            }}>
+              Search
+            </Typography>
+          )}
         </Button>
       </Box>
 
@@ -326,7 +328,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               fontWeight: 700, 
               color: "#0056A2" 
             }}>
-              Showing results from <strong>{historyFrom?.toLocaleDateString()}</strong> to <strong>{historyTo?.toLocaleDateString()}</strong>
+              Showing results from <strong>{dateRange.from?.toLocaleDateString()}</strong> to <strong>{dateRange.to?.toLocaleDateString()}</strong>
             </Typography>
             
             <ToggleButtonGroup
@@ -428,7 +430,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                       textAlign: "center", 
                       mt: 2 
                     }}>
-                      No {["All", "Extra GB", "Add-Ons"][selectedTab]} history found in the selected range.
+                      No purchase history found in the selected range.
                     </Typography>
                   </Grid>
                 )}
@@ -499,10 +501,10 @@ const PurchaseHistoryComponent: React.FC = () => {
                         }}
                       >
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasType}
+                          {item.vasType || "N/A"}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasPackage}
+                          {item.vasPackage || "N/A"}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
                           {item.validTill || "N/A"}
@@ -515,7 +517,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                   ) : (
                     <TableRow>
                       <TableCell colSpan={4} align="center" sx={{ color: "#0056A2", fontFamily: "'Roboto', sans-serif" }}>
-                        No {["All", "Extra GB", "Add-Ons"][selectedTab]} history found in the selected range.
+                        No purchase history found in the selected range.
                       </TableCell>
                     </TableRow>
                   )}
