@@ -117,6 +117,7 @@ const TransactionsHistory: React.FC<TransactionsHistoryProps> = ({ serviceId }) 
         padding: 2,
         borderRadius: "10px",
         height: "100%",
+        minHeight: "400px",
         boxShadow: "0px 3px 3px rgba(0, 0, 0, 0.29)",
         overflow: "hidden",
       }}
