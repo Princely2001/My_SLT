@@ -179,26 +179,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
       }}
     >
       {/* Back Button */}
-      <Button
-        startIcon={<ArrowBackIcon />}
-        onClick={handleBackToMain}
-        sx={{
-          alignSelf: "flex-start",
-          mb: 2,
-          color: "#0056A2",
-          fontWeight: 600,
-          fontSize: "1rem",
-          "&:hover": {
-            backgroundColor: "rgba(0, 86, 162, 0.05)",
-            transform: "translateX(-4px)",
-          },
-          transition: "all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)",
-          padding: "8px 16px",
-          borderRadius: "8px",
-        }}
-      >
-        Back to Data Add-Ons
-      </Button>
+     
 
       {/* Cards Container with Navigation Arrows */}
       <Box

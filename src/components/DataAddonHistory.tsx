@@ -410,12 +410,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                             fontSize: "13px", 
                             color: "#4B4B4B" 
                           }}>
-                            <strong>Type:</strong> {item.vasType || "N/A"}
-                          </Typography>
-                          <Typography sx={{ 
-                            fontSize: "13px", 
-                            color: "#4B4B4B" 
-                          }}>
+                           
                             <strong>Valid Till:</strong> {item.validTill || "N/A"}
                           </Typography>
                         </Box>
@@ -471,9 +466,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                   }}
                 >
                   <TableRow>
-                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                      Package Type
-                    </TableCell>
+                 
                     <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
                       Package Name
                     </TableCell>
@@ -500,9 +493,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                           }
                         }}
                       >
-                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasType || "N/A"}
-                        </TableCell>
+                       
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
                           {item.vasPackage || "N/A"}
                         </TableCell>
