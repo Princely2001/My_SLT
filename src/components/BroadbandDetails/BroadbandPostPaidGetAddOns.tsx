@@ -20,7 +20,7 @@ import BroadbandNavbar from "./BroadbandNavbar";
 import purchaseAddons from "../../services/postpaid/purchaseAddons";
 
 const BroadbandPostPaidGetAddOns = () => {
-  const [selectedItem, setSelectedItem] = useState<string>("");
+  const [selectedItem, setSelectedItem] = useState<string>("Home Schooling & WFH");
   const [packages, setPackages] = useState<PostpaidAddOnPackage[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<Addon | null>(null);
@@ -62,13 +62,21 @@ const BroadbandPostPaidGetAddOns = () => {
 
     setActiveIndex(currentIndex);
   };
+
   useEffect(() => {
     const fetchPackages = async () => {
       const response: PostpaidAddOnPackage[] =
         await fetchLTEPostpaidAddOnPackages(packageName, subscriberID);
       setPackages(response);
       console.log("Packages: ", response);
-      if (response.length > 0) setSelectedItem(response[0].category);
+      
+      // Set default selected item to "Home Schooling & WFH" if it exists
+      const homeSchoolingPackage = response.find(pkg => pkg.category === "Home Schooling & WFH");
+      if (homeSchoolingPackage) {
+        setSelectedItem("Home Schooling & WFH");
+      } else if (response.length > 0) {
+        setSelectedItem(response[0].category);
+      }
     };
     fetchPackages();
   }, [selectedTelephone]);
@@ -186,7 +194,6 @@ const BroadbandPostPaidGetAddOns = () => {
             padding: 1,
             overflowX: "auto",
             flexDirection: "row",
-
             cursor: isDragging ? "grabbing" : "grab",
             "&::-webkit-scrollbar": {
               display: "none",
@@ -195,13 +202,6 @@ const BroadbandPostPaidGetAddOns = () => {
             scrollbarWidth: "none",
           }}
         >
-          {/* <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-              justifyContent: "center",
-            }}
-          > */}
           {selectedItem.trim() === "LMS" ||
           selectedItem.trim() === "Home Schooling & WFH" ? (
             <>
@@ -369,7 +369,6 @@ const BroadbandPostPaidGetAddOns = () => {
                 ))}
             </>
           )}
-          {/* </Box> */}
         </Box>
         <Dialog open={dialogOpen} onClose={handleDialogClose}>
           <DialogTitle>Confirm</DialogTitle>

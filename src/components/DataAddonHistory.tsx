@@ -80,36 +80,36 @@ const PurchaseHistoryComponent: React.FC = () => {
 
   const filterByTab = (data: DataBundle[] | null, tab: number): DataBundle[] => {
     if (!data) return [];
-    switch (tab) {
-      case 1: // Extra GB tab
-        return data.filter((item) => {
-          const lowerType = item.vasType?.toLowerCase() || '';
-          const lowerPackage = item.vasPackage?.toLowerCase() || '';
-          return (
-            (lowerType.includes("extra") || 
-            lowerPackage.includes("extra") ||
-            lowerType.includes("gb") ||
-            lowerPackage.includes("gb")) &&
-            !lowerType.includes("add-on") &&
-            !lowerPackage.includes("add-on")
-          );
-        });
-      case 2: // Add-Ons tab
-        return data.filter((item) => {
-          const lowerType = item.vasType?.toLowerCase() || '';
-          const lowerPackage = item.vasPackage?.toLowerCase() || '';
-          return (
-            (lowerType.includes("add-on") ||
-            lowerPackage.includes("add-on")) &&
-            !lowerType.includes("extra") &&
-            !lowerPackage.includes("extra") &&
-            !lowerType.includes("gb") &&
-            !lowerPackage.includes("gb")
-          );
-        });
-      default: // All tab
-        return data;
-    }
+    
+    return data.filter((item) => {
+      const lowerType = item.vasType?.toLowerCase() || '';
+      const lowerPackage = item.vasPackage?.toLowerCase() || '';
+      
+      // Common patterns for each category
+      const isExtraGB = 
+        (lowerType.includes("extra") || 
+         lowerPackage.includes("extra")) &&
+        (lowerType.includes("gb") || 
+         lowerPackage.includes("gb") ||
+         lowerType.includes("data") || 
+         lowerPackage.includes("data"));
+      
+      const isAddOn = 
+        (lowerType.includes("add-on") ||
+         lowerPackage.includes("add-on") ||
+         lowerType.includes("addon") ||
+         lowerPackage.includes("addon")) &&
+        !isExtraGB;
+
+      switch (tab) {
+        case 1: // Extra GB tab
+          return isExtraGB;
+        case 2: // Add-Ons tab
+          return isAddOn;
+        default: // All tab
+          return true;
+      }
+    });
   };
 
   const filteredHistory = filterByTab(allPurchaseHistory, selectedTab);
@@ -410,12 +410,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                             fontSize: "13px", 
                             color: "#4B4B4B" 
                           }}>
-                            <strong>Type:</strong> {item.vasType || "N/A"}
-                          </Typography>
-                          <Typography sx={{ 
-                            fontSize: "13px", 
-                            color: "#4B4B4B" 
-                          }}>
+                           
                             <strong>Valid Till:</strong> {item.validTill || "N/A"}
                           </Typography>
                         </Box>
@@ -471,9 +466,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                   }}
                 >
                   <TableRow>
-                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                      Package Type
-                    </TableCell>
+                 
                     <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
                       Package Name
                     </TableCell>
@@ -500,9 +493,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                           }
                         }}
                       >
-                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasType || "N/A"}
-                        </TableCell>
+                       
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
                           {item.vasPackage || "N/A"}
                         </TableCell>
