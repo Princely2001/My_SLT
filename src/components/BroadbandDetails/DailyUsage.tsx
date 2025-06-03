@@ -173,7 +173,7 @@ const DailyUsage = () => {
             sx={{
               width: 16,
               height: 16,
-              bgcolor: "#4FD745",
+              bgcolor: "#00D300",
               borderRadius: "50%",
             }}
           />
@@ -184,7 +184,7 @@ const DailyUsage = () => {
             sx={{
               width: 16,
               height: 16,
-              bgcolor: "#CF1C1F",
+              bgcolor: "#ED4872",
               borderRadius: "50%",
             }}
           />
@@ -195,7 +195,7 @@ const DailyUsage = () => {
             sx={{
               width: 16,
               height: 16,
-              bgcolor: "#F6E901",
+              bgcolor: "#FFDD00",
               borderRadius: "50%",
             }}
           />
@@ -206,7 +206,7 @@ const DailyUsage = () => {
             sx={{
               width: 16,
               height: 16,
-              bgcolor: "#00B4EB",
+              bgcolor: "#00FFFF",
               borderRadius: "50%",
             }}
           />
@@ -322,7 +322,7 @@ const DailyUsage = () => {
                               sx={{
                                 width: `${usage.percentage}%`,
                                 height: 9,
-                                backgroundColor: usage.sorter === 1 ? "#4FD745" : usage.sorter === 2 ? "#F6E901" : usage.sorter === 3 ? "#CF1C1F" : "#00B4EB",
+                                backgroundColor: usage.sorter === 1 ? "#00D300" : usage.sorter === 2 ? "#FFDD00" : usage.sorter === 3 ? "#ED4872" : "#00FFFF",
                                 
                               }}
                             ></Box>
