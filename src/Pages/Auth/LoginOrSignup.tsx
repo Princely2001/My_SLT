@@ -1,6 +1,8 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import backgroundImage from "../../assets/Images/background.jpg";
 import LoginImage from "../../assets/images/loginImage.png";
 import ForgetPassword from "./ForgetPassword";
@@ -11,6 +13,7 @@ import Signup from "./SignUp";
 import SocialMediaLogin from "./SocialMediaLogin";
 
 const LoginOrSignup = () => {
+  const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState("login");
 
   return (
@@ -39,7 +42,7 @@ const LoginOrSignup = () => {
         <Box
           component="img"
           src={LoginImage}
-          alt="Login Image"
+          alt={t("loginOrSignup.loginImageAlt")}
           sx={{
             display: { xs: "none", md: "block" },
             width: "auto",
@@ -74,7 +77,10 @@ const LoginOrSignup = () => {
               backgroundColor: "#D9F7FF",
               borderRadius: "16px",
               boxShadow: "0px 3px 3px #0056A260",
-              display: selectedTab === "forgetPassword" || selectedTab === "otp"  ? "none" : "flex",
+              display:
+                selectedTab === "forgetPassword" || selectedTab === "otp"
+                  ? "none"
+                  : "flex",
               alignItems: "center",
               justifyContent: "space-around",
             }}
@@ -85,8 +91,8 @@ const LoginOrSignup = () => {
                 width: "40%",
                 height: "70%",
                 backgroundColor:
-                  selectedTab == "login" ? "#0056A2" : "transparent",
-                color: selectedTab == "login" ? "#ffffff" : "#0056A2",
+                  selectedTab === "login" ? "#0056A2" : "transparent",
+                color: selectedTab === "login" ? "#ffffff" : "#0056A2",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -99,13 +105,14 @@ const LoginOrSignup = () => {
                       ? "rgba(0, 86, 162, 0.1)"
                       : undefined,
                   "& .MuiTypography-root": {
-                    transform: selectedTab !== "login" ? "scale(1.1)" : "none",
+                    transform:
+                      selectedTab !== "login" ? "scale(1.1)" : "none",
                     transition: "transform 0.3s ease",
                   },
                 },
               }}
             >
-              <Typography variant="body2">Log In</Typography>
+              <Typography variant="body2">{t("loginOrSignup.login")}</Typography>
             </Box>
             <Box
               onClick={() => setSelectedTab("signup")}
@@ -113,8 +120,8 @@ const LoginOrSignup = () => {
                 width: "40%",
                 height: "70%",
                 backgroundColor:
-                  selectedTab == "signup" ? "#0056A2" : "transparent",
-                color: selectedTab == "signup" ? "#ffffff" : "#0056A2",
+                  selectedTab === "signup" ? "#0056A2" : "transparent",
+                color: selectedTab === "signup" ? "#ffffff" : "#0056A2",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -127,13 +134,14 @@ const LoginOrSignup = () => {
                       ? "rgba(0, 86, 162, 0.1)"
                       : undefined,
                   "& .MuiTypography-root": {
-                    transform: selectedTab !== "signup" ? "scale(1.1)" : "none",
+                    transform:
+                      selectedTab !== "signup" ? "scale(1.1)" : "none",
                     transition: "transform 0.3s ease",
                   },
                 },
               }}
             >
-              <Typography variant="body2">Sign Up</Typography>
+              <Typography variant="body2">{t("loginOrSignup.signup")}</Typography>
             </Box>
           </Box>
 
@@ -153,9 +161,7 @@ const LoginOrSignup = () => {
             {selectedTab === "forgetPassword" && (
               <ForgetPassword onSelectTab={setSelectedTab} />
             )}
-            {selectedTab === "otp" && (
-              <OTPPage onSelectTab={setSelectedTab} />
-            )}
+            {selectedTab === "otp" && <OTPPage onSelectTab={setSelectedTab} />}
             {selectedTab === "registerotp" && (
               <RegisterOTP onSelectTab={setSelectedTab} />
             )}

@@ -14,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { fetchLTEPrepaidMainPackages } from "../../services/prepaid/fetchLTEPrepaidMainPackages";
 import { BroadbandPrepaidMainPackageDetails } from "../../types/types";
 import addBroadbandPackage from "../../services/prepaid/addBroadbandPackage";
@@ -23,6 +24,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const BroadbandPrepaidMainPackages: React.FC = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
   const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } =
     useStore();
@@ -54,21 +56,20 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
         const data = await fetchLTEPrepaidMainPackages();
         setPackages(data);
       } catch (error) {
-        setError(`Failed to fetch packages: ${error}`);
+        setError(t("packages.errors.fetchFailed", { error }));
       } finally {
         setLoading(false);
       }
     };
 
     getPackages();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
-      // Calculate which card is currently most visible
       const cardWidth = container.scrollWidth / packages.length;
       const scrollPosition = container.scrollLeft + container.clientWidth / 2;
       const newActiveDot = Math.floor(scrollPosition / cardWidth);
@@ -77,7 +78,6 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
         setActiveDot(newActiveDot);
       }
 
-      // Update arrow visibility
       setShowLeftArrow(container.scrollLeft > 0);
       setShowRightArrow(
         container.scrollLeft < container.scrollWidth - container.clientWidth - 1
@@ -116,7 +116,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
   };
 
   const handleBackToMain = () => {
-    setLeftMenuItem("Main Packages");
+    setLeftMenuItem(t("packages.mainMenu"));
   };
 
   const handleButtonPress = (index: number) => {
@@ -131,7 +131,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
     await addBroadbandPackage(telephoneNo, offeringId, pkgName);
     setPackageListUpdate();
     setDialogOpen(false);
-    setLeftMenuItem("Main Packages");
+    setLeftMenuItem(t("packages.mainMenu"));
   };
 
   if (loading) {
@@ -176,9 +176,6 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
         position: "relative",
       }}
     >
-      {/* Back Button */}
-    
-
       {/* Cards Container with Navigation Arrows */}
       <Box
         sx={{
@@ -310,13 +307,13 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
                       fontSize: "1.8rem",
                     }}
                   >
-                    Rs.{pkg.PRICE_LKR_WITH_TAX} /-
+                    {t("co.currency")}{pkg.PRICE_LKR_WITH_TAX} /-
                   </Typography>
                   <Typography
                     variant="body2"
                     sx={{ mb: 1, fontWeight: "bold", opacity: 0.9 }}
                   >
-                    (With Tax)
+                    ({t("co.withTax")})
                   </Typography>
 
                   <Typography
@@ -329,7 +326,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
                       },
                     }}
                   >
-                    Validity: <strong>{pkg.VALIDITY} Days</strong>
+                    {t("packages.validity")}: <strong>{pkg.VALIDITY} {t("co.days")}</strong>
                   </Typography>
 
                   <Button
@@ -360,7 +357,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
                     }}
                     onClick={() => handleButtonPress(index)}
                   >
-                    Activate Now
+                    {t("packages.activateNow")}
                   </Button>
                 </Box>
               </CardContent>
@@ -457,7 +454,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Confirm Package Activation
+            {t("packages.confirmActivation")}
           </Typography>
         </DialogTitle>
         <DialogContent sx={{ padding: "24px" }}>
@@ -466,7 +463,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
               variant="body1"
               sx={{ fontSize: "1.1rem", color: "#333" }}
             >
-              You're about to activate:
+              {t("packages.activateConfirmation")}
             </Typography>
             <Typography
               variant="h6"
@@ -493,16 +490,16 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
               variant="body2"
               sx={{ color: "#555", textAlign: "center" }}
             >
-              <strong>Details:</strong>{" "}
+              <strong>{t("packages.details")}:</strong>{" "}
               {selectedPackageIndex !== null &&
                 packages[selectedPackageIndex]?.DATA_VOLUME_GB}
-              GB | Rs.
+              GB | {t("co.currency")}
               {selectedPackageIndex !== null &&
                 packages[selectedPackageIndex]?.PRICE_LKR_WITH_TAX}{" "}
               |
               {selectedPackageIndex !== null &&
                 packages[selectedPackageIndex]?.VALIDITY}{" "}
-              Days
+              {t("co.days")}
             </Typography>
           </Box>
         </DialogContent>
@@ -527,7 +524,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
             }}
             onClick={() => setDialogOpen(false)}
           >
-            Cancel
+            {t("co.cancel")}
           </Button>
           <Button
             variant="contained"
@@ -546,7 +543,7 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
             onClick={handleConfirmActivation}
             autoFocus
           >
-            Confirm Activation
+            {t("packages.confirmButton")}
           </Button>
         </DialogActions>
       </Dialog>

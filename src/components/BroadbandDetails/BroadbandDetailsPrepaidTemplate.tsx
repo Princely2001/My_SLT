@@ -1,6 +1,7 @@
 import { ArrowBackIos, ArrowForwardIos } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import fetchServiceDetailByTelephone from "../../services/fetchServiceDetails";
 import { parseTime } from "../../services/helperFunctions";
 import useStore from "../../services/useAppStore";
@@ -24,18 +25,21 @@ interface CustomSectionProps {
   value: string;
 }
 
-const CustomSection = ({ label, value }: CustomSectionProps) => (
-  <Typography variant="body2" sx={commonTextStyle}>
-    {label}:
-    <Typography
-      component="span"
-      variant="body2"
-      sx={{ fontSize: "12px", fontWeight: 500, color: "#0056A2" }}
-    >
-      {` ${value}`}
+const CustomSection = ({ label, value }: CustomSectionProps) => {
+  const { t } = useTranslation();
+  return (
+    <Typography variant="body2" sx={commonTextStyle}>
+      {t(label)}:
+      <Typography
+        component="span"
+        variant="body2"
+        sx={{ fontSize: "12px", fontWeight: 500, color: "#0056A2" }}
+      >
+        {` ${value}`}
+      </Typography>
     </Typography>
-  </Typography>
-);
+  );
+};
 
 interface ActionButtonProps {
   text: string;
@@ -47,34 +51,37 @@ const ActionButton = ({
   text,
   variant = "outlined",
   onClick,
-}: ActionButtonProps) => (
-  <Button
-    variant={variant}
-    sx={{
-      ...commonButtonStyle,
-      zIndex: 10,
-      border: variant === "outlined" ? "3px solid #0056A2" : "none",
-      backgroundColor: variant === "contained" ? "#0056A2" : "transparent",
-      color: variant === "contained" ? "#ffffff" : "#0056A2",
-      marginY: variant === "contained" ? 0 : 3,
-      padding: variant === "contained" ? 1 : 2.5,
-      "&:hover": {
-        backgroundColor: variant === "contained" ? "#004b8c" : "#e0f7fa",
-        border: variant === "outlined" ? "3px solid #004b8c" : "none",
-        color: variant === "contained" ? "#ffffff" : "#004b8c",
-      },
-    }}
-    onClick={onClick}
-  >
-    <Typography
-      variant="body2"
-      textTransform="capitalize"
-      sx={{ fontWeight: "bold", fontSize: 16 }}
+}: ActionButtonProps) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      variant={variant}
+      sx={{
+        ...commonButtonStyle,
+        zIndex: 10,
+        border: variant === "outlined" ? "3px solid #0056A2" : "none",
+        backgroundColor: variant === "contained" ? "#0056A2" : "transparent",
+        color: variant === "contained" ? "#ffffff" : "#0056A2",
+        marginY: variant === "contained" ? 0 : 3,
+        padding: variant === "contained" ? 1 : 2.5,
+        "&:hover": {
+          backgroundColor: variant === "contained" ? "#004b8c" : "#e0f7fa",
+          border: variant === "outlined" ? "3px solid #004b8c" : "none",
+          color: variant === "contained" ? "#ffffff" : "#004b8c",
+        },
+      }}
+      onClick={onClick}
     >
-      {text}
-    </Typography>
-  </Button>
-);
+      <Typography
+        variant="body2"
+        textTransform="capitalize"
+        sx={{ fontWeight: "bold", fontSize: 16 }}
+      >
+        {t(text)}
+      </Typography>
+    </Button>
+  );
+};
 
 interface BroadbandDetailsPrepaidTemplateProps {
   dataBalance: DataBalance[];
@@ -85,22 +92,16 @@ const BroadbandDetailsPrepaidTemplate = ({
   dataBalance,
   isMain,
 }: BroadbandDetailsPrepaidTemplateProps) => {
-  console.log("Component rendering with props:", { dataBalance, isMain });
-  
+  const { t } = useTranslation();
   const { setLeftMenuItem, selectedTelephone } = useStore();
-  console.log("Store values:", { selectedTelephone });
-
   const [serviceDetails, setServiceDetails] = useState<ServiceDetailsAPIResponse | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
-    console.log("useEffect triggered for selectedTelephone:", selectedTelephone);
     if (selectedTelephone) {
-      console.log("Fetching service details for telephone:", selectedTelephone);
       const fetchDetails = async () => {
         try {
           const details = await fetchServiceDetailByTelephone(selectedTelephone);
-          console.log("Service details fetched:", details);
           setServiceDetails(details);
         } catch (error) {
           console.error("Error fetching service details:", error);
@@ -108,8 +109,6 @@ const BroadbandDetailsPrepaidTemplate = ({
         }
       };
       fetchDetails();
-    } else {
-      console.log("No selected telephone, skipping service details fetch");
     }
   }, [selectedTelephone]);
 
@@ -119,7 +118,6 @@ const BroadbandDetailsPrepaidTemplate = ({
           parseFloat(dataBalance[selectedIndex]?.initialAmount)) *
         100
       : 0;
-  console.log("Percentage calculation:", { percentage, selectedIndex });
 
   const initialAmount =
     dataBalance.length > 0
@@ -139,26 +137,15 @@ const BroadbandDetailsPrepaidTemplate = ({
     day: "2-digit",
   });
   const serviceID =
-    serviceDetails?.listofBBService[0]?.serviceID || "Loading...";
+    serviceDetails?.listofBBService[0]?.serviceID || t("broadband.loading");
   const serviceStatus =
-    serviceDetails?.listofBBService[0]?.serviceStatus || "Loading...";
-
-  console.log("Derived values:", {
-    initialAmount,
-    currentAmount,
-    expireTime,
-    formattedExpireTime,
-    serviceID,
-    serviceStatus
-  });
+    serviceDetails?.listofBBService[0]?.serviceStatus || t("broadband.loading");
 
   const handlePackageChange = (newIndex: number) => {
-    console.log("Changing package from", selectedIndex, "to", newIndex);
     setSelectedIndex(newIndex);
   };
 
   const handleNavigation = (menuItem: string) => {
-    console.log("Navigating to:", menuItem);
     setLeftMenuItem(menuItem);
   };
 
@@ -268,15 +255,16 @@ const BroadbandDetailsPrepaidTemplate = ({
                   variant="body2"
                   sx={{ fontSize: 20, fontWeight: 700, color: "#0F3B7A" }}
                 >
-                  {`${
-                    initialAmount - currentAmount
-                  } GB USED OF ${initialAmount} GB`}
+                  {t("broadband.dataUsage", {
+                    used: initialAmount - currentAmount,
+                    total: initialAmount
+                  })}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{ fontSize: 16, fontWeight: 500, color: "#0F3B7A" }}
                 >
-                  {`Valid Till: ${formattedExpireTime}`}
+                  {t("broadband.validTill")}: {formattedExpireTime}
                 </Typography>
               </Box>
             </>
@@ -294,7 +282,7 @@ const BroadbandDetailsPrepaidTemplate = ({
                 variant="body2"
                 sx={{ fontSize: 20, fontWeight: 700, color: "#0F3B7A" }}
               >
-                No Data to Show
+                {t("broadband.noData")}
               </Typography>
             </Box>
           )}
@@ -323,8 +311,8 @@ const BroadbandDetailsPrepaidTemplate = ({
               gap: 1,
             }}
           >
-            <CustomSection label="Status" value={serviceStatus} />
-            <CustomSection label="Username" value={serviceID} />
+            <CustomSection label="broadband.status" value={serviceStatus} />
+            <CustomSection label="broadband.username" value={serviceID} />
           </Box>
           <Box
             sx={{
@@ -345,19 +333,19 @@ const BroadbandDetailsPrepaidTemplate = ({
                 fontWeight: 700,
               }}
             >
-              {isMain ? "Main Package" : "Data Add-ons"}
+              {isMain ? t("broadband.mainPackage") : t("broadband.dataAddons")}
             </Typography>
           </Box>
          
           <ActionButton
-            text="Get Main Package"
+            text="broadband.getMainPackage"
             variant="contained"
             onClick={() => {
               handleNavigation("GetBroadbandMainPackage");
             }}
           />
           <ActionButton
-            text="Get Data Add-ons"
+            text="broadband.getDataAddons"
             variant="contained"
             onClick={() => {
               handleNavigation("GetBroadbandAddOnPackage");
@@ -366,7 +354,7 @@ const BroadbandDetailsPrepaidTemplate = ({
           <Box
             sx={{ position: "absolute", zIndex: 1, right: "1%", bottom: "1%" }}
           >
-            <img src={WatermarkLogo} alt="Watermark Logo" />
+            <img src={WatermarkLogo} alt={t("broadband.watermarkAlt")} />
           </Box>
         </Box>
       </Box>

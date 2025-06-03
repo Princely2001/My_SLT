@@ -1,7 +1,6 @@
 import { Box, Button, CircularProgress, Typography } from "@mui/material";
-import React, { useEffect } from "react";
-import fetchBillStatus from "../../services/billMethod/fetchBillStatus";
-import useStore from "../../services/useAppStore";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import fetchBillingDetails from "../../services/postpaid/fetchBillingDetails";
 
 interface BillingDetail {
@@ -9,24 +8,45 @@ interface BillingDetail {
   lastBillDate: string;
   lastPaymentAmount: number;
   lastPaymentDate: string;
+  billAmount: number; // You use billAmount in handlePayNow
 }
 
 interface BillDetailsProps {
   selectedTab: string;
   telephoneNo: string;
   accountNo: string;
-  billingDetails: BillingDetail[];
 }
 
 const BillDetails: React.FC<BillDetailsProps> = ({
   selectedTab,
   telephoneNo,
   accountNo,
-  billingDetails,
 }) => {
-  const billingData = billingDetails?.[0];
+  const { t } = useTranslation();
 
-  if (!billingData) {
+  // Use local state to store fetched billing details
+  const [billingDetails, setBillingDetails] = useState<BillingDetail[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchDetails = async () => {
+      setLoading(true);
+      try {
+        const details = await fetchBillingDetails(telephoneNo, accountNo);
+        setBillingDetails(details);
+      } catch (error) {
+        console.error("Failed to fetch billing details:", error);
+        setBillingDetails(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDetails();
+  }, [telephoneNo, accountNo]);
+
+  // Show loader while fetching data
+  if (loading) {
     return (
       <Box sx={{ p: 2, mt: 2, textAlign: "center", width: "95%" }}>
         <CircularProgress />
@@ -34,28 +54,20 @@ const BillDetails: React.FC<BillDetailsProps> = ({
     );
   }
 
-  useEffect(() => {
-    const fetchDetails = async () => {
-      const details = await fetchBillingDetails(telephoneNo, accountNo);
-      console.log("Fetched billing details inside useEffect:", details);
-    };
-  
-    fetchDetails();
-  }, [telephoneNo, accountNo]);
-  
+  const billingData = billingDetails?.[0];
 
-  
-  const handlePayNow = async () => {
-    const details = await fetchBillingDetails(telephoneNo, accountNo);
-  
-    if (!details || details.length === 0) {
-      console.error("No billing details found");
-      return;
-    }
-  
+  if (!billingData) {
+    return (
+      <Box sx={{ p: 2, mt: 2, textAlign: "center", width: "95%" }}>
+        <Typography>{t("bill.noBillingDetails") || "No billing details found."}</Typography>
+      </Box>
+    );
+  }
+
+  const handlePayNow = () => {
     const formData = {
       EventSource: accountNo,
-      vpc_Amount: details[0].billAmount,
+      vpc_Amount: billingData.billAmount.toString(),
       prepaidID: "",
       reciever: "",
       packageId: "",
@@ -64,12 +76,12 @@ const BillDetails: React.FC<BillDetailsProps> = ({
       reporterPackage: "",
       callbackURLSLT: "",
     };
-  
+
     const form = document.createElement("form");
     form.method = "POST";
     form.action = "https://billpay.slt.lk/confirm.php";
-    form.target = "_self"; // Use "_blank" to open in new tab
-  
+    form.target = "_self";
+
     Object.entries(formData).forEach(([key, value]) => {
       const input = document.createElement("input");
       input.type = "hidden";
@@ -77,11 +89,10 @@ const BillDetails: React.FC<BillDetailsProps> = ({
       input.value = value;
       form.appendChild(input);
     });
-  
+
     document.body.appendChild(form);
     form.submit();
   };
-  
 
   return (
     <Box sx={{ p: 0, width: "99%" }}>
@@ -98,13 +109,13 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             }}
           >
             <Box display="flex" justifyContent="space-between">
-              <Typography variant="body1">Total Payable:</Typography>
+              <Typography variant="body1">{t("bill.totalPayable")}:</Typography>
               <Typography variant="body1">
-                Rs. {billingData.outstandingBalance}
+                {t("common.currency")} {billingData.outstandingBalance}
               </Typography>
             </Box>
             <Typography variant="body1" sx={{ mt: 1 }}>
-              For the month ending at {billingData.lastBillDate}
+              {t("bill.forMonthEnding")} {billingData.lastBillDate}
             </Typography>
           </Box>
 
@@ -120,10 +131,10 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             }}
           >
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              Last Payment: Rs. {billingData.lastPaymentAmount}
+              {t("bill.lastPayment")}: {t("common.currency")} {billingData.lastPaymentAmount}
             </Typography>
             <Typography variant="body1">
-              On {billingData.lastPaymentDate}
+              {t("common.on")} {billingData.lastPaymentDate}
             </Typography>
           </Box>
 
@@ -140,7 +151,7 @@ const BillDetails: React.FC<BillDetailsProps> = ({
               }}
               onClick={handlePayNow}
             >
-              <Typography variant="body2">Pay Now</Typography>
+              <Typography variant="body2">{t("bill.payNow")}</Typography>
             </Button>
           </Box>
         </>

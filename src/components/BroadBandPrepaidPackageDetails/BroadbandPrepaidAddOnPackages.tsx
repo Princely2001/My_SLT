@@ -14,6 +14,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import addBroadbandPackage from "../../services/prepaid/addBroadbandPackage";
 import { fetchLTEPrepaidAddOnPackages } from "../../services/prepaid/fetchLTEPrepaidAddOnPackages";
 import useStore from "../../services/useAppStore";
@@ -23,24 +24,19 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const BroadbandPrepaidAddOnPackages: React.FC = () => {
+  const { t } = useTranslation();
   const theme = useTheme();
-  const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } =
-    useStore();
-  const [packages, setPackages] = useState<
-    BroadbandPrepaidAddOnPackageDetails[]
-  >([]);
+  const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } = useStore();
+  const [packages, setPackages] = useState<BroadbandPrepaidAddOnPackageDetails[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeDot, setActiveDot] = useState(0);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedPackageIndex, setSelectedPackageIndex] = useState<
-    number | null
-  >(null);
+  const [selectedPackageIndex, setSelectedPackageIndex] = useState<number | null>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Calculate how many cards are visible at once
   const calculateCardsPerView = () => {
     if (!scrollContainerRef.current) return 1;
     const cardWidth = scrollContainerRef.current.scrollWidth / packages.length;
@@ -54,21 +50,20 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
         const data = await fetchLTEPrepaidAddOnPackages();
         setPackages(data);
       } catch (error) {
-        setError(`Failed to fetch packages: ${error}`);
+        setError(t('packageActivation.fetchError', { error }));
       } finally {
         setLoading(false);
       }
     };
 
     getPackages();
-  }, []);
+  }, [t]);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
 
     const handleScroll = () => {
-      // Calculate which card is currently most visible
       const cardWidth = container.scrollWidth / packages.length;
       const scrollPosition = container.scrollLeft + container.clientWidth / 2;
       const newActiveDot = Math.floor(scrollPosition / cardWidth);
@@ -77,7 +72,6 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
         setActiveDot(newActiveDot);
       }
 
-      // Update arrow visibility
       setShowLeftArrow(container.scrollLeft > 0);
       setShowRightArrow(
         container.scrollLeft < container.scrollWidth - container.clientWidth - 1
@@ -90,8 +84,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
 
   const scrollToDot = (index: number) => {
     if (scrollContainerRef.current) {
-      const cardWidth =
-        scrollContainerRef.current.scrollWidth / packages.length;
+      const cardWidth = scrollContainerRef.current.scrollWidth / packages.length;
       scrollContainerRef.current.scrollTo({
         left: index * cardWidth,
         behavior: "smooth",
@@ -116,7 +109,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
   };
 
   const handleBackToMain = () => {
-    setLeftMenuItem("Data Add-Ons");
+    setLeftMenuItem(t('me.dataAddOns'));
   };
 
   const handleButtonPress = (index: number) => {
@@ -133,7 +126,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
     await addBroadbandPackage(telephoneNo, offeringId, pkgName);
     setPackageListUpdate();
     setDialogOpen(false);
-    setLeftMenuItem("Data Add-Ons");
+    setLeftMenuItem(t('me.dataAddOns'));
   };
 
   if (loading) {
@@ -153,11 +146,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
 
   if (error) {
     return (
-      <Typography
-        variant="h6"
-        color="error"
-        sx={{ textAlign: "center", mt: 4 }}
-      >
+      <Typography variant="h6" color="error" sx={{ textAlign: "center", mt: 4 }}>
         {error}
       </Typography>
     );
@@ -178,9 +167,6 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
         position: "relative",
       }}
     >
-      {/* Back Button */}
-     
-
       {/* Cards Container with Navigation Arrows */}
       <Box
         sx={{
@@ -300,7 +286,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                       }}
                       variant="body2"
                     >
-                      {pkg.DATA_VOLUME_GB}GB
+                      {pkg.DATA_VOLUME_GB}{t('com.gb')}
                     </Typography>
                   </Box>
 
@@ -312,13 +298,13 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                       fontSize: "1.8rem",
                     }}
                   >
-                    Rs.{pkg.PRICE_LKR_WITH_TAX} /-
+                    {t('com.rs')}{pkg.PRICE_LKR_WITH_TAX} /-
                   </Typography>
                   <Typography
                     variant="body2"
                     sx={{ mb: 1, fontWeight: "bold", opacity: 0.9 }}
                   >
-                    (With Tax)
+                    ({t('com.withTax')})
                   </Typography>
 
                   <Typography
@@ -331,15 +317,14 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                       },
                     }}
                   >
-                    Validity: <strong>{pkg.VALIDITY} Days</strong>
+                    {t('packageActivation.validity')}: <strong>{pkg.VALIDITY} {t('com.days')}</strong>
                   </Typography>
 
                   <Button
                     variant="contained"
                     sx={{
                       mt: 1,
-                      background:
-                        "linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)",
+                      background: "linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)",
                       color: "white",
                       borderRadius: "8px",
                       width: "70%",
@@ -351,8 +336,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                       boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
                       transition: "all 0.3s ease",
                       "&:hover": {
-                        background:
-                          "linear-gradient(135deg, #43A047 0%, #1B5E20 100%)",
+                        background: "linear-gradient(135deg, #43A047 0%, #1B5E20 100%)",
                         transform: "translateY(-3px)",
                         boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.3)",
                       },
@@ -362,7 +346,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                     }}
                     onClick={() => handleButtonPress(index)}
                   >
-                    Activate Now
+                    {t('packageActivation.activateNow')}
                   </Button>
                 </Box>
               </CardContent>
@@ -459,16 +443,13 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: 700 }}>
-            Confirm Package Activation
+            {t('packageActivation.confirmTitle')}
           </Typography>
         </DialogTitle>
         <DialogContent sx={{ padding: "24px" }}>
           <Box sx={{ textAlign: "center", mb: 2 }}>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: "1.1rem", color: "#333" }}
-            >
-              You're about to activate:
+            <Typography variant="body1" sx={{ fontSize: "1.1rem", color: "#333" }}>
+              {t('packageActivation.confirmMessage')}
             </Typography>
             <Typography
               variant="h6"
@@ -479,8 +460,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
                 fontSize: "1.3rem",
               }}
             >
-              {selectedPackageIndex !== null &&
-                packages[selectedPackageIndex]?.ADDON_NAME}
+              {selectedPackageIndex !== null && packages[selectedPackageIndex]?.ADDON_NAME}
             </Typography>
           </Box>
           <Box
@@ -491,20 +471,13 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
               mt: 2,
             }}
           >
-            <Typography
-              variant="body2"
-              sx={{ color: "#555", textAlign: "center" }}
-            >
-              <strong>Details:</strong>{" "}
-              {selectedPackageIndex !== null &&
-                packages[selectedPackageIndex]?.DATA_VOLUME_GB}
-              GB | Rs.
-              {selectedPackageIndex !== null &&
-                packages[selectedPackageIndex]?.PRICE_LKR_WITH_TAX}{" "}
-              |
-              {selectedPackageIndex !== null &&
-                packages[selectedPackageIndex]?.VALIDITY}{" "}
-              Days
+            <Typography variant="body2" sx={{ color: "#555", textAlign: "center" }}>
+              <strong>{t('packageActivation.details')}:</strong>{" "}
+              {selectedPackageIndex !== null && packages[selectedPackageIndex]?.DATA_VOLUME_GB}
+              {t('com.gb')} | {t('com.rs')}
+              {selectedPackageIndex !== null && packages[selectedPackageIndex]?.PRICE_LKR_WITH_TAX}{" "}
+              | {selectedPackageIndex !== null && packages[selectedPackageIndex]?.VALIDITY}{" "}
+              {t('com.days')}
             </Typography>
           </Box>
         </DialogContent>
@@ -529,7 +502,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
             }}
             onClick={() => setDialogOpen(false)}
           >
-            Cancel
+            {t('com.cancel')}
           </Button>
           <Button
             variant="contained"
@@ -548,7 +521,7 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
             onClick={handleConfirmActivation}
             autoFocus
           >
-            Confirm Activation
+            {t('packageActivation.confirmButton')}
           </Button>
         </DialogActions>
       </Dialog>

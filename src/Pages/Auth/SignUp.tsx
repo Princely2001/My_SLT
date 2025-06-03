@@ -11,14 +11,16 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import registerUser from "../../services/register/register";
-import useStore from "../../services/useAppStore"; // Importing the zustand store
+import useStore from "../../services/useAppStore";
 import { OtpGlobalState, OtpResponse } from "../../types/types";
+import { useTranslation } from "react-i18next";
 
 interface SignupProps {
   onSelectTab: (tab: string) => void;
 }
 
 const Signup = ({ onSelectTab }: SignupProps) => {
+  const { t } = useTranslation();
   const [userID, setUserID] = useState("");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
@@ -27,19 +29,13 @@ const Signup = ({ onSelectTab }: SignupProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Get the setDataBundle method from the store
   const { setOtpState } = useStore();
 
-  // Determine user type based on input (email or mobile)
   const determineUserType = (input: string): string => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Validates email format
-    const phoneRegex = /^\d{10}$/; // Validates a 10-digit mobile number
-    if (emailRegex.test(input)) {
-      return "EMAIL";
-    }
-    if (phoneRegex.test(input)) {
-      return "MOBILE";
-    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const phoneRegex = /^\d{10}$/;
+    if (emailRegex.test(input)) return "EMAIL";
+    if (phoneRegex.test(input)) return "MOBILE";
     return "UNKNOWN";
   };
 
@@ -47,12 +43,14 @@ const Signup = ({ onSelectTab }: SignupProps) => {
     setLoading(true);
     event.preventDefault();
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match!");
+      setErrorMessage(t("signup.error.passwordMismatch"));
+      setLoading(false);
       return;
     }
     const userType = determineUserType(userID);
     if (userType === "UNKNOWN") {
-      setErrorMessage("Please enter a valid email or 10-digit mobile number.");
+      setErrorMessage(t("signup.error.invalidInput"));
+      setLoading(false);
       return;
     }
     try {
@@ -64,25 +62,18 @@ const Signup = ({ onSelectTab }: SignupProps) => {
         userType
       );
       if (response.isSuccess) {
-        console.log("Registration successful:", response.dataBundle);
-
         const data: OtpGlobalState = {
           userName: userID,
           userType: userType,
           dataBundle: response.dataBundle,
         };
         setOtpState(data);
-
-        onSelectTab("registerotp"); // Navigate to OTP screen
+        onSelectTab("registerotp");
       } else {
-        // Handle registration failure
-        setErrorMessage(response.errorMessage || "Registration failed");
-        console.error("API Error:", response);
+        setErrorMessage(response.errorMessage || t("signup.error.registrationFailed"));
       }
     } catch (error) {
-      // Handle any errors during registration
-      setErrorMessage("An error occurred while registering");
-      console.error("Error during registration:", error);
+      setErrorMessage(t("signup.error.generic"));
     }
     setLoading(false);
   };
@@ -91,7 +82,6 @@ const Signup = ({ onSelectTab }: SignupProps) => {
     setShowPassword((prev) => !prev);
   };
 
-  // Style for text fields
   const textFieldStyles = {
     "& .MuiOutlinedInput-root": {
       mt: -1,
@@ -119,9 +109,7 @@ const Signup = ({ onSelectTab }: SignupProps) => {
   };
 
   return (
-    <Box
-      sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}
-    >
+    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
       <Typography
         variant="h1"
         sx={{
@@ -132,63 +120,61 @@ const Signup = ({ onSelectTab }: SignupProps) => {
           marginBottom: "20px",
         }}
       >
-        Sign Up
+        {t("signup.title")}
       </Typography>
       <form onSubmit={handleSubmit}>
-        {/* Show error message if any */}
         {errorMessage && (
           <Typography color="error" variant="body2">
             {errorMessage}
           </Typography>
         )}
 
-        {/* Input fields */}
-        <Typography variant="body2" sx={{ color: " #0F3B7A" }}>
-          Email or Mobile
+        <Typography variant="body2" sx={{ color: "#0F3B7A" }}>
+          {t("signup.emailOrMobile")}
         </Typography>
         <TextField
-          sx={{ ...textFieldStyles }}
+          sx={textFieldStyles}
           fullWidth
           variant="outlined"
           margin="normal"
           value={userID}
-          placeholder="Enter your email or mobile number"
+          placeholder={t("signup.emailOrMobilePlaceholder")}
           onChange={(e) => setUserID(e.target.value.trim())}
           required
         />
 
-        <Typography variant="body2" sx={{ color: " #0F3B7A" }}>
-          Name
+        <Typography variant="body2" sx={{ color: "#0F3B7A" }}>
+          {t("signup.name")}
         </Typography>
         <TextField
-          sx={{ ...textFieldStyles }}
+          sx={textFieldStyles}
           fullWidth
           variant="outlined"
           margin="normal"
           value={name}
-          placeholder="Enter your name"
+          placeholder={t("signup.namePlaceholder")}
           onChange={(e) => setName(e.target.value.trim())}
           required
         />
 
-        <Typography variant="body2" sx={{ color: " #0F3B7A" }}>
-          Password
+        <Typography variant="body2" sx={{ color: "#0F3B7A" }}>
+          {t("signup.password")}
         </Typography>
         <TextField
           fullWidth
-          sx={{ ...textFieldStyles }}
+          sx={textFieldStyles}
           type={showPassword ? "text" : "password"}
           variant="outlined"
           margin="normal"
           value={password}
-          placeholder="Enter your password"
+          placeholder={t("signup.passwordPlaceholder")}
           onChange={(e) => setPassword(e.target.value)}
           required
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  aria-label="toggle password visibility"
+                  aria-label={t("signup.togglePasswordVisibility")}
                   onClick={togglePasswordVisibility}
                   edge="end"
                 >
@@ -199,24 +185,24 @@ const Signup = ({ onSelectTab }: SignupProps) => {
           }}
         />
 
-        <Typography variant="body2" sx={{ color: " #0F3B7A" }}>
-          Confirm Password
+        <Typography variant="body2" sx={{ color: "#0F3B7A" }}>
+          {t("signup.confirmPassword")}
         </Typography>
         <TextField
           fullWidth
-          sx={{ ...textFieldStyles }}
+          sx={textFieldStyles}
           type={showPassword ? "text" : "password"}
           variant="outlined"
           margin="normal"
           value={confirmPassword}
-          placeholder="Confirm your password"
+          placeholder={t("signup.confirmPasswordPlaceholder")}
           onChange={(e) => setConfirmPassword(e.target.value)}
           required
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  aria-label="toggle password visibility"
+                  aria-label={t("signup.togglePasswordVisibility")}
                   onClick={togglePasswordVisibility}
                   edge="end"
                 >
@@ -227,7 +213,6 @@ const Signup = ({ onSelectTab }: SignupProps) => {
           }}
         />
 
-        {/* Submit button */}
         <Button
           variant="contained"
           type="submit"
@@ -248,7 +233,7 @@ const Signup = ({ onSelectTab }: SignupProps) => {
             <CircularProgress color="inherit" size={20} />
           ) : (
             <Typography variant="body2" sx={{ color: "#FFFFFF" }}>
-              Sign Up
+              {t("signup.signupButton")}
             </Typography>
           )}
         </Button>

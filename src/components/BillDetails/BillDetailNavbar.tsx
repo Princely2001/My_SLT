@@ -1,14 +1,22 @@
-import { Box, Button, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Box, Button, Typography } from "@mui/material";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 
-
-interface NavbarProps {
+interface NavProps {
   onTabChange: (tab: string) => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onTabChange }) => {
-  const tabs = ["Total Payable", "Bill History", "Bill Methods"];
-  const [selectedTab, setSelectedTab] = useState<string>("Total Payable");
+const Navbar: React.FC<NavProps> = ({ onTabChange }) => {
+  const { t } = useTranslation();
+
+  // Translation keys for tabs, mapped from tab internal string to i18n keys
+  const tabs = [
+    { label: "Total Payable", key: "total_payable" },
+    { label: "Bill History", key: "bill_history" },
+    { label: "Bill Methods", key: "bill_methods" },
+  ];
+
+  const [selectedTab, setSelectedTab] = useState<string>(tabs[0].label);
 
   const handleTabClick = (tab: string) => {
     setSelectedTab(tab);
@@ -17,38 +25,45 @@ const Navbar: React.FC<NavbarProps> = ({ onTabChange }) => {
 
   return (
     <Box
-    sx={{
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      width: "100%", // Width as a percentage of the viewport or parent container
-      height: "2vh", // Height as a percentage of the viewport or parent container
-      mb:1,
-      borderRadius: 2, // Border radius as a percentage
-      gap: 1, // Space between items as a percentage
-      padding: 3, // Padding as a percentage Padding inside the box relative to viewport height
-    }}
-  >
-        {tabs.map((tab) => (
-          <Button
-            key={tab}
-            onClick={() => handleTabClick(tab)}
-            sx={{
-              backgroundColor: selectedTab === tab ? "#0056A2" : "#FFFFFF",
-              width: "32%",
-              height: "5vh",
-              color: selectedTab === tab ? "#FFFFFF" : "#0056A2",
-              minHeight: "50px",
-              fontWeight: selectedTab === tab ? 700 : 500,
-              borderRadius: "10px",
-              padding: "8px 16px",
-              "&:hover": { backgroundColor: "#0056A2", color: "#FFFFFF" },
-            }}
-          >
-            <Typography variant="body2"sx={{textTransform:"capitalize",fontWeight:600,fontSize:"18px"}}>{tab}</Typography>
-          </Button>
-        ))}
-      </Box>
+      sx={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%",
+        mb: 2,
+        px: 2,
+        gap: 1,
+        flexWrap: "wrap",
+      }}
+    >
+      {tabs.map(({ label, key }) => (
+        <Button
+          key={label}
+          onClick={() => handleTabClick(label)}
+          sx={{
+            flex: "1 1 30%",
+            minWidth: "30%",
+            maxWidth: "32%",
+            backgroundColor: selectedTab === label ? "#0056A2" : "#FFFFFF",
+            color: selectedTab === label ? "#FFFFFF" : "#0056A2",
+            fontWeight: selectedTab === label ? 700 : 500,
+            borderRadius: 2,
+            height: "6vh",
+            minHeight: "50px",
+            textTransform: "capitalize",
+            boxShadow: selectedTab === label ? 2 : 1,
+            "&:hover": {
+              backgroundColor: "#0056A2",
+              color: "#FFFFFF",
+            },
+          }}
+        >
+          <Typography sx={{ fontSize: "16px", fontWeight: 600 }}>
+            {t(key)}
+          </Typography>
+        </Button>
+      ))}
+    </Box>
   );
 };
 

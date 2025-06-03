@@ -11,11 +11,13 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
+import { useTranslation } from "react-i18next"; // ✅ Translation Hook
 import WatermarkLogo from "../../assets/Images/watermarklogo.png";
-import terminateUserProfile from "../../services/profile/terminateUserProfile"; // Import the terminate API
+import terminateUserProfile from "../../services/profile/terminateUserProfile";
 import updateUserInfo from "../../services/profile/updateUserInfo";
 
 const UserProfile = () => {
+  const { t } = useTranslation(); // ✅ Use translation function
   const storedEmail = localStorage.getItem("username");
   const [altrContact, setAltrContact] = useState("");
   const [name, setName] = useState("");
@@ -36,11 +38,11 @@ const UserProfile = () => {
   const handleDelete = async () => {
     const response = await terminateUserProfile();
     if (response) {
-      setResponseMessage("Profile successfully terminated.");
+      setResponseMessage(t("Profile successfully terminated."));
     } else {
-      setResponseMessage("Failed to terminate the profile.");
+      setResponseMessage(t("Failed to terminate the profile."));
     }
-    setOpenDialog(false); // Close dialog after the action
+    setOpenDialog(false);
   };
 
   return (
@@ -73,7 +75,7 @@ const UserProfile = () => {
             fontSize: "24px",
           }}
         >
-          My Profile
+          {t("My Profile")}
         </Typography>
 
         <Box
@@ -105,13 +107,13 @@ const UserProfile = () => {
                 {storedEmail}
               </Typography>
               <Typography variant="body2" sx={{ fontSize: "12px" }}>
-                You are logged in as a EasyLogin
+                {t("You are logged in as a EasyLogin")}
               </Typography>
             </Box>
           </Box>
           <IconButton
             sx={{ color: "white" }}
-            onClick={() => setOpenDialog(true)} // Open confirmation dialog
+            onClick={() => setOpenDialog(true)}
           >
             <DeleteIcon />
           </IconButton>
@@ -126,7 +128,7 @@ const UserProfile = () => {
               marginBottom: "5px",
             }}
           >
-            Enter Your Mobile :
+            {t("Enter Your Mobile")} :
           </Typography>
           <TextField
             fullWidth
@@ -151,7 +153,7 @@ const UserProfile = () => {
               marginBottom: "5px",
             }}
           >
-            Name :
+            {t("Name")} :
           </Typography>
           <TextField
             fullWidth
@@ -168,7 +170,6 @@ const UserProfile = () => {
               },
             }}
           />
-          <Box sx={{ alignSelf: "flex-start" }}></Box>
           <Button
             variant="contained"
             sx={{
@@ -185,7 +186,7 @@ const UserProfile = () => {
             }}
             onClick={handleUpdate}
           >
-            Update
+            {t("Update")}
           </Button>
         </Box>
 
@@ -201,16 +202,16 @@ const UserProfile = () => {
 
       {/* Confirmation Dialog */}
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
+        <DialogTitle>{t("Confirm Deletion")}</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete your profile? This action cannot be undone.
+            {t("Are you sure you want to delete your profile? This action cannot be undone.")}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>No</Button>
+          <Button onClick={() => setOpenDialog(false)}>{t("No")}</Button>
           <Button onClick={handleDelete} sx={{ color: "red" }}>
-            Yes
+            {t("Yes")}
           </Button>
         </DialogActions>
       </Dialog>

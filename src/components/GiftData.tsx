@@ -1,11 +1,24 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import { textFieldStyle } from "../assets/Themes/CommonStyles";
 import validateDataGiftSubscriber from "../services/postpaid/ValidateDataGiftResponse";
 import useStore from "../services/useAppStore";
+import { useTranslation } from "react-i18next";
 
 const GiftData: React.FC = () => {
+  const { t } = useTranslation();
+
   const [username, setUsername] = useState("");
   const [apiResponse, setApiResponse] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -16,14 +29,13 @@ const GiftData: React.FC = () => {
   const { serviceDetails, setLeftMenuItem, giftDataMobileNumber, setGiftDataMobileNumber } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
 
-  // UseEffect to log serviceID whenever it changes
   useEffect(() => {
-    console.log("Service ID:", serviceID); // Log serviceID
+    console.log("Service ID:", serviceID);
   }, [serviceID]);
 
   const handleValidate = async () => {
     if (!username || !serviceID) {
-      setErrorMessage("Subscriber ID or username is missing. Please provide both.");
+      setErrorMessage(t("Subscriber ID or username is missing. Please provide both."));
       setIsSuccess(false);
       setIsDialogOpen(true);
       return;
@@ -34,25 +46,24 @@ const GiftData: React.FC = () => {
 
       if (response) {
         if (response.isSuccess) {
-          setApiResponse("Receiver Validate Success");
+          setApiResponse(t("Receiver Validate Success"));
           setIsSuccess(true);
           setErrorMessage(null);
-          // Update mobile number in the store when validation is successful
           setGiftDataMobileNumber(username);
         } else {
           setApiResponse(null);
-          setErrorMessage("Subscriber ID you entered is Invalid – Please enter a correct Subscriber ID.");
+          setErrorMessage(t("Subscriber ID you entered is Invalid – Please enter a correct Subscriber ID."));
           setIsSuccess(false);
         }
       } else {
         setApiResponse(null);
-        setErrorMessage("Unexpected error occurred during the API call.");
+        setErrorMessage(t("Unexpected error occurred during the API call."));
         setIsSuccess(false);
       }
     } catch (error) {
       console.error("Validation API call failed:", error);
       setApiResponse(null);
-      setErrorMessage("An error occurred during validation.");
+      setErrorMessage(t("An error occurred during validation."));
       setIsSuccess(false);
     } finally {
       setIsDialogOpen(true);
@@ -94,9 +105,9 @@ const GiftData: React.FC = () => {
           fontFamily: "Poppins, sans-serif",
         }}
       >
-        Enter the username of the person to whom you wish to Gift Data
+        {t("Enter the username of the person to whom you wish to Gift Data")}
         <br />
-        Select the package by tapping VALIDATE RECEIVER
+        {t("Select the package by tapping VALIDATE RECEIVER")}
       </Typography>
 
       <Box
@@ -115,7 +126,7 @@ const GiftData: React.FC = () => {
             lineHeight: 1,
           }}
         >
-          Receiver's username :
+          {t("Receiver's username :")}
         </Typography>
         <Box
           sx={{
@@ -148,7 +159,9 @@ const GiftData: React.FC = () => {
           borderRadius: "8px",
         }}
       >
-        <Typography variant="body2" sx={{ fontSize: "20px", fontWeight: 600 }}>Validate Receiver</Typography>
+        <Typography variant="body2" sx={{ fontSize: "20px", fontWeight: 600 }}>
+          {t("Validate Receiver")}
+        </Typography>
       </Button>
 
       <Typography
@@ -158,13 +171,13 @@ const GiftData: React.FC = () => {
           fontSize: 13,
         }}
       >
-        Ensure the username is correct, as this transaction cannot be reversed.
+        {t("Ensure the username is correct, as this transaction cannot be reversed.")}
       </Typography>
 
       {/* Dialog for displaying API messages */}
       <Dialog open={isDialogOpen} onClose={handleDialogClose}>
         <DialogTitle sx={{ textAlign: "center", color: isSuccess ? "green" : "red" }}>
-          {isSuccess ? "Success" : "Error"}
+          {isSuccess ? t("Success") : t("Error")}
         </DialogTitle>
         <DialogContent>
           <DialogContentText
@@ -185,7 +198,6 @@ const GiftData: React.FC = () => {
             {isSuccess ? (
               <>
                 {apiResponse}
-                {/* Success GIF */}
                 <img
                   src="https://cdn.dribbble.com/users/39201/screenshots/3694057/nutmeg.gif"
                   alt="Success"
@@ -195,7 +207,6 @@ const GiftData: React.FC = () => {
             ) : (
               <>
                 {errorMessage}
-                {/* Failure GIF */}
                 <img
                   src="https://i.gifer.com/Z16w.gif"
                   alt="Failure"
@@ -207,7 +218,7 @@ const GiftData: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} autoFocus>
-            Ok
+            {t("Ok")}
           </Button>
         </DialogActions>
       </Dialog>

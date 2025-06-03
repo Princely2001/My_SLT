@@ -1,4 +1,9 @@
-import { Button, CircularProgress, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  CircularProgress,
+  TextField,
+  Typography,
+} from "@mui/material";
 import Box from "@mui/material/Box";
 import { textFieldStyles } from "./LogIn";
 import { useState } from "react";
@@ -6,12 +11,14 @@ import sendOTPRequest from "../../services/changePassword/sendOTPRequest";
 import { OtpGlobalState } from "../../types/types";
 import { determineUserType } from "../../services/helperFunctions";
 import useStore from "../../services/useAppStore";
+import { useTranslation } from "react-i18next";
 
 interface ForgetPasswordProps {
   onSelectTab: (tab: string) => void;
 }
 
 const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
+  const { t } = useTranslation();
   const [userID, setUserID] = useState("");
   const [loading, setLoading] = useState(false);
   const { setOtpState } = useStore();
@@ -61,7 +68,7 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
             marginBottom: "20px",
           }}
         >
-          Forgot Password ?
+          {t("forgetPassword.title")}
         </Typography>
         <Typography
           variant="body2"
@@ -73,8 +80,7 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
             mb: "40px",
           }}
         >
-          Enter your Registered email Address or Mobile Number and we will send
-          an OTP to reset your password.
+          {t("forgetPassword.description")}
         </Typography>
         <Box
           sx={{
@@ -84,8 +90,8 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
             mb: "40px",
           }}
         >
-          <Typography variant="body2" sx={{ color: " #A4A4AA" }}>
-            User ID
+          <Typography variant="body2" sx={{ color: "#A4A4AA" }}>
+            {t("forgetPassword.userIDLabel")}
             <Typography
               component="sup"
               sx={{
@@ -104,7 +110,7 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
             variant="outlined"
             margin="normal"
             value={userID}
-            placeholder="Enter your email or mobile number"
+            placeholder={t("forgetPassword.userIDPlaceholder")}
             onChange={(e) => setUserID(e.target.value.trim())}
             required
           />
@@ -127,7 +133,7 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
             <CircularProgress color="inherit" size={20} />
           ) : (
             <Typography variant="body2" sx={{ color: "#FFFFFF" }}>
-              Submit
+              {t("forgetPassword.submitButton")}
             </Typography>
           )}
         </Button>
@@ -140,7 +146,7 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
             maxWidth: "400px",
           }}
         >
-          Back to{" "}
+          {t("forgetPassword.backTo")}{" "}
           <Typography
             onClick={() => onSelectTab("login")}
             component="span"
@@ -151,7 +157,7 @@ const ForgetPassword = ({ onSelectTab }: ForgetPasswordProps) => {
               textDecoration: "underline",
             }}
           >
-            Sign in
+            {t("forgetPassword.signIn")}
           </Typography>
         </Typography>
       </Box>

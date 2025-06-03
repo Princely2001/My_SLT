@@ -1,13 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import GoogleLogo from "../../assets/images/google-icon.png";
 import FacebookLogo from "../../assets/images/facebook-icon1.jpg";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import FacebookLogin from "@greatsumini/react-facebook-login";
 import axios from "axios";
+import { languageState } from "../../types/types";
 
 // Facebook Type Definitions
 type FacebookAuthResponse = {
@@ -33,48 +38,20 @@ type FacebookProfile = {
 const CLIENT_ID = "641643356344-un4nm5pqbp11f2g0h8rmuri4u8ij6fev.apps.googleusercontent.com";
 
 const SocialMediaLoginInner = () => {
+  const { t, i18n } = useTranslation();
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const [googleUser, setGoogleUser] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Load Google Translate script
-  useEffect(() => {
-    const addGoogleTranslateScript = () => {
-      const script = document.createElement('script');
-      script.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-      script.async = true;
-      document.body.appendChild(script);
-
-      // @ts-ignore
-      window.googleTranslateElementInit = () => {
-        // @ts-ignore
-        new window.google.translate.TranslateElement(
-          {
-            pageLanguage: 'en',
-            includedLanguages: 'en,si,ta', // English, Sinhala, Tamil
-            layout: window.google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false
-          },
-          'google_translate_element'
-        );
-      };
-    };
-
-    addGoogleTranslateScript();
-
-    return () => {
-      // Cleanup function
-      const script = document.querySelector('script[src*="translate.google.com"]');
-      if (script) {
-        document.body.removeChild(script);
-      }
-      // @ts-ignore
-      if (window.googleTranslateElementInit) {
-        // @ts-ignore
-        delete window.googleTranslateElementInit;
-      }
-    };
-  }, []);
+  // Handle language change
+  const handleLanguageChange = (event: SelectChangeEvent) => {
+    const newLanguage = event.target.value as 'en' | 'si' | 'ta';
+    i18n.changeLanguage(newLanguage);
+    languageState.currentLanguage = newLanguage;
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('appLanguage', newLanguage);
+    }
+  };
 
   // Google Login Handler
   const loginWithGoogle = useGoogleLogin({
@@ -127,10 +104,32 @@ const SocialMediaLoginInner = () => {
         width: "100%",
         mt: 2,
         mb: 2,
+        gap: 2,
       }}
     >
-      <Typography variant="body2" sx={{ color: "#333333", mb: 1 }}>
-        Or sign in with
+      {/* Language Selector */}
+      <FormControl sx={{ minWidth: 120 }} size="small">
+        <Select
+          value={i18n.language}
+          onChange={handleLanguageChange}
+          displayEmpty
+          inputProps={{ 'aria-label': t('languageSelector.selectLanguage') }}
+          sx={{
+            borderRadius: '20px',
+            '& .MuiSelect-select': {
+              py: 1,
+            }
+          }}
+        >
+          
+          <MenuItem value="en">{t('languages.english')}</MenuItem>
+          <MenuItem value="si">{t('languages.sinhala')}</MenuItem>
+          <MenuItem value="ta">{t('languages.tamil')}</MenuItem>
+        </Select>
+      </FormControl>
+
+      <Typography variant="body2" sx={{ color: "#333333" }}>
+        {t("socialLogin.orSignInWith")}
       </Typography>
 
       <Box sx={{ 
@@ -147,7 +146,7 @@ const SocialMediaLoginInner = () => {
           <Box
             component="img"
             src={GoogleLogo}
-            alt="Google Login"
+            alt={t("socialLogin.googleLogin")}
             onClick={() => loginWithGoogle()}
             sx={{
               width: 37,
@@ -170,7 +169,7 @@ const SocialMediaLoginInner = () => {
               <Box
                 component="img"
                 src={FacebookLogo}
-                alt="Facebook Login"
+                alt={t("socialLogin.facebookLogin")}
                 onClick={(e) => {
                   e.preventDefault();
                   setIsFacebookLoading(true);
@@ -190,35 +189,13 @@ const SocialMediaLoginInner = () => {
           />
         </Box>
 
-        {/* Google Translate Button - English, Sinhala, Tamil only */}
-        <Box 
-          id="google_translate_element" 
-          sx={{ 
-            ml: 2,
-            '& .goog-te-combo': {
-              padding: '5px 10px',
-              borderRadius: '4px',
-              border: '1px solid #ddd',
-              backgroundColor: '#f8f8f8',
-              cursor: 'pointer',
-              fontSize: '14px',
-              '&:hover': {
-                backgroundColor: '#e8e8e8'
-              }
-            },
-            '& .goog-te-menu-value span': {
-              display: 'none' // Hide the default "Select Language" text
-            },
-            '& .goog-te-menu-value:before': {
-              content: '"🌐"', // Add a globe icon
-              marginRight: '5px'
-            }
-          }} 
-        />
-
         {/* Loading Indicator */}
         {isFacebookLoading && (
-          <CircularProgress size={24} sx={{ position: "absolute", right: -40 }} />
+          <CircularProgress 
+            size={24} 
+            sx={{ position: "absolute", right: -40 }} 
+            aria-label={t("socialLogin.loading")}
+          />
         )}
       </Box>
     </Box>

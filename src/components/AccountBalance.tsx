@@ -6,7 +6,12 @@ import fetchBillingDetails from "../services/postpaid/fetchBillingDetails";
 import fetchWalletDetail from "../services/prepaid/fetchWalletDetails";
 import useStore from "../services/useAppStore";
 
+// Import translation hook
+import { useTranslation } from "react-i18next";
+
 const AccountBalance: React.FC = () => {
+  const { t } = useTranslation();
+
   const { serviceDetails, selectedTelephone, setLeftMenuItem } = useStore();
   const [amount, setAmount] = useState("");
   const [expireTime, setExpireTime] = useState("");
@@ -33,7 +38,7 @@ const AccountBalance: React.FC = () => {
             month: "2-digit",
             day: "2-digit",
           })
-        : "N/A";
+        : t("N/A");
 
       setExpireTime(formattedExpireDate);
 
@@ -56,12 +61,12 @@ const AccountBalance: React.FC = () => {
     };
 
     fetchData();
-  }, [selectedTelephone, serviceDetails]);
+  }, [selectedTelephone, serviceDetails, t]);
 
   // Function to format amount with thousand separators
   const formatAmount = (value: string) => {
     if (!value) return "0.00";
-    const num = parseFloat(value.replace(/,/g, ''));
+    const num = parseFloat(value.replace(/,/g, ""));
     return num.toLocaleString("en-US", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -90,10 +95,10 @@ const AccountBalance: React.FC = () => {
           variant="body2"
           sx={{ color: "#0056A2", fontSize: 18, fontWeight: 700 }}
         >
-          {isPrepaid ? "Balance" : "Total Payable"}
+          {isPrepaid ? t("Balance") : t("Total Payable")}
         </Typography>
         <Typography variant="body2" sx={{ color: "#0056A2", fontSize: 12 }}>
-          {isPrepaid ? "Expires on " : "For month Ending at "}
+          {isPrepaid ? t("Expires on ") : t("For month Ending at ")}
           <Typography
             variant="body2"
             component="span"
@@ -104,7 +109,7 @@ const AccountBalance: React.FC = () => {
         </Typography>
       </Box>
       <Box sx={{ flexGrow: 0.75 }}></Box>
-      
+
       <Typography
         variant="body2"
         sx={{ color: "#0056A2", fontSize: 25, fontWeight: "900" }}
@@ -123,7 +128,7 @@ const AccountBalance: React.FC = () => {
           },
         }}
         onClick={() => {
-          if(isPrepaid) setLeftMenuItem("Transaction");
+          if (isPrepaid) setLeftMenuItem("Transaction");
           else setLeftMenuItem("Bill");
         }}
       >
@@ -131,7 +136,7 @@ const AccountBalance: React.FC = () => {
           variant="body2"
           sx={{ color: "#FFFFFF", textTransform: "capitalize", fontSize: 14 }}
         >
-          {isPrepaid ? "Transaction" : "Pay Now"}
+          {isPrepaid ? t("Transaction") : t("Pay Now")}
         </Typography>
       </Button>
     </Box>

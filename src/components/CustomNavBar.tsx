@@ -3,6 +3,8 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import useStore from "../services/useAppStore";
+import { useTheme, useMediaQuery } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const CustomNavBar = () => {
   const {
@@ -14,6 +16,11 @@ const CustomNavBar = () => {
     setSelectedQuickAccessItem,
   } = useStore();
 
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const { t } = useTranslation();
+
   const isPrepaid =
     serviceDetails?.promotionType === "Prepaid" ||
     serviceDetails?.promotionType === null;
@@ -21,10 +28,10 @@ const CustomNavBar = () => {
   const [selectedItem, setSelectedItem] = useState("Broadband");
 
   const items = [
-    { label: "Broadband", key: "Broadband" },
-    { label: "PEO TV", key: "PeoTV" },
-    { label: "Voice", key: "Voice" },
-    { label: "Mobile", key: "Mobile" },
+    { label: t("navbar.broadband"), key: "Broadband" },
+    { label: t("navbar.peoTV"), key: "PeoTV" },
+    { label: t("navbar.voice"), key: "Voice" },
+    { label: t("navbar.mobile"), key: "Mobile" },
   ];
 
   const handleItemClick = (item: string) => {
@@ -47,22 +54,20 @@ const CustomNavBar = () => {
     setSelectedItem("Broadband");
   }, [selectedTelephone]);
 
-  useEffect(() => {
-    console.log("Selected Telephone number:", selectedTelephone);
-  }, [selectedTelephone]);
-
   return (
     <Box
       sx={{
         backgroundColor: "#ffffff",
         width: "100%",
-        height: "5vh",
-        minHeight: "40px",
+        height: { xs: "auto", sm: "5vh" },
+        minHeight: { xs: "48px", sm: "40px" },
         borderRadius: "10px",
         display: "flex",
+        flexDirection: { xs: "column", sm: "row" },
         justifyContent: "space-around",
-        paddingY: 0.5,
-        paddingX: 0,
+        alignItems: "stretch",
+        padding: { xs: "4px", sm: "4px 8px" },
+        gap: { xs: "4px", sm: 0 },
       }}
     >
       {items.map((item, index) => {
@@ -73,21 +78,37 @@ const CustomNavBar = () => {
             disabled={disabled}
             onClick={() => handleItemClick(item.key)}
             sx={{
-              marginX: 1,
               flexGrow: 1,
-              width: "auto",
+              minWidth: 0,
+              minHeight: { xs: "36px", sm: "auto" },
+              padding: { xs: "4px 8px", sm: "6px 12px" },
+              marginX: { xs: 0, sm: 1 },
               color: selectedItem === item.key ? "white" : "#0056A2",
               backgroundColor:
                 selectedItem === item.key ? "#0056A2" : "transparent",
-              borderRadius: 2,
+              borderRadius: { xs: "4px", sm: "8px" },
               textTransform: "capitalize",
               "&:hover": {
-                scale: selectedItem !== item.key ? 1.1 : 1,
-                transition: "all 0.3s ease",
+                transform: selectedItem !== item.key ? "scale(1.02)" : "none",
+                transition: "all 0.2s ease",
+                backgroundColor:
+                  selectedItem === item.key ? "#0056A2" : "rgba(0, 86, 162, 0.08)",
+              },
+              "&.Mui-disabled": {
+                opacity: 0.6,
               },
             }}
           >
-            <Typography variant="body2" sx={{ fontSize: 16 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                fontSize: { xs: 14, sm: 16 },
+                fontWeight: selectedItem === item.key ? 600 : 400,
+                whiteSpace: "nowrap",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+              }}
+            >
               {item.label}
             </Typography>
           </Button>

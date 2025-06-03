@@ -9,6 +9,7 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import RedeemImage from "../assets/Images/redeem.png";
 import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import redeemVoucher from "../services/postpaid/redeemVoucher";
@@ -16,18 +17,21 @@ import useStore from "../services/useAppStore";
 import { textFieldStyle } from "../assets/Themes/CommonStyles";
 
 const Redeem: React.FC = () => {
+  const { t } = useTranslation();
+
   const { serviceDetails } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
+
   const [voucherId, setVoucherId] = useState("");
-  const [loading, setLoading] = useState(false); // To handle loading state
-  const [message, setMessage] = useState(""); // To display response messages
-  const [isDialogOpen, setIsDialogOpen] = useState(false); // To manage message box visibility
-  const [isSuccess, setIsSuccess] = useState(false); // To check if the result is success or error
-  const [showMessage, setShowMessage] = useState(false); // To handle delayed message display
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
 
   const handleValidate = async () => {
     if (!voucherId) {
-      setMessage("Please enter a voucher ID.");
+      setMessage(t("redeem.enterVoucherId"));
       setIsSuccess(false);
       setIsDialogOpen(true);
       setShowMessage(true);
@@ -35,41 +39,41 @@ const Redeem: React.FC = () => {
     }
 
     if (!serviceID) {
-      setMessage("Service ID is missing. Unable to redeem voucher.");
+      setMessage(t("redeem.serviceIdMissing"));
       setIsSuccess(false);
       setIsDialogOpen(true);
       setShowMessage(true);
       return;
     }
 
-    setLoading(true); // Start loading
-    setMessage(""); // Reset the message
-    setShowMessage(false); // Initially hide the message
-    setIsDialogOpen(true); // Open the dialog
+    setLoading(true);
+    setMessage("");
+    setShowMessage(false);
+    setIsDialogOpen(true);
 
     try {
       const response = await redeemVoucher(serviceID, voucherId);
 
       if (response?.isSuccess) {
-        setMessage(response.dataBundle.message || "Voucher redeemed successfully!");
+        setMessage(response.dataBundle.message || t("redeem.successMessage"));
         setIsSuccess(true);
       } else {
-        setMessage(response?.errorShow || "Failed to redeem voucher. Please try again.");
+        setMessage(response?.errorShow || t("redeem.failureMessage"));
         setIsSuccess(false);
       }
     } catch (error) {
       console.error("An error occurred while redeeming the voucher:", error);
-      setMessage("An unexpected error occurred. Please try again.");
+      setMessage(t("redeem.unexpectedError"));
       setIsSuccess(false);
     } finally {
-      setLoading(false); // Stop loading
-      setShowMessage(true); // Show the message
+      setLoading(false);
+      setShowMessage(true);
     }
   };
 
   const handleDialogClose = () => {
-    setIsDialogOpen(false); // Close the message box
-    setShowMessage(false); // Reset message visibility
+    setIsDialogOpen(false);
+    setShowMessage(false);
   };
 
   return (
@@ -99,7 +103,7 @@ const Redeem: React.FC = () => {
           fontSize: "16px",
         }}
       >
-        Enter the promo code on the voucher to avail yourself of the offer.
+        {t("redeem.enterPromoCode")}
       </Typography>
 
       <Box
@@ -118,7 +122,7 @@ const Redeem: React.FC = () => {
             lineHeight: 1,
           }}
         >
-          Enter your voucher ID:
+          {t("redeem.enterVoucherIdLabel")}
         </Typography>
         <Box sx={{ display: "flex", alignItems: "center" }}>
           <TextField
@@ -126,7 +130,7 @@ const Redeem: React.FC = () => {
             value={voucherId}
             onChange={(e) => setVoucherId(e.target.value)}
             sx={{
-              ...textFieldStyle(40, 250)
+              ...textFieldStyle(40, 250),
             }}
           />
         </Box>
@@ -136,7 +140,7 @@ const Redeem: React.FC = () => {
         variant="contained"
         size="large"
         onClick={handleValidate}
-        disabled={loading} // Disable button while loading
+        disabled={loading}
         sx={{
           display: "flex",
           justifyContent: "start",
@@ -162,7 +166,7 @@ const Redeem: React.FC = () => {
           <img
             src={RedeemImage}
             style={{ width: "34px", height: "38px" }}
-            alt="Redeem Icon"
+            alt={t("redeem.redeemIconAlt")}
           />
         </Box>
 
@@ -175,7 +179,7 @@ const Redeem: React.FC = () => {
             color: "#0056A2",
           }}
         >
-          {loading ? "Processing..." : "REDEEM VOUCHER"}
+          {loading ? t("redeem.processing") : t("redeem.redeemVoucher")}
         </Typography>
       </Button>
 
@@ -187,7 +191,7 @@ const Redeem: React.FC = () => {
             padding: "10px 20px",
           }}
         >
-          
+          {isSuccess ? t("redeem.success") : t("redeem.error")}
         </DialogTitle>
         <DialogContent
           sx={{
@@ -208,7 +212,7 @@ const Redeem: React.FC = () => {
                 <>
                   <img
                     src="https://cdn.dribbble.com/users/39201/screenshots/3694057/nutmeg.gif"
-                    alt="Success"
+                    alt={t("redeem.successGifAlt")}
                     style={{ width: "100px", borderRadius: "10px" }}
                   />
                   <Typography variant="body2">{message}</Typography>
@@ -217,7 +221,7 @@ const Redeem: React.FC = () => {
                 <>
                   <img
                     src="https://i.gifer.com/Z16w.gif"
-                    alt="Error"
+                    alt={t("redeem.errorGifAlt")}
                     style={{ width: "30px", height: "20px" }}
                   />
                   <Typography variant="body2">{message}</Typography>
@@ -228,13 +232,13 @@ const Redeem: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} autoFocus>
-            Ok
+            {t("redeem.ok")}
           </Button>
         </DialogActions>
       </Dialog>
 
       <Box sx={{ position: "absolute", zIndex: 1, right: "2%", bottom: "2%" }}>
-        <img src={WatermarkLogo} alt="Watermark Logo" />
+        <img src={WatermarkLogo} alt={t("redeem.watermarkLogoAlt")} />
       </Box>
     </Box>
   );

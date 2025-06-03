@@ -18,8 +18,7 @@ import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
 import axios from "axios";
 import fetchServiceDetailByTelephone from "../../services/fetchServiceDetails";
-
-
+import { useTranslation } from "react-i18next";
 
 interface DataPlan {
   range: string;
@@ -32,13 +31,6 @@ interface PackageDetail {
   packageId: string;
 }
 
-const dataPlans: DataPlan[] = [
-  { range: "1GB to 3GB", pricePerGB: 100 },
-  { range: "5GB to 19GB", pricePerGB: 85 },
-  { range: "20GB to 49GB", pricePerGB: 75 },
-  { range: "Above 50GB", pricePerGB: 60 },
-];
-
 interface DataPlanProps {
   packageName: string | null;
 }
@@ -49,15 +41,19 @@ interface PaymentResponse {
   message?: string;
 }
 
-
 const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
+  const { t } = useTranslation();
   const { serviceDetails } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
-  const {   selectedTelephone } = useStore();
+  const { selectedTelephone } = useStore();
   
-  console.log("🔍 [Init] Service Details:", serviceDetails);
-  console.log("🆔 [Init] Service ID:", serviceID);
-  
+  const dataPlans: DataPlan[] = [
+    { range: t("extra_gb.range_1_to_3"), pricePerGB: 100 },
+    { range: t("extra_gb.range_5_to_19"), pricePerGB: 85 },
+    { range: t("extra_gb.range_20_to_49"), pricePerGB: 75 },
+    { range: t("extra_gb.range_above_50"), pricePerGB: 60 },
+  ];
+
   const [selectedGB, setSelectedGB] = useState<number | null>(null);
   const [selectedPrice, setSelectedPrice] = useState<number | null>(null);
   const [packageDetails, setPackageDetails] = useState<PackageDetail[]>([]);
@@ -68,7 +64,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const storedEmail = localStorage.getItem("username");
-  // Logging effects
+
   useEffect(() => {
     console.log("📦 [Update] Package Details:", packageDetails);
   }, [packageDetails]);
@@ -107,7 +103,6 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
       console.log(selectedGB);
       console.log(selectedTelephone);
       
-
       console.warn("⚠️ [Validation] Missing:", {
         checkbox: !isCheckboxChecked,
         GB: !selectedGB,
@@ -115,7 +110,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
         serviceID: !serviceID
       });
   
-      setErrorMessage("Please select all required options");
+      setErrorMessage(t("extra_gb.validation_error"));
       setOpenDialog(true);
       console.groupEnd();
       return;
@@ -138,22 +133,19 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
         console.log("📄 [Response] Activation:", response);
         
         if (!response?.isSuccess) {
-          throw new Error(response?.errorShow || response?.errorMessege || "Failed to add to bill");
+          throw new Error(response?.errorShow || response?.errorMessege || t("extra_gb.bill_add_error"));
         }
   
-        setSuccessMessage(response?.message || "Package added to your bill successfully");
+        setSuccessMessage(response?.message || t("extra_gb.bill_add_success"));
       } else {
         console.log("💳 [Action] Redirecting to payment gateway...");
        
-
-         // Define payment fields
-         const paymentData = {
-        
+        const paymentData = {
           CustEmail: storedEmail,
-          ContactNumber:selectedTelephone,
+          ContactNumber: selectedTelephone,
           subscriberID: serviceID,
-          prepaidID:"EGB",
-          reciever:  serviceID,
+          prepaidID: "EGB",
+          reciever: serviceID,
           packageId: selectedPlan.packageId,
           channel: "SLTPRE",
           commitUser: "OmniAPP",
@@ -162,18 +154,13 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           callbackURLSLT: "", 
         };
   
-        // Create form element
         const form = document.createElement("form");
         form.method = "POST";
         form.action = "https://billpay.slt.lk/bbtopup/summaryallAPImyslt.php";
-        form.target = "_self"; // Use "_blank" to open in new tab
-  
-    
-
+        form.target = "_self";
 
         console.log("📤 [Form Data to be Sent]:", paymentData);
   
-        // Append fields to form
         Object.entries(paymentData).forEach(([key, value]) => {
           const input = document.createElement("input");
           input.type = "hidden";
@@ -182,15 +169,14 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           form.appendChild(input);
         });
   
-        // Append and submit the form
         document.body.appendChild(form);
         form.submit();
   
-        return; // Exit, since redirection will occur
+        return;
       }
     } catch (error: any) {
       console.error("❌ [Error] Transaction Failed:", error);
-      setErrorMessage(error.message || "An unexpected error occurred");
+      setErrorMessage(error.message || t("extra_gb.generic_error"));
     } finally {
       setIsLoading(false);
       setOpenDialog(true);
@@ -212,12 +198,12 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
             setPackageDetails(response);
           } else {
             console.warn("⚠️ [Warning] No package details found");
-            setErrorMessage("No package options available");
+            setErrorMessage(t("extra_gb.no_packages_error"));
             setOpenDialog(true);
           }
         } catch (error) {
           console.error("❌ [Error] Fetch Failed:", error);
-          setErrorMessage("Failed to load package options");
+          setErrorMessage(t("extra_gb.fetch_error"));
           setOpenDialog(true);
         }
       }
@@ -264,7 +250,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           mb: 2, 
           fontSize: { xs: "20px", md: "25px" } 
         }}>
-          Price Plan
+          {t("extra_gb.price_plan")}
         </Typography>
         
         {dataPlans.map((plan, index) => (
@@ -297,7 +283,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               fontSize: { xs: "14px", md: "16px" }, 
               fontWeight: "bold" 
             }}>
-              {plan.pricePerGB} LKR/GB
+              {plan.pricePerGB} {t("extra_gb.currency_per_gb")}
             </Typography>
           </Box>
         ))}
@@ -382,7 +368,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
             fontWeight: "bold",
             fontSize: { xs: "18px", md: "22px" }
           }}>
-            Rs. {selectedPrice ? Math.floor(selectedPrice) : "0"} + Tax
+            {t("extra_gb.price_format", { price: selectedPrice ? Math.floor(selectedPrice) : 0 })}
           </Typography>
         </Box>
 
@@ -408,7 +394,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           >
             <img
               src={AddToBillImage}
-              alt="Add to Bill"
+              alt={t("extra_gb.add_to_bill")}
               style={{
                 width: "100px",
                 height: "auto",
@@ -433,7 +419,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
           >
             <img
               src={PayNowImage}
-              alt="Pay Now"
+              alt={t("extra_gb.pay_now")}
               style={{
                 width: "100px",
                 height: "auto",
@@ -462,9 +448,9 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
               }}
             />
             <Typography variant="body2" sx={{ color: "#0056A2" }}>
-              I agree to the{" "}
+              {t("extra_gb.terms_agreement")}{" "}
               <span style={{ fontWeight: "bold", textDecoration: "underline", cursor: "pointer" }}>
-                general terms and conditions
+                {t("extra_gb.terms_conditions")}
               </span>
             </Typography>
           </Box>
@@ -487,7 +473,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
             }}
             onClick={handleSubmit}
           >
-            {isLoading ? <CircularProgress size={24} color="inherit" /> : "Submit"}
+            {isLoading ? <CircularProgress size={24} color="inherit" /> : t("extra_gb.submit_button")}
           </Button>
         </Box>
 
@@ -503,7 +489,17 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
       </Box>
 
       {/* Result Dialog */}
-     
+      <Dialog open={openDialog} onClose={handleDialogClose}>
+        <DialogTitle>{errorMessage ? t("extra_gb.error_title") : t("extra_gb.success_title")}</DialogTitle>
+        <DialogContent>
+          <Typography>{errorMessage || successMessage}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose} color="primary">
+            {t("extra_gb.close_button")}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

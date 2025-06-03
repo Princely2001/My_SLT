@@ -5,11 +5,15 @@ import {
   ListItemText,
   Popover,
   Typography,
+  MenuItem,
+  Select,
+  FormControl,
+  Box,
+  Button,
 } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import React, { useEffect, useState } from "react";
 import useStore from "../services/useAppStore";
+import { useTranslation } from "react-i18next";
 
 const MenuLeft: React.FC = () => {
   const {
@@ -19,6 +23,8 @@ const MenuLeft: React.FC = () => {
     selectedNavbarItem,
     detailReportAvailability,
   } = useStore();
+
+  const { t, i18n } = useTranslation();
 
   const isPrepaid: boolean =
     serviceDetails?.promotionType === "Prepaid" ||
@@ -43,7 +49,6 @@ const MenuLeft: React.FC = () => {
     items = broadbandItems;
   } else if (selectedNavbarItem === "PeoTV") {
     items = peoTVItems;
-  
   } else {
     items = voiceItems;
   }
@@ -54,23 +59,21 @@ const MenuLeft: React.FC = () => {
     mouseX: number;
     mouseY: number;
   } | null>(null);
+  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     if (isPrepaid && selectedNavbarItem === "Broadband") {
       setSelectedItem("");
-      setLeftMenuItem("Summary");  
+      setLeftMenuItem("Summary");
     } else if (!isPrepaid && selectedNavbarItem === "Broadband") {
       setSelectedItem("Summary");
       setLeftMenuItem("Summary");
-    } else if (selectedNavbarItem === "PeoTV") {
-      setSelectedItem("My Package");
-      setLeftMenuItem("My Package");
-    } else if (selectedNavbarItem === "Voice") {
+    } else if (selectedNavbarItem === "PeoTV" || selectedNavbarItem === "Voice") {
       setSelectedItem("My Package");
       setLeftMenuItem("My Package");
     }
-    
   }, [isPrepaid]);
+
   useEffect(() => {
     setSelectedItem(selectedLeftMenuItem);
   }, [selectedLeftMenuItem]);
@@ -83,6 +86,12 @@ const MenuLeft: React.FC = () => {
   const handleClose = () => {
     setAnchorEl(null);
     setMousePosition(null);
+  };
+
+  const handleLanguageChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    const newLang = event.target.value as string;
+    setLanguage(newLang);
+    i18n.changeLanguage(newLang);
   };
 
   const open = Boolean(anchorEl);
@@ -101,14 +110,16 @@ const MenuLeft: React.FC = () => {
         maxHeight: "500px",
       }}
     >
+     
+
       {items.map((item, index) => (
         <Button
+          key={index}
           sx={{
             backgroundColor: item === selectedItem ? "#FFFFFF" : "#FFFFFF40",
-            border:
-              item === selectedItem
-                ? "3px solid #50B748"
-                : "1px solid #FFFFFFA6",
+            border: item === selectedItem
+              ? "3px solid #50B748"
+              : "1px solid #FFFFFFA6",
             borderRadius: "10px",
             padding: 1.5,
             "&:hover": {
@@ -116,7 +127,6 @@ const MenuLeft: React.FC = () => {
               borderColor: "#50B748",
             },
           }}
-          key={index}
           onClick={(event) => {
             if (item === "More") {
               handleMoreClick(event);
@@ -135,7 +145,7 @@ const MenuLeft: React.FC = () => {
               fontWeight: item === selectedItem ? 700 : 600,
             }}
           >
-            {item}
+            {t(item)}
           </Typography>
         </Button>
       ))}
@@ -172,21 +182,14 @@ const MenuLeft: React.FC = () => {
             <ListItemButton
               onClick={() => {
                 handleClose();
-                if (detailReportAvailability) {
-                  setLeftMenuItem("DisableDetailReport");
-                } else {
-                  setLeftMenuItem("Subscription");
-                }
+                setLeftMenuItem(detailReportAvailability ? "DisableDetailReport" : "Subscription");
               }}
             >
               <ListItemText>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "#00256A", fontSize: 16 }}
-                >
-                  {detailReportAvailability
+                <Typography variant="body2" sx={{ color: "#00256A", fontSize: 16 }}>
+                  {t(detailReportAvailability
                     ? "Disable Detailed Report"
-                    : "Enable Detailed Report"}
+                    : "Enable Detailed Report")}
                 </Typography>
               </ListItemText>
             </ListItemButton>
@@ -199,11 +202,8 @@ const MenuLeft: React.FC = () => {
               }}
             >
               <ListItemText>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "#00256A", fontSize: 16 }}
-                >
-                  Change Contact Information
+                <Typography variant="body2" sx={{ color: "#00256A", fontSize: 16 }}>
+                  {t("Change Contact Information")}
                 </Typography>
               </ListItemText>
             </ListItemButton>
@@ -216,11 +216,8 @@ const MenuLeft: React.FC = () => {
               }}
             >
               <ListItemText>
-                <Typography
-                  variant="body2"
-                  sx={{ color: "#00256A", fontSize: 16 }}
-                >
-                  Change Broadband Password
+                <Typography variant="body2" sx={{ color: "#00256A", fontSize: 16 }}>
+                  {t("Change Broadband Password")}
                 </Typography>
               </ListItemText>
             </ListItemButton>

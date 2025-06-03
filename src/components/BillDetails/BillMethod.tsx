@@ -11,26 +11,25 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import registerSmartBill from "../../services/billMethod/registerSmartBill";
-import useStore from "../../services/useAppStore"; // Import the Zustand store
+import useStore from "../../services/useAppStore";
 
 interface BillMethodProps {
   selectedTab: string;
 }
 
 const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
-  // Access Zustand store values
+  const { t } = useTranslation();
+
   const { billMethodDataBundle, selectedTelephone, selectedAccountNo } = useStore();
 
-  // State for response messages and dialog visibility
   const [responseMessage, setResponseMessage] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  // Get stored email from localStorage
   const storedEmail = localStorage.getItem("username");
 
-  // Log state values for debugging
   useEffect(() => {
     if (billMethodDataBundle) {
       console.log("billMethodDataBundle changed:", billMethodDataBundle);
@@ -41,7 +40,6 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
     console.log("Selected Account No:", selectedAccountNo);
   }, [billMethodDataBundle, selectedTelephone, selectedAccountNo]);
 
-  // Function to handle smart bill registration
   const handleSmartBillRegistration = async (method: any) => {
     try {
       const tpNo = selectedTelephone;
@@ -51,17 +49,16 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
 
       const response = await registerSmartBill(tpNo, accountNo, econtact, billCode);
 
-      // Extract response message
-      const responseMessage =
-        response?.dataBundle?.errorShow || // Message inside nested `dataBundle.errorShow`
-        response?.errorShow || // Top-level `errorShow`
-        "An unexpected error occurred. Please try again later.";
+      const responseMsg =
+        response?.dataBundle?.errorShow ||
+        response?.errorShow ||
+        t("billMethod.notificationTitle") + ": An unexpected error occurred. Please try again later.";
 
-      setResponseMessage(responseMessage); // Set the message for display
-      setDialogOpen(true); // Open the dialog box
+      setResponseMessage(responseMsg);
+      setDialogOpen(true);
     } catch (error) {
       console.error("Registration error:", error);
-      setResponseMessage("An unexpected error occurred. Please try again later.");
+      setResponseMessage(t("billMethod.notificationTitle") + ": An unexpected error occurred. Please try again later.");
       setDialogOpen(true);
     }
   };
@@ -70,7 +67,6 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
     setDialogOpen(false);
   };
 
-  // Render no privilege message if bill_code is "24"
   if (billMethodDataBundle?.bill_code === "24") {
     return (
       <Box p={1} textAlign="center" sx={{ mt: 4 }}>
@@ -86,11 +82,9 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
           }}
         >
           <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-            No privilege
+            {t("billMethod.noPrivilegeTitle")}
           </Typography>
-          <Typography variant="body1">
-            You do not have permission to change the bill method
-          </Typography>
+          <Typography variant="body1">{t("billMethod.noPrivilegeMessage")}</Typography>
         </Box>
       </Box>
     );
@@ -100,10 +94,8 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
     <Box p={1} textAlign="center">
       {billMethodDataBundle?.bill_code === "" ? (
         <Box sx={{ mt: 4, color: "#FF0000", fontWeight: "bold" }}>
-          <Typography variant="h6">No privilege</Typography>
-          <Typography variant="body1">
-            You do not have permission to change the bill method
-          </Typography>
+          <Typography variant="h6">{t("billMethod.noPrivilegeTitle")}</Typography>
+          <Typography variant="body1">{t("billMethod.noPrivilegeMessage")}</Typography>
         </Box>
       ) : (
         selectedTab === "Bill Methods" && (
@@ -138,7 +130,7 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
               >
                 <Box>
                   <Typography variant="body1" fontWeight="bold">
-                    Current Bill Method
+                    {t("billMethod.currentBillMethod")}
                   </Typography>
                   <Typography variant="body1">
                     {billMethodDataBundle?.bill_code_desc || "N/A"} : {storedEmail || "N/A"}
@@ -154,7 +146,7 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
                     },
                   }}
                 >
-                  <Typography variant="body2">Edit</Typography>
+                  <Typography variant="body2">{t("billMethod.edit")}</Typography>
                 </Button>
               </Box>
 
@@ -169,7 +161,7 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
                     color: "#0056A2",
                   }}
                 >
-                  Other Methods
+                  {t("billMethod.otherMethods")}
                 </Typography>
 
                 {/* Map through possible bill methods and display */}
@@ -201,7 +193,7 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
                             {method.bill_code_desc}
                           </Typography>
                           <Typography variant="body1" color="#0056A2">
-                            Get your bill via {method.bill_code_desc}
+                            {t("billMethod.getBillVia", { method: method.bill_code_desc })}
                           </Typography>
                           <FormControlLabel
                             control={<Checkbox color="primary" />}
@@ -215,7 +207,7 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
                                     borderRadius: "4px",
                                   }}
                                 >
-                                  I agree to the general terms and conditions
+                                  {t("billMethod.agreeTerms")}
                                 </Box>
                               </Typography>
                             }
@@ -236,7 +228,7 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
                             }}
                             onClick={() => handleSmartBillRegistration(method)}
                           >
-                            Submit
+                            {t("billMethod.submit")}
                           </Button>
                         </Typography>
                       </Box>
@@ -250,13 +242,13 @@ const BillMethod: React.FC<BillMethodProps> = ({ selectedTab }) => {
       )}
       {/* Dialog for displaying response messages */}
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
-        <DialogTitle>Notification</DialogTitle>
+        <DialogTitle>{t("billMethod.notificationTitle")}</DialogTitle>
         <DialogContent>
           <DialogContentText>{responseMessage}</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} color="primary" autoFocus>
-            Close
+            {t("billMethod.close")}
           </Button>
         </DialogActions>
       </Dialog>

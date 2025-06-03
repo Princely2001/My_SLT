@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -11,23 +12,23 @@ import {
 import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
-import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+
 import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import setHappyDay from "../services/postpaid/setHappyDay"; // Import API function
 import useStore from "../services/useAppStore"; // Import useStore
 
-
 const HappyDay: React.FC = () => {
+  const { t } = useTranslation();
+
   const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs());
   const [dialogOpen, setDialogOpen] = useState(false);
   const [apiResponse, setApiResponse] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false); // To manage dialog success/error state
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
 
   const { serviceDetails } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
-
-  console.log("Service ID:", serviceID); // Log serviceID to the console
 
   const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
@@ -43,7 +44,7 @@ const HappyDay: React.FC = () => {
 
   const handleSetHappyDay = async () => {
     if (!serviceID || !selectedDate) {
-      alert("Service ID or date is missing. Please select a valid date.");
+      alert(t("happyDay.missingServiceIdOrDate"));
       return;
     }
 
@@ -51,16 +52,16 @@ const HappyDay: React.FC = () => {
     const response = await setHappyDay(serviceID, formattedDate);
 
     if (response?.isSuccess) {
-      setApiResponse(response.dataBundle?.message || "Success!");
+      setApiResponse(response.dataBundle?.message || t("happyDay.success"));
       setErrorMessage(null);
-      setIsSuccess(true); // Set success state
+      setIsSuccess(true);
     } else {
-      setErrorMessage(response?.errorShow || "An error occurred.");
+      setErrorMessage(response?.errorShow || t("happyDay.error"));
       setApiResponse(null);
-      setIsSuccess(false); // Set error state
+      setIsSuccess(false);
     }
 
-    setDialogOpen(true); // Open the dialog to show success/error message
+    setDialogOpen(true);
   };
 
   return (
@@ -91,7 +92,7 @@ const HappyDay: React.FC = () => {
             color: "#0056A2",
           }}
         >
-          Choose your Happy Day and enjoy{" "}
+          {t("happyDay.chooseMessage1")}{" "}
           <Typography
             variant="body2"
             component="span"
@@ -102,10 +103,10 @@ const HappyDay: React.FC = () => {
               color: "#40E734",
             }}
           >
-            Unlimited Data, FREE
+            {t("happyDay.chooseMessage2")}
             <br />
           </Typography>{" "}
-          for the entire day.
+          {t("happyDay.chooseMessage3")}
         </Typography>
         <Box sx={{ display: "flex", gap: 1 }}>
           <Box
@@ -149,8 +150,10 @@ const HappyDay: React.FC = () => {
 
             {/* Dialog for displaying API messages */}
             <Dialog open={dialogOpen} onClose={handleDialogClose}>
-              <DialogTitle sx={{ textAlign: "center", color: isSuccess ? "green" : "red" }}>
-                {isSuccess ? "Success" : "Error"}
+              <DialogTitle
+                sx={{ textAlign: "center", color: isSuccess ? "green" : "red" }}
+              >
+                {isSuccess ? t("happyDay.success") : t("happyDay.error")}
               </DialogTitle>
               <DialogContent>
                 <Typography
@@ -174,7 +177,7 @@ const HappyDay: React.FC = () => {
                       {/* Success GIF */}
                       <img
                         src="https://cdn.dribbble.com/users/39201/screenshots/3694057/nutmeg.gif"
-                        alt="Success"
+                        alt={t("happyDay.success")}
                         style={{ width: "100px", height: "30px", borderRadius: "10px" }}
                       />
                     </>
@@ -184,7 +187,7 @@ const HappyDay: React.FC = () => {
                       {/* Failure GIF */}
                       <img
                         src="https://i.gifer.com/Z16w.gif"
-                        alt="Failure"
+                        alt={t("happyDay.error")}
                         style={{ width: "30px", height: "18px", borderRadius: "10px" }}
                       />
                     </>
@@ -193,7 +196,7 @@ const HappyDay: React.FC = () => {
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleDialogClose} autoFocus>
-                  Ok
+                  {t("happyDay.ok")}
                 </Button>
               </DialogActions>
             </Dialog>
@@ -222,7 +225,7 @@ const HappyDay: React.FC = () => {
                   color: "#0056A2",
                 }}
               >
-                Set Date
+                {t("happyDay.setDate")}
               </Typography>
             </Button>
             <Box mt={2}>
@@ -235,15 +238,15 @@ const HappyDay: React.FC = () => {
                   textAlign: "left",
                 }}
               >
-                Terms & Conditions
+                {t("happyDay.termsConditions")}
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ fontSize: "12px", color: "#0056A2", textAlign: "left" }}
               >
-                • Select any day and enjoy Free data for 24 hours.
-                <br />• You can change the date as your requirement, one day
-                prior to the selected date.
+                {t("happyDay.term1")}
+                <br />
+                {t("happyDay.term2")}
               </Typography>
             </Box>
           </Box>
@@ -269,9 +272,6 @@ const HappyDay: React.FC = () => {
           </Box>
         </Box>
       </Box>
-
-     
-      
     </>
   );
 };

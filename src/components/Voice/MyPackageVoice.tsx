@@ -1,10 +1,13 @@
 import Box from "@mui/material/Box";
-import useStore from "../../services/useAppStore";
 import { Typography } from "@mui/material";
 import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
+import useStore from "../../services/useAppStore";
+import { useTranslation } from "react-i18next";
 
 const MyPackageVoice = () => {
+  const { t } = useTranslation();
   const { serviceDetails } = useStore();
+
   return (
     <Box
       sx={{
@@ -37,19 +40,19 @@ const MyPackageVoice = () => {
           variant="body2"
           sx={{ color: "#0056A2", fontSize: "20px", fontWeight: 600, mb: 2 }}
         >
-          {`Service ID : ${serviceDetails?.listofVoiceService[0].serviceID}`}
+          {`${t("service_id")} : ${serviceDetails?.listofVoiceService[0].serviceID}`}
         </Typography>
         <Typography
           variant="body2"
           sx={{ color: "#0056A2", fontSize: "36px", fontWeight: 600, mb: 2 }}
         >
-          {`${serviceDetails?.listofVoiceService[0].packageName}`}
+          {serviceDetails?.listofVoiceService[0].packageName}
         </Typography>
         <Typography variant="body2" sx={{ color: "#0056A2", fontSize: "36px" }}>
-          {`Status : `}
+          {`${t("status")} : `}
           <Typography
             variant="body2"
-            component={"span"}
+            component="span"
             sx={{ color: "#4FD745", fontSize: "36px", fontWeight: 600 }}
           >
             {serviceDetails?.listofVoiceService[0].serviceStatus}

@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 import useStore from "../../services/useAppStore";
 import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
+import { useTranslation } from "react-i18next";
 
 const VideoOnDemand = () => {
   const { serviceDetails, setLeftMenuItem, selectedNavbarItem } = useStore();
   const [showAlert, setShowAlert] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (!serviceDetails?.listofVODService?.length) {
@@ -21,31 +31,30 @@ const VideoOnDemand = () => {
       <Dialog open={showAlert} onClose={handleCloseAlert}>
         <DialogTitle>
           <Typography variant="body2" sx={{ fontSize: "24px", color: "#00256A" }}>
-            No Video On Demand Service
+            {t("vod.noServiceTitle")}
           </Typography>
         </DialogTitle>
         <DialogContent>
           <Typography variant="body2" sx={{ fontSize: "16px", color: "#0056A2" }}>
-            You don't have a VOD service subscription. Subscribe now!
+            {t("vod.noServiceMessage")}
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button sx={buttonStyle} onClick={handleCloseAlert} color="primary">
-            Close
+            {t("c.close")}
           </Button>
           <Button
-  sx={buttonStyle}
-  onClick={() => {
-    handleCloseAlert();
-    setLeftMenuItem("New Services");
-    window.open("https://www.slt.lk/en/personal/peo-tv/vod", "_blank");
-  }}
-  color="primary"
-  autoFocus
->
-  Subscribe Now
-</Button>
-
+            sx={buttonStyle}
+            onClick={() => {
+              handleCloseAlert();
+              setLeftMenuItem("New Services");
+              window.open("https://www.slt.lk/en/personal/peo-tv/vod", "_blank");
+            }}
+            color="primary"
+            autoFocus
+          >
+            {t("vod.subscribeNow")}
+          </Button>
         </DialogActions>
       </Dialog>
 
@@ -55,13 +64,13 @@ const VideoOnDemand = () => {
           {serviceDetails?.listofVODService?.length > 0 ? (
             <>
               <Typography variant="body2" sx={textStyle}>
-                {`Service ID : ${serviceDetails.listofVODService[0].serviceID}`}
+                {`${t("vod.serviceID")} : ${serviceDetails.listofVODService[0].serviceID}`}
               </Typography>
               <Typography variant="body2" sx={{ ...textStyle, fontSize: "36px" }}>
                 {serviceDetails.listofVODService[0].movieTitle}
               </Typography>
               <Typography variant="body2" sx={{ ...textStyle, fontSize: "36px" }}>
-                {`Status : `}
+                {`${t("vod.status")} : `}
                 <Typography
                   variant="body2"
                   component={"span"}
@@ -73,7 +82,7 @@ const VideoOnDemand = () => {
             </>
           ) : (
             <Typography variant="body2" sx={{ ...textStyle, fontSize: "24px" }}>
-              No Videos Available
+              {t("vod.noVideos")}
             </Typography>
           )}
         </Box>

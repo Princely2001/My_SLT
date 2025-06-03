@@ -18,9 +18,11 @@ import useStore from "../../services/useAppStore";
 import { Addon, PostpaidAddOnPackage } from "../../types/types";
 import BroadbandNavbar from "./BroadbandNavbar";
 import purchaseAddons from "../../services/postpaid/purchaseAddons";
+import { useTranslation } from "react-i18next";
 
 const BroadbandPostPaidGetAddOns = () => {
-  const [selectedItem, setSelectedItem] = useState<string>("Home Schooling & WFH");
+  const { t } = useTranslation();
+  const [selectedItem, setSelectedItem] = useState<string>("");
   const [packages, setPackages] = useState<PostpaidAddOnPackage[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedPackage, setSelectedPackage] = useState<Addon | null>(null);
@@ -69,14 +71,7 @@ const BroadbandPostPaidGetAddOns = () => {
         await fetchLTEPostpaidAddOnPackages(packageName, subscriberID);
       setPackages(response);
       console.log("Packages: ", response);
-      
-      // Set default selected item to "Home Schooling & WFH" if it exists
-      const homeSchoolingPackage = response.find(pkg => pkg.category === "Home Schooling & WFH");
-      if (homeSchoolingPackage) {
-        setSelectedItem("Home Schooling & WFH");
-      } else if (response.length > 0) {
-        setSelectedItem(response[0].category);
-      }
+      if (response.length > 0) setSelectedItem(response[0].category);
     };
     fetchPackages();
   }, [selectedTelephone]);
@@ -254,7 +249,7 @@ const BroadbandPostPaidGetAddOns = () => {
                         variant="body2"
                         sx={{ color: "#FFFFFF", fontSize: 16 }}
                       >
-                        {`Rs. ${addon.postprice}`}
+                        {t("addons.price_format", { price: addon.postprice })}
                       </Typography>
                     </Box>
                     <CardContent
@@ -280,7 +275,7 @@ const BroadbandPostPaidGetAddOns = () => {
                         }}
                         onClick={() => handleCardButtonClick(addon)}
                       >
-                        Activate
+                        {t("addons.activate_button")}
                       </Button>
                     </CardContent>
                   </Card>
@@ -336,7 +331,7 @@ const BroadbandPostPaidGetAddOns = () => {
                         variant="body2"
                         sx={{ color: "#FFFFFF", fontSize: 16 }}
                       >
-                        {`Rs. ${addon.postprice}`}
+                        {t("addons.price_format", { price: addon.postprice })}
                       </Typography>
                     </Box>
                     <CardContent
@@ -362,7 +357,7 @@ const BroadbandPostPaidGetAddOns = () => {
                         }}
                         onClick={() => handleCardButtonClick(addon)}
                       >
-                        Activate
+                        {t("addons.activate_button")}
                       </Button>
                     </CardContent>
                   </Card>
@@ -371,10 +366,10 @@ const BroadbandPostPaidGetAddOns = () => {
           )}
         </Box>
         <Dialog open={dialogOpen} onClose={handleDialogClose}>
-          <DialogTitle>Confirm</DialogTitle>
+          <DialogTitle>{t("addons.confirm_title")}</DialogTitle>
           <DialogContent>
             <Typography>
-              Do you want to purchase and activate {selectedPackage?.name}?
+              {t("addons.confirm_message", { packageName: selectedPackage?.name })}
             </Typography>
             {(selectedItem.trim() === "LMS" ||
               selectedItem.trim() === "Home Schooling & WFH") && (
@@ -385,22 +380,22 @@ const BroadbandPostPaidGetAddOns = () => {
                 <FormControlLabel
                   value="onetime"
                   control={<Radio />}
-                  label="One-Time"
+                  label={t("addons.one_time_option")}
                 />
                 <FormControlLabel
                   value="recurrent"
                   control={<Radio />}
-                  label="Recurrent"
+                  label={t("addons.recurrent_option")}
                 />
               </RadioGroup>
             )}
           </DialogContent>
           <DialogActions>
             <Button onClick={handleDialogClose} color="error">
-              No
+              {t("addons.no_button")}
             </Button>
             <Button onClick={handleActivation} color="primary">
-              Yes
+              {t("addons.yes_button")}
             </Button>
           </DialogActions>
         </Dialog>

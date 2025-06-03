@@ -7,45 +7,23 @@ import {
   Typography,
   SvgIcon,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import fetchCurrentPackage from "../../services/postpaid/fetchCurrentPackage";
 import useStore from "../../services/useAppStore";
 import { BBPackage, CurrentPackageDetails } from "../../types/types";
 import fetchPackageUpgrades from "../../services/postpaid/fetchPackageUpgrades";
 import upgradePackage from "../../services/postpaid/upgradePackage";
 
-const packages = [
-  {
-    title: "Any Joy",
-    subtitle1: "22GB Any Time BB - ADSL",
-    price: 155,
-  },
-  {
-    title: "Any Joy",
-    subtitle: "22GB Any Time BB - ADSL",
-    price: 155,
-  },
-  {
-    title: "Any Joy",
-    subtitle: "22GB Any Time BB - ADSL",
-    price: 155,
-  },
-  {
-    title: "Any Joy",
-    subtitle: "22GB Any Time BB - ADSL",
-    price: 155,
-  },
-];
-
 const CustomArrowIcon: React.FC = () => (
   <SvgIcon viewBox="0 0 24 24" sx={{ fontSize: 16 }}>
-    {/* Green Circle */}
     <circle cx="12" cy="12" r="11" stroke="green" strokeWidth="2" fill="none" />
-    {/* Right Arrow */}
     <path d="M10 8l4 4-4 4" stroke="green" strokeWidth="2" fill="none" />
   </SvgIcon>
 );
+
 const BroadbandPostPaidPackageUpgrader = () => {
-  const { serviceDetails,email } = useStore();
+  const { t } = useTranslation();
+  const { serviceDetails, email } = useStore();
   const [currentPackage, setCurrentPackage] = useState<CurrentPackageDetails>();
   const packageType = serviceDetails?.listofBBService[0]?.serviceType;
   const packageName = serviceDetails?.listofBBService[0]?.packageName;
@@ -54,8 +32,8 @@ const BroadbandPostPaidPackageUpgrader = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const tabs = ["Standard", "Any", "Unlimited"];
-  const [selectedTab, setSelectedTab] = useState("Standard");
+  const tabs = ["standard", "any", "unlimited"];
+  const [selectedTab, setSelectedTab] = useState("standard");
 
   const [standardPackages, setStandardPackages] = useState<BBPackage[]>([]);
   const [anyPackages, setAnyPackages] = useState<BBPackage[]>([]);
@@ -69,7 +47,6 @@ const BroadbandPostPaidPackageUpgrader = () => {
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!isDragging || !scrollRef.current) return;
-
     e.preventDefault();
     const x = e.pageX - (scrollRef.current.offsetLeft || 0);
     const walk = x - startX;
@@ -82,30 +59,28 @@ const BroadbandPostPaidPackageUpgrader = () => {
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
-
     const scrollLeft = scrollRef.current.scrollLeft;
     const itemWidth = 250;
     const currentIndex = Math.round(scrollLeft / itemWidth) + 1;
-
     setActiveIndex(currentIndex);
   };
 
   const getPackages = () => {
     let packages = [];
 
-    if (selectedTab === "Standard") {
+    if (selectedTab === "standard") {
       packages = standardPackages.map((pkg) => ({
         title: pkg.BB_PACKAGE_NAME,
-        subtitle: `Standard : ${pkg.STANDARD_GB}GB + Free : ${pkg.FREE_GB}GB`,
+        subtitle: `${t("package.standard")}: ${pkg.STANDARD_GB}GB + ${t("package.free")}: ${pkg.FREE_GB}GB`,
         price: pkg.MONTHLY_RENTAL,
       }));
-    } else if (selectedTab === "Any") {
+    } else if (selectedTab === "any") {
       packages = anyPackages.map((pkg) => ({
         title: pkg.BB_PACKAGE_NAME,
         subtitle: `${pkg.STANDARD_GB}GB ${pkg.DESCRIPTION}`,
         price: pkg.MONTHLY_RENTAL,
       }));
-    } else if (selectedTab === "Unlimited") {
+    } else if (selectedTab === "unlimited") {
       packages = unlimitedPackages.map((pkg) => ({
         title: pkg.BB_PACKAGE_NAME,
         subtitle: pkg.DESCRIPTION,
@@ -115,6 +90,7 @@ const BroadbandPostPaidPackageUpgrader = () => {
 
     return packages;
   };
+
   const packages = getPackages();
 
   useEffect(() => {
@@ -123,7 +99,6 @@ const BroadbandPostPaidPackageUpgrader = () => {
         if (packageType && packageName) {
           const response = await fetchCurrentPackage(packageType, packageName);
           if (response) {
-
             setCurrentPackage(response);
           }
         }
@@ -140,7 +115,6 @@ const BroadbandPostPaidPackageUpgrader = () => {
         if (packageType && packageName) {
           const response = await fetchPackageUpgrades(packageType, packageName);
           if (response) {
-            console.log(response);
             setStandardPackages(response.Standard.flat(1) || []);
             setAnyPackages(response.Any.flat(1) || []);
             setUnlimitedPackages(response.Unlimited.flat(1) || []);
@@ -153,8 +127,8 @@ const BroadbandPostPaidPackageUpgrader = () => {
     getPackageUpgrades();
   }, [packageType, packageName]);
 
-  const handleActivation = async (item) => {
-    try{
+  const handleActivation = async (item: any) => {
+    try {
       const response = await upgradePackage(
         serviceDetails!.listofBBService[0]?.serviceID,
         serviceDetails!.listofBBService[0]?.serviceType,
@@ -164,13 +138,13 @@ const BroadbandPostPaidPackageUpgrader = () => {
         currentPackage?.bB_PACKAGE_NAME || "",
         item.title,
         currentPackage?.monthlY_RENTAL || "",
-        item.price,
-      )
-    }catch(error){
+        item.price
+      );
+    } catch (error) {
       console.error("An error occurred while upgrading the package:", error);
       return null;
     }
-  }
+  };
 
   return (
     <>
@@ -189,18 +163,14 @@ const BroadbandPostPaidPackageUpgrader = () => {
           mb: 1,
         }}
       >
-        {/* Left Section */}
         <Box>
           <Box display="flex" alignItems="center">
-            {/* Custom SVG Icon */}
             <CustomArrowIcon />
-
-            {/* Text */}
             <Typography
               variant="body2"
               sx={{ color: "#0056A2", fontSize: "0.8rem", ml: 0.5 }}
             >
-              Current Package
+              {t("package.currentPackage")}
             </Typography>
           </Box>
 
@@ -231,19 +201,17 @@ const BroadbandPostPaidPackageUpgrader = () => {
               mr: 1,
             }}
           >
-            Rs. {currentPackage?.monthlY_RENTAL} + Tax
+            {t("common.currency")} {currentPackage?.monthlY_RENTAL} + {t("package.tax")}
           </Typography>
           <Typography
             variant="body2"
             sx={{ color: "#0056A2", fontSize: "1rem" }}
           >
-            (Per Month)
+            ({t("package.perMonth")})
           </Typography>
         </Box>
 
-        {/* Right Section */}
         <Box display="flex" alignItems="center">
-          {/* Standard Data */}
           <Box
             textAlign="center"
             sx={{
@@ -255,10 +223,10 @@ const BroadbandPostPaidPackageUpgrader = () => {
             }}
           >
             <Typography variant="body2" fontWeight="bold" color="#0056A2">
-              Standard
+              {t("package.standard")}
             </Typography>
             <Typography variant="h5" fontWeight="bold" color="#0056A2">
-              {currentPackage?.standarD_GB} GB
+              {currentPackage?.standarD_GB} {t("comm.gb")}
             </Typography>
           </Box>
 
@@ -266,7 +234,6 @@ const BroadbandPostPaidPackageUpgrader = () => {
             +
           </Typography>
 
-          {/* Free Data */}
           <Box
             textAlign="center"
             sx={{
@@ -278,10 +245,10 @@ const BroadbandPostPaidPackageUpgrader = () => {
             }}
           >
             <Typography variant="body2" fontWeight="bold" color="#7642A9">
-              Free
+              {t("package.free")}
             </Typography>
             <Typography variant="h5" fontWeight="bold" color="#7642A9">
-              {currentPackage?.freE_GB} GB
+              {currentPackage?.freE_GB} {t("comm.gb")}
             </Typography>
           </Box>
         </Box>
@@ -339,7 +306,7 @@ const BroadbandPostPaidPackageUpgrader = () => {
                 textTransform: "none",
               }}
             >
-              <Typography variant="body2">{tab}</Typography>
+              <Typography variant="body2">{t(`package.${tab}`)}</Typography>
             </Button>
           ))}
         </Box>
@@ -428,13 +395,13 @@ const BroadbandPostPaidPackageUpgrader = () => {
                       variant="body2"
                       sx={{ mt: 1, fontSize: "1.5rem", fontWeight: "bold" }}
                     >
-                      Rs.{item.price} + Tax
+                      {t("common.currency")}{item.price} + {t("package.tax")}
                     </Typography>
                     <Typography
                       variant="body2"
                       sx={{ mb: 1, fontWeight: "bold" }}
                     >
-                      (Per Month)
+                      ({t("package.perMonth")})
                     </Typography>
                     <Button
                       variant="contained"
@@ -461,7 +428,7 @@ const BroadbandPostPaidPackageUpgrader = () => {
                           fontWeight: "600",
                         }}
                       >
-                        Upgrade
+                        {t("package.upgrade")}
                       </Typography>
                     </Button>
                   </Box>

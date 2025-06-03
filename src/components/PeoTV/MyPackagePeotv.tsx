@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import useStore from "../../services/useAppStore";
 import {
   Button,
   Dialog,
@@ -8,34 +7,33 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import useStore from "../../services/useAppStore";
+import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 
 const MyPackagePeotv = () => {
+  const { t } = useTranslation();
   const { serviceDetails, setLeftMenuItem, selectedNavbarItem } = useStore();
   const [showAlert, setShowAlert] = useState(false);
+
   useEffect(() => {
-    if (serviceDetails!.listofPEOService.length == 0) {
+    if (serviceDetails?.listofPEOService.length === 0) {
       setShowAlert(true);
     }
   }, [serviceDetails, selectedNavbarItem]);
+
   return (
     <>
       <Dialog open={showAlert} onClose={() => setShowAlert(false)}>
         <DialogTitle>
-          <Typography
-            variant="body2"
-            sx={{ fontSize: "24px", color: "#00256A" }}
-          >
-            No PEO TV Connection
+          <Typography variant="body2" sx={{ fontSize: "24px", color: "#00256A" }}>
+            {t("no_peo_tv_connection")}
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography
-            variant="body2"
-            sx={{ fontSize: "16px", color: "#0056A2" }}
-          >
-            Seems like you don't have a PEO TV connection. Let's request one!
+          <Typography variant="body2" sx={{ fontSize: "16px", color: "#0056A2" }}>
+            {t("no_peo_tv_message")}
           </Typography>
         </DialogContent>
         <DialogActions>
@@ -48,12 +46,9 @@ const MyPackagePeotv = () => {
                 color: "#ffffff",
               },
             }}
-            onClick={() => {
-              setShowAlert(false);
-            }}
-            color="primary"
+            onClick={() => setShowAlert(false)}
           >
-            Close
+            {t("close")}
           </Button>
           <Button
             sx={{
@@ -68,13 +63,13 @@ const MyPackagePeotv = () => {
               setShowAlert(false);
               setLeftMenuItem("New Services");
             }}
-            color="primary"
             autoFocus
           >
-            Request Now
+            {t("request_now")}
           </Button>
         </DialogActions>
       </Dialog>
+
       <Box
         sx={{
           position: "relative",
@@ -100,55 +95,40 @@ const MyPackagePeotv = () => {
             height: "80%",
           }}
         >
-          {serviceDetails?.listofPEOService &&
-          serviceDetails?.listofPEOService.length > 0 ? (
+          {serviceDetails?.listofPEOService?.length > 0 ? (
             <>
               <Typography
                 variant="body2"
-                sx={{
-                  color: "#0056A2",
-                  fontSize: "20px",
-                  fontWeight: 600,
-                  mb: 2,
-                }}
+                sx={{ color: "#0056A2", fontSize: "20px", fontWeight: 600, mb: 2 }}
               >
-                {`Service ID : ${serviceDetails?.listofPEOService[0].serviceID}`}
+                {`${t("service_id")} : ${serviceDetails.listofPEOService[0].serviceID}`}
               </Typography>
               <Typography
                 variant="body2"
-                sx={{
-                  color: "#0056A2",
-                  fontSize: "36px",
-                  fontWeight: 600,
-                  mb: 2,
-                }}
+                sx={{ color: "#0056A2", fontSize: "36px", fontWeight: 600, mb: 2 }}
               >
-                {`${serviceDetails?.listofPEOService[0].packageName}`}
+                {serviceDetails.listofPEOService[0].packageName}
               </Typography>
               <Typography
                 variant="body2"
                 sx={{ color: "#0056A2", fontSize: "36px" }}
               >
-                {`Status : `}
+                {`${t("status")} : `}
                 <Typography
                   variant="body2"
-                  component={"span"}
+                  component="span"
                   sx={{ color: "#4FD745", fontSize: "36px", fontWeight: 600 }}
                 >
-                  {serviceDetails?.listofPEOService[0].serviceStatus}
+                  {serviceDetails.listofPEOService[0].serviceStatus}
                 </Typography>
               </Typography>
             </>
           ) : (
             <Typography
               variant="body2"
-              sx={{
-                color: "#0056A2",
-                fontSize: "24px",
-                fontWeight: 600,
-              }}
+              sx={{ color: "#0056A2", fontSize: "24px", fontWeight: 600 }}
             >
-              No Data to Show
+              {t("no_data")}
             </Typography>
           )}
         </Box>

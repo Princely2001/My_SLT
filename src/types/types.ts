@@ -487,3 +487,10 @@ export interface ApiResponse {
   errorCode: string | null;
 }
 
+export interface LanguageState {
+  currentLanguage: 'en' | 'si' | 'ta';
+}
+
+export const languageState: LanguageState = {
+  currentLanguage: 'en',
+};

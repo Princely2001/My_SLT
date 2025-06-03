@@ -6,15 +6,19 @@ import vas3 from "../assets/images/VASIcons/Group 39682.png";
 import vas4 from "../assets/images/VASIcons/Group 39683.png";
 import vas5 from "../assets/images/VASIcons/Group 39684.png";
 import VasIcon from "./VasIcon";
+import { useTranslation } from 'react-i18next';
 
 const ValueAddedServicesMenu = () => {
-const items = [
-  {image:vas1, url:"https://duthaya.lk/"},
-  {image:vas2, url:"https://kaspersky-dp.slt.lk/customerProductList"},
-  {image:vas3, url:"https://www.slt.lk/en/peotv-go"},
-  {image:vas4, url:"https://play.google.com/store/apps/details?id=com.arimac.slt&hl=en&gl=US"},
-  {image:vas5, url:"https://storage.slt.lk/portal/new-registration/"},
-];
+  const { t } = useTranslation();
+  
+  const items = [
+    {image: vas1, url: "https://duthaya.lk/"},
+    {image: vas2, url: "https://kaspersky-dp.slt.lk/customerProductList"},
+    {image: vas3, url: "https://www.slt.lk/en/peotv-go"},
+    {image: vas4, url: "https://play.google.com/store/apps/details?id=com.arimac.slt&hl=en&gl=US"},
+    {image: vas5, url: "https://storage.slt.lk/portal/new-registration/"},
+  ];
+
   return (
     <Box
       sx={{
@@ -36,15 +40,9 @@ const items = [
           fontSize: 20,
           color: "#0056A2",
           fontWeight: "bold",
-    //       textShadow: `
-    // -1px -1px 0 #0056A291,
-    //  1px -1px 0 #0056A291,
-    // -1px  1px 0 #0056A291,
-    //  1px  1px 0 #0056A291`,
         }}
       >
-        {" "}
-        Value Added Services
+        {t("Value Added Services")}
       </Typography>
       <Box
         sx={{
@@ -52,14 +50,12 @@ const items = [
           justifyContent: "end",
           alignItems: "center",
           flexGrow: 1,
-          gap:0.3,
+          gap: 0.3,
         }}
       >
-        {items.map((item, index) => {
-            return (
-                <VasIcon key={index} imagePath={item.image} url={item.url} />
-            )
-        })}
+        {items.map((item, index) => (
+          <VasIcon key={index} imagePath={item.image} url={item.url} />
+        ))}
       </Box>
     </Box>
   );

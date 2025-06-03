@@ -1,30 +1,40 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Grid2, Typography } from "@mui/material";
+import { Box, Button, Typography, Grid } from "@mui/material";
+import { useTranslation } from "react-i18next";
+import useStore from "../services/useAppStore";
+
+// Image Imports
 import Promotion from "../../src/assets/Images/QuickAccessIcons/Promotion.png";
 import PromotionSelected from "../../src/assets/Images/QuickAccessIcons/PromotionSelected.png";
 import PromotionHover from "../../src/assets/Images/QuickAccessIcons/PromotionHover.png";
+
 import NewServices from "../../src/assets/Images/QuickAccessIcons/New Services.png";
 import NewServicesSelected from "../../src/assets/Images/QuickAccessIcons/NewServicesSelected.png";
 import NewServicesHover from "../../src/assets/Images/QuickAccessIcons/NewServicesHover.png";
+
 import DigitalLife from "../../src/assets/Images/QuickAccessIcons/Digital Life.png";
 import DigitalLifeSelected from "../../src/assets/Images/QuickAccessIcons/DigitalLifeSelected.png";
 import DigitalLifeHover from "../../src/assets/Images/QuickAccessIcons/DigitalLifeHover.png";
+
 import Bill from "../../src/assets/Images/QuickAccessIcons/Bill.png";
 import BillSelected from "../../src/assets/Images/QuickAccessIcons/BillSelected.png";
 import BillDisabled from "../../src/assets/Images/QuickAccessIcons/BillDisabled.png";
 import BillHover from "../../src/assets/Images/QuickAccessIcons/BillHover.png";
+
 import HotDevices from "../../src/assets/Images/QuickAccessIcons/Hot Devices.png";
 import HotDevicesSelected from "../../src/assets/Images/QuickAccessIcons/HotDevicesSelected.png";
 import HotDevicesHover from "../../src/assets/Images/QuickAccessIcons/HotDevicesHover.png";
+
 import Complaints from "../../src/assets/Images/QuickAccessIcons/Complaints.png";
 import ComplaintsSelected from "../../src/assets/Images/QuickAccessIcons/ComplaintsSelected.png";
 import ComplaintsDisabled from "../../src/assets/Images/QuickAccessIcons/ComplaintsDisabled.png";
 import ComplaintsHover from "../../src/assets/Images/QuickAccessIcons/ComplaintsHover.png";
 
-import useStore from "../services/useAppStore";
-
 const QuickAccessMenu = () => {
+  const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState("");
+  const [hover, setHover] = useState(-1);
+
   const {
     selectedTelephone,
     serviceDetails,
@@ -33,31 +43,35 @@ const QuickAccessMenu = () => {
     setSelectedQuickAccessItem,
     selectedQuickAccessItem,
   } = useStore();
+
   const isPrepaid = serviceDetails?.promotionType === "Prepaid";
+
+  const disabledItems = [t("Reload"), t("Complaints")];
+
   const tileData = [
     {
-      label: "Promotion",
+      label: t("Promotion"),
       img: Promotion,
       selectedImg: PromotionSelected,
       hoverImg: PromotionHover,
-      customStyles: { width: "32px", height: "32px" }, // Custom size for this image
+      customStyles: { width: "32px", height: "32px" },
     },
     {
-      label: "New Services",
+      label: t("New Services"),
       img: NewServices,
       selectedImg: NewServicesSelected,
       hoverImg: NewServicesHover,
       customStyles: { width: "30px", height: "30px" },
     },
     {
-      label: "Digital Life",
+      label: t("Digital Life"),
       img: DigitalLife,
       selectedImg: DigitalLifeSelected,
       hoverImg: DigitalLifeHover,
       customStyles: { width: "28px", height: "30px" },
     },
     {
-      label: isPrepaid ? "Reload" : "Bill",
+      label: isPrepaid ? t("Reload") : t("Bill"),
       img: Bill,
       selectedImg: BillSelected,
       disabledImg: BillDisabled,
@@ -65,14 +79,14 @@ const QuickAccessMenu = () => {
       customStyles: { width: "30px", height: "30px" },
     },
     {
-      label: "Hot Devices",
+      label: t("Hot Devices"),
       img: HotDevices,
       selectedImg: HotDevicesSelected,
       hoverImg: HotDevicesHover,
       customStyles: { width: "30px", height: "30px" },
     },
     {
-      label: "Complaints",
+      label: t("Complaints"),
       img: Complaints,
       selectedImg: ComplaintsSelected,
       disabledImg: ComplaintsDisabled,
@@ -81,8 +95,6 @@ const QuickAccessMenu = () => {
     },
   ];
 
-  const disabledItems = ["Reload", "Complaints"];
-  const [hover, setHover] = useState(-1);
   const handleRedirect = () => {
     window.open("https://eteleshop.slt.lk/", "_blank");
   };
@@ -96,20 +108,16 @@ const QuickAccessMenu = () => {
   }, [selectedTelephone]);
 
   return (
-    <Box
-      sx={{
-        width: "100%",
-      }}
-    >
-      <Grid2 container spacing={1}>
+    <Box sx={{ width: "100%" }}>
+      <Grid container spacing={1}>
         {tileData.map((tile, index) => {
           const disabled = disabledItems.includes(tile.label) && isPrepaid;
 
           return (
-            <Grid2 size={6} key={index}>
+            <Grid item xs={6} key={index}>
               <Button
                 onClick={() => {
-                  if (tile.label === "Hot Devices") {
+                  if (tile.label === t("Hot Devices")) {
                     handleRedirect();
                   } else {
                     setSelectedQuickAccessItem(tile.label);
@@ -143,7 +151,7 @@ const QuickAccessMenu = () => {
                   },
                   "&:disabled": {
                     backgroundColor: "#CCCCCC",
-                    color: "#99999",
+                    color: "#999999",
                   },
                 }}
               >
@@ -155,17 +163,16 @@ const QuickAccessMenu = () => {
                     height: "30px",
                   }}
                 >
-                  {disabled && (
+                  {disabled ? (
                     <img
                       src={tile.disabledImg}
-                      alt={`${tile.label}-default`}
+                      alt={`${tile.label}-disabled`}
                       style={{
                         ...tile.customStyles,
                         position: "absolute",
                       }}
                     />
-                  )}
-                  {!disabled && (
+                  ) : (
                     <>
                       <img
                         src={tile.img}
@@ -177,10 +184,10 @@ const QuickAccessMenu = () => {
                             hover === index || selectedItem === tile.label
                               ? 0
                               : 1,
-                          transition: "opacity 0.3s ease", // Smooth fade-out
+                          transition: "opacity 0.3s ease",
                         }}
                       />
-                      <img
+                       <img
                         src={
                           hover === index
                             ? tile.hoverImg
@@ -196,7 +203,7 @@ const QuickAccessMenu = () => {
                             hover === index || selectedItem === tile.label
                               ? 1
                               : 0,
-                          transition: "opacity 0.3s ease", // Smooth fade-in
+                          transition: "opacity 0.3s ease",
                         }}
                       />
                     </>
@@ -205,7 +212,7 @@ const QuickAccessMenu = () => {
                 <Typography
                   variant="body2"
                   sx={{
-                    marginL: "auto",
+                      marginL: "auto",
                     textTransform: "capitalize",
                     fontWeight: 600,
                   }}
@@ -213,10 +220,10 @@ const QuickAccessMenu = () => {
                   {tile.label}
                 </Typography>
               </Button>
-            </Grid2>
+            </Grid>
           );
         })}
-      </Grid2>
+      </Grid>
     </Box>
   );
 };

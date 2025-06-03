@@ -1,4 +1,5 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
@@ -18,6 +19,7 @@ import {
 import useStore from "../services/useAppStore";
 
 const PurchaseHistoryComponent: React.FC = () => {
+  const { t } = useTranslation();
   const [allPurchaseHistory, setAllPurchaseHistory] = useState<DataBundle[] | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -25,37 +27,28 @@ const PurchaseHistoryComponent: React.FC = () => {
   const [showTable, setShowTable] = useState<boolean>(false);
   const [viewMode, setViewMode] = useState<"cards" | "table">("cards");
   
-  // Single shared date range state for all tabs
   const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null }>({
-    from: new Date(new Date().setDate(new Date().getDate() - 30)), // Default to last 30 days
+    from: new Date(new Date().setDate(new Date().getDate() - 30)),
     to: new Date()
   });
 
-  const { serviceDetails } = useStore();
+  const { serviceDetails, selectedTelephone } = useStore();
   const subscriberID = serviceDetails?.listofBBService[0]?.serviceID;
   const today = new Date();
 
-  const handleDateChange = useCallback((field: "from" | "to", date: Date | null) => {
-    setDateRange(prev => ({
-      ...prev,
-      [field]: date
-    }));
-    setShowTable(false);
-  }, []);
-
-  const handleSearch = async () => {
+  const fetchHistory = useCallback(async () => {
     const { from, to } = dateRange;
 
     if (!from || !to) {
-      setError("Please select both date ranges");
+      setError(t("purchaseHistory.errors.dateRangeRequired"));
       return;
     }
     if (!subscriberID) {
-      setError("Subscriber ID not found.");
+      setError(t("purchaseHistory.errors.subscriberNotFound"));
       return;
     }
     if (from > to) {
-      setError("Invalid date range: 'From' date cannot be later than 'To' date.");
+      setError(t("purchaseHistory.errors.invalidDateRange"));
       return;
     }
 
@@ -71,45 +64,59 @@ const PurchaseHistoryComponent: React.FC = () => {
       setAllPurchaseHistory(data && data.length > 0 ? data : []);
       setShowTable(true);
     } catch (err) {
-      setError("Failed to fetch purchase history. Please try again.");
+      setError(t("purchaseHistory.errors.fetchFailed"));
       console.error("Error fetching purchase history:", err);
     } finally {
       setLoading(false);
     }
+  }, [subscriberID, dateRange, t]);
+
+  useEffect(() => {
+    if (subscriberID) {
+      fetchHistory();
+    }
+  }, [subscriberID, fetchHistory]);
+
+  const handleDateChange = useCallback((field: "from" | "to", date: Date | null) => {
+    setDateRange(prev => ({
+      ...prev,
+      [field]: date
+    }));
+    setShowTable(false);
+  }, []);
+
+  const handleSearch = async () => {
+    await fetchHistory();
   };
 
   const filterByTab = (data: DataBundle[] | null, tab: number): DataBundle[] => {
     if (!data) return [];
-    
-    return data.filter((item) => {
-      const lowerType = item.vasType?.toLowerCase() || '';
-      const lowerPackage = item.vasPackage?.toLowerCase() || '';
-      
-      // Common patterns for each category
-      const isExtraGB = 
-        (lowerType.includes("extra") || 
-         lowerPackage.includes("extra")) &&
-        (lowerType.includes("gb") || 
-         lowerPackage.includes("gb") ||
-         lowerType.includes("data") || 
-         lowerPackage.includes("data"));
-      
-      const isAddOn = 
-        (lowerType.includes("add-on") ||
-         lowerPackage.includes("add-on") ||
-         lowerType.includes("addon") ||
-         lowerPackage.includes("addon")) &&
-        !isExtraGB;
 
-      switch (tab) {
-        case 1: // Extra GB tab
-          return isExtraGB;
-        case 2: // Add-Ons tab
-          return isAddOn;
-        default: // All tab
-          return true;
-      }
-    });
+    switch (tab) {
+      case 1:
+        return data.filter((item) => {
+          const lowerType = item.vasType?.toLowerCase() || '';
+          const lowerPackage = item.vasPackage?.toLowerCase() || '';
+          const isExtraGb =
+            lowerType.includes('extra') || lowerPackage.includes('extra') ||
+            lowerType.includes('gb') || lowerPackage.includes('gb');
+          const isAddon =
+            lowerType.includes('add-on') || lowerPackage.includes('add-on');
+          return isExtraGb && !isAddon;
+        });
+
+      case 2:
+        return data.filter((item) => {
+          const lowerType = item.vasType?.toLowerCase() || '';
+          const lowerPackage = item.vasPackage?.toLowerCase() || '';
+          const isAddon =
+            lowerType.includes('add-on') || lowerPackage.includes('add-on');
+          return isAddon;
+        });
+
+      default:
+        return data;
+    }
   };
 
   const filteredHistory = filterByTab(allPurchaseHistory, selectedTab);
@@ -145,7 +152,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         marginBottom: 1, 
         letterSpacing: "0.5px" 
       }}>
-        ── Purchase History ──
+        ── {t("purchaseHistory.title")} ──
       </Typography>
 
       <Box sx={{ 
@@ -161,7 +168,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         px: 1, 
         backgroundColor: "#FFFFFF" 
       }}>
-        {["All", "Extra GB", "Add-Ons"].map((tab, index) => (
+        {[t("purchaseHistory.tabs.all"), t("purchaseHistory.tabs.extraGB"), t("purchaseHistory.tabs.addOns")].map((tab, index) => (
           <Button 
             key={tab} 
             onClick={() => { setSelectedTab(index); setShowTable(true); }}
@@ -209,7 +216,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               color: "#0056A2", 
               mb: 0.5 
             }}>
-              From:
+              {t("common.from")}:
             </Typography>
             <DatePicker 
               selected={dateRange.from} 
@@ -239,7 +246,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               color: "#0056A2", 
               mb: 0.5 
             }}>
-              To:
+              {t("common.to")}:
             </Typography>
             <DatePicker 
               selected={dateRange.to} 
@@ -290,7 +297,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               fontWeight: 600, 
               textTransform: "none" 
             }}>
-              Search
+              {t("common.search")}
             </Typography>
           )}
         </Button>
@@ -328,7 +335,10 @@ const PurchaseHistoryComponent: React.FC = () => {
               fontWeight: 700, 
               color: "#0056A2" 
             }}>
-              Showing results from <strong>{dateRange.from?.toLocaleDateString()}</strong> to <strong>{dateRange.to?.toLocaleDateString()}</strong>
+              {t("purchaseHistory.showingResults", {
+                from: dateRange.from?.toLocaleDateString(),
+                to: dateRange.to?.toLocaleDateString()
+              })}
             </Typography>
             
             <ToggleButtonGroup
@@ -355,10 +365,14 @@ const PurchaseHistoryComponent: React.FC = () => {
               }}
             >
               <ToggleButton value="cards" aria-label="card view">
-                <Typography variant="body2" sx={{ fontSize: "14px", fontWeight: 600 }}>Summary View</Typography>
+                <Typography variant="body2" sx={{ fontSize: "14px", fontWeight: 600 }}>
+                  {t("purchaseHistory.viewModes.summary")}
+                </Typography>
               </ToggleButton>
               <ToggleButton value="table" aria-label="table view">
-                <Typography variant="body2" sx={{ fontSize: "14px", fontWeight: 600 }}>Detailed View</Typography>
+                <Typography variant="body2" sx={{ fontSize: "14px", fontWeight: 600 }}>
+                  {t("purchaseHistory.viewModes.detailed")}
+                </Typography>
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
@@ -395,14 +409,14 @@ const PurchaseHistoryComponent: React.FC = () => {
                             fontSize: "14px", 
                             color: "#0056A2" 
                           }}>
-                            {item.vasPackage || "Unknown Package"}
+                            {item.vasPackage || t("common.unknownPackage")}
                           </Typography>
                           <Typography sx={{ 
                             fontSize: "14px", 
                             fontWeight: 600, 
                             color: "#0056A2" 
                           }}>
-                            Rs. {item.payPrice || "0.00"}
+                            {t("common.currency")} {item.payPrice || "0.00"}
                           </Typography>
                         </Box>
                         <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
@@ -410,8 +424,13 @@ const PurchaseHistoryComponent: React.FC = () => {
                             fontSize: "13px", 
                             color: "#4B4B4B" 
                           }}>
-                           
-                            <strong>Valid Till:</strong> {item.validTill || "N/A"}
+                            <strong>{t("common.type")}:</strong> {item.vasType || t("common.notAvailable")}
+                          </Typography>
+                          <Typography sx={{ 
+                            fontSize: "13px", 
+                            color: "#4B4B4B" 
+                          }}>
+                            <strong>{t("common.validTill")}:</strong> {item.validTill || t("common.notAvailable")}
                           </Typography>
                         </Box>
                       </Paper>
@@ -425,7 +444,7 @@ const PurchaseHistoryComponent: React.FC = () => {
                       textAlign: "center", 
                       mt: 2 
                     }}>
-                      No purchase history found in the selected range.
+                      {t("purchaseHistory.noResults")}
                     </Typography>
                   </Grid>
                 )}
@@ -466,15 +485,17 @@ const PurchaseHistoryComponent: React.FC = () => {
                   }}
                 >
                   <TableRow>
-                 
                     <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                      Package Name
+                      {t("purchaseHistory.tableHeaders.type")}
                     </TableCell>
                     <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                      Valid Till
+                      {t("purchaseHistory.tableHeaders.name")}
                     </TableCell>
                     <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
-                      Price
+                      {t("purchaseHistory.tableHeaders.validTill")}
+                    </TableCell>
+                    <TableCell align="center" sx={{ color: "#FFFFFF", fontSize: "15px", fontWeight: "600" }}>
+                      {t("purchaseHistory.tableHeaders.price")}
                     </TableCell>
                   </TableRow>
                 </TableHead>
@@ -493,22 +514,24 @@ const PurchaseHistoryComponent: React.FC = () => {
                           }
                         }}
                       >
-                       
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasPackage || "N/A"}
+                          {item.vasType || t("common.notAvailable")}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.validTill || "N/A"}
+                          {item.vasPackage || t("common.notAvailable")}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          Rs. {item.payPrice || "0.00"}
+                          {item.validTill || t("common.notAvailable")}
+                        </TableCell>
+                        <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
+                          {t("common.currency")} {item.payPrice || "0.00"}
                         </TableCell>
                       </TableRow>
                     ))
                   ) : (
                     <TableRow>
                       <TableCell colSpan={4} align="center" sx={{ color: "#0056A2", fontFamily: "'Roboto', sans-serif" }}>
-                        No purchase history found in the selected range.
+                        {t("purchaseHistory.noResults")}
                       </TableCell>
                     </TableRow>
                   )}
@@ -527,7 +550,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         zIndex: 1, 
         pointerEvents: "none" 
       }}>
-        <img src={WatermarkLogo} alt="Watermark Logo" width="160" height="180" />
+        <img src={WatermarkLogo} alt={t("common.watermarkAlt")} width="160" height="180" />
       </Box>
     </Box>
   );

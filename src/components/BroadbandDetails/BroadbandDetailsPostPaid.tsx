@@ -15,6 +15,7 @@ import fetchOtherPackageUsage from "../../services/postpaid/fetchOtherUsage";
 import BroadbandNavbar from "./BroadbandNavbar";
 import ArrowBackIos from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIos from "@mui/icons-material/ArrowForwardIos";
+import { useTranslation } from 'react-i18next';
 
 const commonTextStyle = {
   fontSize: "14px",
@@ -32,18 +33,21 @@ interface CustomSectionProps {
   value: string | null;
 }
 
-const CustomSection = ({ label, value }: CustomSectionProps) => (
-  <Typography variant="body2" sx={commonTextStyle}>
-    {label}:
-    <Typography
-      component="span"
-      variant="body2"
-      sx={{ fontSize: "12px", fontWeight: 500, color: "#0056A2" }}
-    >
-      {value ? ` ${value}` : "Loading..."}
+const CustomSection = ({ label, value }: CustomSectionProps) => {
+  const { t } = useTranslation();
+  return (
+    <Typography variant="body2" sx={commonTextStyle}>
+      {t(label)}:
+      <Typography
+        component="span"
+        variant="body2"
+        sx={{ fontSize: "12px", fontWeight: 500, color: "#0056A2" }}
+      >
+        {value ? ` ${value}` : ` ${t("Loading...")}`}
+      </Typography>
     </Typography>
-  </Typography>
-);
+  );
+};
 
 interface ActionButtonProps {
   text: string;
@@ -55,36 +59,40 @@ const ActionButton = ({
   text,
   variant = "outlined",
   onClick,
-}: ActionButtonProps) => (
-  <Button
-    variant={variant}
-    sx={{
-      ...commonButtonStyle,
-      zIndex: 10,
-      border: variant === "outlined" ? "3px solid #0056A2" : "none",
-      backgroundColor: variant === "contained" ? "#0056A2" : "transparent",
-      color: variant === "contained" ? "#ffffff" : "#0056A2",
-      marginY: variant === "contained" ? 0 : 3,
-      padding: variant === "contained" ? 1 : 2.5,
-      "&:hover": {
-        backgroundColor: variant === "contained" ? "#004b8c" : "#e0f7fa",
-        border: variant === "outlined" ? "3px solid #004b8c" : "none",
-        color: variant === "contained" ? "#ffffff" : "#004b8c",
-      },
-    }}
-    onClick={onClick}
-  >
-    <Typography
-      variant="body2"
-      textTransform="capitalize"
-      sx={{ fontWeight: "bold", fontSize: 16 }}
+}: ActionButtonProps) => {
+  const { t } = useTranslation();
+  return (
+    <Button
+      variant={variant}
+      sx={{
+        ...commonButtonStyle,
+        zIndex: 10,
+        border: variant === "outlined" ? "3px solid #0056A2" : "none",
+        backgroundColor: variant === "contained" ? "#0056A2" : "transparent",
+        color: variant === "contained" ? "#ffffff" : "#0056A2",
+        marginY: variant === "contained" ? 0 : 3,
+        padding: variant === "contained" ? 1 : 2.5,
+        "&:hover": {
+          backgroundColor: variant === "contained" ? "#004b8c" : "#e0f7fa",
+          border: variant === "outlined" ? "3px solid #004b8c" : "none",
+          color: variant === "contained" ? "#ffffff" : "#004b8c",
+        },
+      }}
+      onClick={onClick}
     >
-      {text}
-    </Typography>
-  </Button>
-);
+      <Typography
+        variant="body2"
+        textTransform="capitalize"
+        sx={{ fontWeight: "bold", fontSize: 16 }}
+      >
+        {t(text)}
+      </Typography>
+    </Button>
+  );
+};
 
 const BroadbandDetailsPostPaid = () => {
+  const { t } = useTranslation();
   const { selectedTelephone, setLeftMenuItem, serviceDetails } = useStore();
   const [serviceData, setServiceData] =
     useState<ServiceDetailsAPIResponse | null>(null);
@@ -95,7 +103,7 @@ const BroadbandDetailsPostPaid = () => {
     freeDataDetails?: PostpaidUsageDetails | null;
     addOnsDetails?: PostpaidUsageDetails | null;
   }>({});
-  const [selectedItem, setSelectedItem] = useState("My Package");
+  const [selectedItem, setSelectedItem] = useState(t("My Package"));
   const [selectedPackage, setSelectedPackage] =
     useState<PostpaidUsageDetails | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -103,9 +111,9 @@ const BroadbandDetailsPostPaid = () => {
 
   const serviceID = serviceData?.listofBBService[0]?.serviceID || null;
   const serviceStatus =
-    serviceData?.listofBBService[0]?.serviceStatus || "Loading...";
+    serviceData?.listofBBService[0]?.serviceStatus || t("Loading...");
   const packageName =
-    serviceData?.listofBBService[0]?.packageName || "Loading...";
+    serviceData?.listofBBService[0]?.packageName || t("Loading...");
   const isPrepaid = serviceDetails?.promotionType === "Prepaid" || serviceDetails?.promotionType === null;
 
   useEffect(() => {
@@ -155,45 +163,45 @@ const BroadbandDetailsPostPaid = () => {
 
   const navbarItems = [
     {
-      label: "My Package",
+      label: t("My Package"),
       used: usageDetails?.myPackageDetails?.package_summary?.used || null,
       limit: usageDetails?.myPackageDetails?.package_summary?.limit || null,
     },
     {
-      label: "Extra GB",
+      label: t("Extra GB"),
       used: usageDetails?.extraGBDetails?.package_summary?.used || null,
       limit: usageDetails?.extraGBDetails?.package_summary?.limit || null,
     },
     {
-      label: "Bonus Data",
+      label: t("Bonus Data"),
       used: usageDetails?.bonusDataDetails?.package_summary?.used || null,
       limit: usageDetails?.bonusDataDetails?.package_summary?.limit || null,
     },
     {
-      label: "Add-Ons",
+      label: t("Add-Ons"),
       used: usageDetails?.addOnsDetails?.package_summary?.used || null,
       limit: usageDetails?.addOnsDetails?.package_summary?.limit || null,
     },
     {
-      label: "Free Data",
+      label: t("Free Data"),
       used: usageDetails?.freeDataDetails?.package_summary?.used || null,
       limit: usageDetails?.freeDataDetails?.package_summary?.limit || null,
     },
   ];
 
   useEffect(() => {
-    if (selectedItem === "My Package") {
+    if (selectedItem === t("My Package")) {
       setSelectedPackage(usageDetails?.myPackageDetails || null);
-    } else if (selectedItem === "Extra GB") {
+    } else if (selectedItem === t("Extra GB")) {
       setSelectedPackage(usageDetails?.extraGBDetails || null);
-    } else if (selectedItem === "Bonus Data") {
+    } else if (selectedItem === t("Bonus Data")) {
       setSelectedPackage(usageDetails?.bonusDataDetails || null);
-    } else if (selectedItem === "Add-Ons") {
+    } else if (selectedItem === t("Add-Ons")) {
       setSelectedPackage(usageDetails?.addOnsDetails || null);
-    } else if (selectedItem === "Free Data") {
+    } else if (selectedItem === t("Free Data")) {
       setSelectedPackage(usageDetails?.freeDataDetails || null);
     }
-  }, [selectedItem, usageDetails]);
+  }, [selectedItem, usageDetails, t]);
 
   return (
     <Box
@@ -214,7 +222,7 @@ const BroadbandDetailsPostPaid = () => {
         navbarItems={navbarItems}
         onSelected={setSelectedItem}
         type="Summary"
-        selected="My Package"
+        selected={t("My Package")}
       />
 
       <Box sx={{ height: "100%", display: "flex", justifyContent: "end" }}>
@@ -236,6 +244,7 @@ const BroadbandDetailsPostPaid = () => {
             }}
           >
             <CircularProgress />
+            <Typography>{t("Loading...")}</Typography>
           </Box>
         ) : (
           <Box
@@ -260,10 +269,10 @@ const BroadbandDetailsPostPaid = () => {
                   variant="body2"
                   sx={{ fontSize: 20, fontWeight: 700, color: "#0F3B7A" }}
                 >
-                  {selectedItem === "My Package"
-                    ? `Your speed is ${selectedPackage?.status} right now`
+                  {selectedItem === t("My Package")
+                    ? t("Your speed is {{status}} right now", { status: selectedPackage?.status })
                     : selectedPackage?.usageDetails[selectedIndex]?.name ||
-                      "Loading..."}
+                      t("Loading...")}
                 </Typography>
                 <Box
                   sx={{
@@ -339,13 +348,18 @@ const BroadbandDetailsPostPaid = () => {
                   variant="body2"
                   sx={{ fontSize: 20, fontWeight: 700, color: "#0F3B7A" }}
                 >
-                  {`${selectedPackage?.usageDetails[selectedIndex].used} GB USED OF ${selectedPackage?.usageDetails[selectedIndex].limit} GB`}
+                  {t("{{used}} GB USED OF {{limit}} GB", {
+                    used: selectedPackage?.usageDetails[selectedIndex].used,
+                    limit: selectedPackage?.usageDetails[selectedIndex].limit
+                  })}
                 </Typography>
                 <Typography
                   variant="body2"
                   sx={{ fontSize: 16, fontWeight: 500, color: "#0F3B7A" }}
                 >
-                  {`Valid Till : ${selectedPackage?.usageDetails[selectedIndex].expiry_date}`}
+                  {t("Valid Till : {{date}}", {
+                    date: selectedPackage?.usageDetails[selectedIndex].expiry_date
+                  })}
                 </Typography>
               </>
             ) : (
@@ -353,7 +367,7 @@ const BroadbandDetailsPostPaid = () => {
                 variant="body2"
                 sx={{ fontSize: 20, fontWeight: 700, color: "#0F3B7A" }}
               >
-                No data available for this package
+                {t("No data available for this package")}
               </Typography>
             )}
           </Box>
@@ -383,9 +397,9 @@ const BroadbandDetailsPostPaid = () => {
               gap: 1,
             }}
           >
-            <CustomSection label="Package" value={packageName} />
-            <CustomSection label="Status" value={serviceStatus} />
-            <CustomSection label="Username" value={serviceID} />
+            <CustomSection label={t("Package")} value={packageName} />
+      <CustomSection label={t("Status")} value={serviceStatus} />
+      <CustomSection label={t("Username")} value={serviceID} />
           </Box>
 
           {isPrepaid ? (
@@ -434,7 +448,7 @@ const BroadbandDetailsPostPaid = () => {
           <Box
             sx={{ position: "absolute", zIndex: 1, right: "1%", bottom: "1%" }}
           >
-            <img src={WatermarkLogo} alt="Watermark Logo" />
+            <img src={WatermarkLogo} alt={t("Watermark Logo")} />
           </Box>
         </Box>
       </Box>

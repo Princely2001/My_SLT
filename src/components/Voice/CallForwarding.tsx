@@ -11,71 +11,69 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 import { textFieldStyle } from "../../assets/Themes/CommonStyles";
-import callForwardingRequest from "../../services/postpaid/Voice/callForwardingRequest"; // Import the call forwarding API
-import checkCallForwardingStatus from "../../services/postpaid/Voice/checkCallForwardingStatus"; // Import the API function
+import callForwardingRequest from "../../services/postpaid/Voice/callForwardingRequest";
+import checkCallForwardingStatus from "../../services/postpaid/Voice/checkCallForwardingStatus";
 
 const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
-  const [statusMessage, setStatusMessage] = useState<string>(""); // State for status message
-  const [errorMessage, setErrorMessage] = useState<string>(""); // State for error message
-  const [dialogOpen, setDialogOpen] = useState<boolean>(false); // State to control dialog visibility
-  const [forwardingNumber, setForwardingNumber] = useState<string>(""); // State for forwarding number
-  const [currentStatus, setCurrentStatus] = useState<string>(""); // State to store the current status (Y or N)
+  const { t } = useTranslation();
+  const [statusMessage, setStatusMessage] = useState<string>("");
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+  const [forwardingNumber, setForwardingNumber] = useState<string>("");
+  const [currentStatus, setCurrentStatus] = useState<string>("");
 
   useEffect(() => {
     const fetchStatus = async () => {
       const statusResponse = await checkCallForwardingStatus(telephoneNo);
       if (statusResponse) {
-        // Check the status from the API response
         const status = statusResponse.status;
-        setCurrentStatus(status); // Store the current status
+        setCurrentStatus(status);
+
         if (status === "N") {
-          setStatusMessage("Call forwarding status failed");
+          setStatusMessage(t("callForwarding.statusFailed"));
         } else if (status === "Y") {
-          setStatusMessage("Call forwarding status Request Success");
+          setStatusMessage(t("callForwarding.statusSuccess"));
         } else {
-          setStatusMessage("Unknown status received from API");
+          setStatusMessage(t("callForwarding.unknownStatus"));
         }
 
-        // Check for the error message in the response
         if (statusResponse.errorShow) {
           setErrorMessage(statusResponse.errorShow);
-          setDialogOpen(true); 
+          setDialogOpen(true);
         }
       } else {
-        setErrorMessage("Sorry, the service is temporarily unavailable. Please try again later");
-        setDialogOpen(true); // Open the dialog if there is no response from API
+        setErrorMessage(t("callForwarding.apiUnavailable"));
+        setDialogOpen(true);
       }
     };
 
     fetchStatus();
-  }, [telephoneNo]);
+  }, [telephoneNo, t]);
 
   const handleDialogClose = () => {
-    setDialogOpen(false); // Close the dialog
+    setDialogOpen(false);
   };
 
   const handleSubscribeClick = async () => {
     if (!forwardingNumber) {
-      setStatusMessage("Please enter a forwarding number.");
+      setStatusMessage(t("callForwarding.enterNumber"));
       return;
     }
 
-    // Set the requestType based on the current status (Y or N)
-    const requestType = currentStatus === "Y" ? "N" : "Y"; 
-
-    // Prepare the data for the API request
+    const requestType = currentStatus === "Y" ? "N" : "Y";
     const response = await callForwardingRequest(telephoneNo, forwardingNumber, requestType);
 
     if (response) {
       if (requestType === "Y") {
-        setStatusMessage("Call forwarding has been successfully activated.");
-      } else if (requestType === "N") {
-        setStatusMessage("Call forwarding has been successfully canceled.");
+        setStatusMessage(t("callForwarding.activated"));
+      } else {
+        setStatusMessage(t("callForwarding.cancelled"));
       }
     } else {
-      setStatusMessage("Failed to process the request.");
+      setStatusMessage(t("callForwarding.failedRequest"));
     }
   };
 
@@ -105,31 +103,14 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
           backgroundColor: "#FFFFFF",
         }}
       >
-        <Typography
-          variant="body2"
-          sx={{ fontSize: 24, fontWeight: "bold", marginBottom: "32px" }}
-        >
-          Call Forwarding
+        <Typography variant="body2" sx={{ fontSize: 24, fontWeight: "bold", marginBottom: "32px" }}>
+          {t("callForwarding.title")}
         </Typography>
+
         <Box sx={{ marginBottom: "16px" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: "bold",
-              color: "#0056A2",
-              marginBottom: "8px",
-            }}
-          >
-            Your Number
-            <Typography
-              component="sup"
-              sx={{
-                color: "red",
-                fontWeight: "bold",
-                fontSize: "1rem",
-                marginLeft: "2px",
-              }}
-            >
+          <Typography variant="body2" sx={{ fontWeight: "bold", color: "#0056A2", marginBottom: "8px" }}>
+            {t("callForwarding.yourNumber")}
+            <Typography component="sup" sx={{ color: "red", fontWeight: "bold", fontSize: "1rem", marginLeft: "2px" }}>
               *
             </Typography>
           </Typography>
@@ -138,83 +119,47 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
             fullWidth
             variant="outlined"
             size="small"
-            value={telephoneNo} // Display the passed telephone number
+            value={telephoneNo}
             disabled
-            sx={{
-              ...textFieldStyle(),
-            }}
+            sx={{ ...textFieldStyle() }}
           />
         </Box>
+
         <Box sx={{ marginBottom: "16px" }}>
-          <Typography
-            variant="body2"
-            sx={{
-              fontWeight: "bold",
-              color: "#0056A2",
-              marginBottom: "8px",
-            }}
-          >
-            Forwarding Number
-            <Typography
-              component="sup"
-              sx={{
-                color: "red",
-                fontWeight: "bold",
-                fontSize: "1rem",
-                marginLeft: "2px",
-              }}
-            >
+          <Typography variant="body2" sx={{ fontWeight: "bold", color: "#0056A2", marginBottom: "8px" }}>
+            {t("callForwarding.forwardingNumber")}
+            <Typography component="sup" sx={{ color: "red", fontWeight: "bold", fontSize: "1rem", marginLeft: "2px" }}>
               *
             </Typography>
           </Typography>
+
           <TextField
             fullWidth
             variant="outlined"
             size="small"
-            placeholder="Enter forwarding number"
+            placeholder={t("callForwarding.enterPlaceholder")}
             value={forwardingNumber}
             onChange={(e) => setForwardingNumber(e.target.value)}
-            sx={{
-              ...textFieldStyle(),
-            }}
+            sx={{ ...textFieldStyle() }}
           />
         </Box>
+
         <FormControlLabel
-          control={
-            <Checkbox
-              sx={{
-                color: "#0056A2",
-                "&.Mui-checked": {
-                  color: "#0056A2",
-                },
-              }}
-            />
-          }
+          control={<Checkbox sx={{ color: "#0056A2", "&.Mui-checked": { color: "#0056A2" } }} />}
           label={
-            <Typography
-              variant="body2"
-              sx={{
-                color: "#0056A2",
-              }}
-            >
-              <Box
-                component="span"
-                sx={{
-                  color: "#0056A2",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                }}
-              >
-                I agree to the general terms and conditions
+            <Typography variant="body2" sx={{ color: "#0056A2" }}>
+              <Box component="span" sx={{ color: "#0056A2", padding: "4px 8px", borderRadius: "4px" }}>
+                {t("callForwarding.terms")}
               </Box>
             </Typography>
           }
         />
       </Box>
+
       <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
         <Button
           variant="contained"
-          onClick={handleSubscribeClick} // Handle the button click
+          onClick={handleSubscribeClick}
           sx={{
             width: "200px",
             backgroundColor: "#ffffff",
@@ -224,18 +169,12 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
             mb: 2,
           }}
         >
-          <Typography
-            variant="body2"
-            sx={{
-              textTransform: "capitalize",
-              fontWeight: 600,
-              fontSize: "20px",
-            }}
-          >
-            Subscribe
+          <Typography variant="body2" sx={{ textTransform: "capitalize", fontWeight: 600, fontSize: "20px" }}>
+            {t("callForwarding.subscribe")}
           </Typography>
         </Button>
       </Box>
+
       {statusMessage && (
         <Typography
           variant="body2"
@@ -248,6 +187,7 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
           {statusMessage}
         </Typography>
       )}
+
       <Box
         component="img"
         src={WaterMarkLogo}
@@ -262,7 +202,6 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
         }}
       />
 
-      {/* Dialog for error messages */}
       <Dialog open={dialogOpen} onClose={handleDialogClose}>
         <DialogContent>
           <DialogContentText
@@ -283,7 +222,6 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
             {errorMessage ? (
               <>
                 {errorMessage}
-                {/* Failure GIF */}
                 <img
                   src="https://i.gifer.com/Z16w.gif"
                   alt="Failure"
@@ -292,8 +230,7 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
               </>
             ) : (
               <>
-                {"Service is working fine."}
-                {/* Success GIF */}
+                {t("callForwarding.serviceFine")}
                 <img
                   src="https://cdn.dribbble.com/users/39201/screenshots/3694057/nutmeg.gif"
                   alt="Success"
@@ -305,7 +242,7 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose} autoFocus>
-            Ok
+            {t("callForwarding.ok")}
           </Button>
         </DialogActions>
       </Dialog>

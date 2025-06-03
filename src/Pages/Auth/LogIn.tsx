@@ -10,10 +10,12 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userLogin } from "../../services/Auth";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useTranslation } from "react-i18next";
 
 interface LoginProps {
   onSelectTab: (tab: string) => void;
 }
+
 export const textFieldStyles = {
   "& .MuiOutlinedInput-root": {
     mt: -1,
@@ -43,7 +45,9 @@ export const textFieldStyles = {
     },
   },
 };
+
 const Login = ({ onSelectTab }: LoginProps) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -53,12 +57,12 @@ const Login = ({ onSelectTab }: LoginProps) => {
   const handleSubmit = async (event: React.MouseEvent<HTMLFormElement>) => {
     setLoading(true);
     const result = await userLogin(event, email, password);
-    // Navigate if the login was successful
     setLoading(false);
     if (result.success) {
       navigate("/home");
     }
   };
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -82,11 +86,11 @@ const Login = ({ onSelectTab }: LoginProps) => {
           marginBottom: "20px",
         }}
       >
-        Login
+        {t("login.title")}
       </Typography>
       <form onSubmit={handleSubmit}>
         <Typography variant="body2" sx={{ color: " #0F3B7A" }}>
-          Email
+          {t("login.emailLabel")}
         </Typography>
         <TextField
           sx={{ ...textFieldStyles }}
@@ -94,30 +98,28 @@ const Login = ({ onSelectTab }: LoginProps) => {
           variant="outlined"
           margin="normal"
           value={email}
-          placeholder="Enter your email"
+          placeholder={t("login.emailPlaceholder")}
           onChange={(e) => setEmail(e.target.value.trim())}
           required
         />
         <Typography variant="body2" sx={{ color: " #0F3B7A" }}>
-          Password
+          {t("login.passwordLabel")}
         </Typography>
         <TextField
           fullWidth
-          sx={{
-            ...textFieldStyles,
-          }}
+          sx={{ ...textFieldStyles }}
           type={showPassword ? "text" : "password"}
           variant="outlined"
           margin="normal"
           value={password}
-          placeholder="Enter your password"
+          placeholder={t("login.passwordPlaceholder")}
           onChange={(e) => setPassword(e.target.value)}
           required
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton
-                  aria-label="toggle password visibility"
+                  aria-label={t("login.togglePasswordVisibility")}
                   onClick={togglePasswordVisibility}
                   edge="end"
                 >
@@ -148,7 +150,7 @@ const Login = ({ onSelectTab }: LoginProps) => {
                 },
               }}
             >
-              Forgot Password?
+              {t("login.forgotPassword")}
             </Typography>
           </Button>
         </Box>
@@ -176,15 +178,12 @@ const Login = ({ onSelectTab }: LoginProps) => {
               <CircularProgress color="inherit" size={20} />
             ) : (
               <Typography variant="body2" sx={{ color: "#FFFFFF" }}>
-                Log In
+                {t("login.loginButton")}
               </Typography>
             )}
           </Button>
-          <Typography
-            variant={"body2"}
-            sx={{ marginTop: "24px", color: "#333333" }}
-          >
-            Don't have an account?{" "}
+          <Typography variant={"body2"} sx={{ marginTop: "24px", color: "#333333" }}>
+            {t("login.noAccountText")}{" "}
             <Typography
               onClick={() => onSelectTab("signup")}
               component="span"
@@ -197,7 +196,7 @@ const Login = ({ onSelectTab }: LoginProps) => {
                 },
               }}
             >
-              Sign up
+              {t("login.signUpLink")}
             </Typography>
           </Typography>
         </Box>
