@@ -32,7 +32,7 @@ const PurchaseHistoryComponent: React.FC = () => {
     to: new Date()
   });
 
-  const { serviceDetails } = useStore();
+  const { serviceDetails} = useStore();
   const subscriberID = serviceDetails?.listofBBService[0]?.serviceID;
   const today = new Date();
 
@@ -121,14 +121,15 @@ const PurchaseHistoryComponent: React.FC = () => {
 
   const filteredHistory = filterByTab(allPurchaseHistory, selectedTab);
 
-  const handleViewModeChange = (
-  
-    newViewMode: "cards" | "table"
-  ) => {
-    if (newViewMode !== null) {
-      setViewMode(newViewMode);
-    }
-  };
+ const handleViewModeChange = (
+  _: React.MouseEvent<HTMLElement>,
+  newViewMode: "cards" | "table" | null
+) => {
+  if (newViewMode !== null) {
+    setViewMode(newViewMode);
+  }
+};
+
 
   return (
     <Box sx={{ 
@@ -253,7 +254,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               onChange={(date) => handleDateChange("to", date)} 
               dateFormat="yyyy-MM-dd" 
               maxDate={today} 
-             
+              
               customInput={
                 <TextField 
                   variant="outlined" 
