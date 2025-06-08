@@ -1,16 +1,16 @@
 import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import vas1 from "../assets/images/VASIcons/Group 39680.png";
-import vas2 from "../assets/images/VASIcons/Group 39681.png";
-import vas3 from "../assets/images/VASIcons/Group 39682.png";
-import vas4 from "../assets/images/VASIcons/Group 39683.png";
-import vas5 from "../assets/images/VASIcons/Group 39684.png";
 import VasIcon from "./VasIcon";
 import { useTranslation } from 'react-i18next';
 
 const ValueAddedServicesMenu = () => {
   const { t } = useTranslation();
-  
+  const vas1 = "https://mysltimages.s3.eu-north-1.amazonaws.com/Group+39680.png";
+  const vas2  = "https://mysltimages.s3.eu-north-1.amazonaws.com/Group+39681.png";
+  const  vas3 = "https://mysltimages.s3.eu-north-1.amazonaws.com/Group+39682.png";
+   const vas4 = "https://mysltimages.s3.eu-north-1.amazonaws.com/Group+39683.png";
+    const vas5 = "https://mysltimages.s3.eu-north-1.amazonaws.com/Group+39684.png";
+   
   const items = [
     {image: vas1, url: "https://duthaya.lk/"},
     {image: vas2, url: "https://kaspersky-dp.slt.lk/customerProductList"},

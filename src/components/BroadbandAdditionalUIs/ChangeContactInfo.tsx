@@ -1,6 +1,6 @@
 import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import { useState } from "react";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
+
 import { textFieldStyle } from "../../assets/Themes/CommonStyles";
 
 import updateContact from "../../services/profile/updateContact";
@@ -9,6 +9,7 @@ import useStore from "../../services/useAppStore";
 const ChangeContactForm = () => {
   const { serviceDetails } = useStore(); // Fetch serviceDetails from the store
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
+  const WatermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   // State variables to store form inputs
   const [fullName, setFullName] = useState("");

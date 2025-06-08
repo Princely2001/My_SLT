@@ -12,7 +12,7 @@ import { CircularProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import AddToBillImage from "../../assets/Images/subscriptionPageImages/AddToBill.png";
 import PayNowImage from "../../assets/Images/subscriptionPageImages/PayNow.png";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
+
 import fetchAdvancedReportEnableDetails from "../../services/postpaid/enableDetailedReport/fetchAdvancedReportEnableDetails";
 import { EnableAdvancedReportDetails } from "../../types/types";
 import activateDetailedReport from "../../services/postpaid/enableDetailedReport/activateDetailedReport";
@@ -21,6 +21,7 @@ import useStore from "../../services/useAppStore";
 
 const SubscriptionPage = () => {
   const { serviceDetails } = useStore();
+  const WatermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   const {   selectedTelephone } = useStore();
    const storedEmail = localStorage.getItem("username");
   const userName = serviceDetails?.listofBBService[0].serviceID || "";

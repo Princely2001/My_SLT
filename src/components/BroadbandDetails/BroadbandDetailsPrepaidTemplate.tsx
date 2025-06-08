@@ -7,7 +7,7 @@ import { parseTime } from "../../services/helperFunctions";
 import useStore from "../../services/useAppStore";
 import { DataBalance, ServiceDetailsAPIResponse } from "../../types/types";
 import CircularProgressBar from "../CircularProgressBar";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
+
 
 const commonTextStyle = {
   fontSize: "14px",

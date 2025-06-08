@@ -3,8 +3,8 @@ import Box from "@mui/material/Box";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import backgroundImage from "../../assets/Images/background.jpg";
-import LoginImage from "..//..//assets//images//loginImage.png";
+
+
 import ForgetPassword from "./ForgetPassword";
 import Login from "./LogIn";
 import OTPPage from "./OTP";
@@ -15,6 +15,8 @@ import SocialMediaLogin from "./SocialMediaLogin";
 const LoginOrSignup = () => {
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState("login");
+  const loginImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/loginImage.png";
+   const backgroundImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/HomeBackground.png";
 
   return (
     <Box
@@ -41,7 +43,7 @@ const LoginOrSignup = () => {
       >
         <Box
           component="img"
-          src={LoginImage}
+          src={loginImage}
           alt={t("loginOrSignup.loginImageAlt")}
           sx={{
             display: { xs: "none", md: "block" },
