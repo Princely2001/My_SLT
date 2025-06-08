@@ -3,7 +3,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 import useStore from "../services/useAppStore";
-import { useTheme, useMediaQuery } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 const CustomNavBar = () => {
@@ -16,9 +15,7 @@ const CustomNavBar = () => {
     setSelectedQuickAccessItem,
   } = useStore();
 
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const isTablet = useMediaQuery(theme.breakpoints.between("sm", "md"));
+   
   const { t } = useTranslation();
 
   const isPrepaid =

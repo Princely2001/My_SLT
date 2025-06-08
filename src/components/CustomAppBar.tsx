@@ -13,7 +13,6 @@ const CustomAppBar = () => {
   const [accounts, setAccounts] = useState<AccountDetails[]>([
     {
       telephoneno: "",
-      accountNo: undefined,
       accountno: "",
       status: ""
     }, // Hardcoded phone number

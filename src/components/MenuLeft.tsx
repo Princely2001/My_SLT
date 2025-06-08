@@ -5,9 +5,6 @@ import {
   ListItemText,
   Popover,
   Typography,
-  MenuItem,
-  Select,
-  FormControl,
   Box,
   Button,
 } from "@mui/material";
@@ -24,7 +21,7 @@ const MenuLeft: React.FC = () => {
     detailReportAvailability,
   } = useStore();
 
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   const isPrepaid: boolean =
     serviceDetails?.promotionType === "Prepaid" ||
@@ -59,7 +56,6 @@ const MenuLeft: React.FC = () => {
     mouseX: number;
     mouseY: number;
   } | null>(null);
-  const [language, setLanguage] = useState("en");
 
   useEffect(() => {
     if (isPrepaid && selectedNavbarItem === "Broadband") {
@@ -68,7 +64,10 @@ const MenuLeft: React.FC = () => {
     } else if (!isPrepaid && selectedNavbarItem === "Broadband") {
       setSelectedItem("Summary");
       setLeftMenuItem("Summary");
-    } else if (selectedNavbarItem === "PeoTV" || selectedNavbarItem === "Voice") {
+    } else if (
+      selectedNavbarItem === "PeoTV" ||
+      selectedNavbarItem === "Voice"
+    ) {
       setSelectedItem("My Package");
       setLeftMenuItem("My Package");
     }
@@ -88,12 +87,6 @@ const MenuLeft: React.FC = () => {
     setMousePosition(null);
   };
 
-  const handleLanguageChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    const newLang = event.target.value as string;
-    setLanguage(newLang);
-    i18n.changeLanguage(newLang);
-  };
-
   const open = Boolean(anchorEl);
   const id = open ? "more-popover" : undefined;
 
@@ -110,20 +103,20 @@ const MenuLeft: React.FC = () => {
         maxHeight: "500px",
       }}
     >
-     
-
       {items.map((item, index) => (
         <Button
           key={index}
           sx={{
             backgroundColor: item === selectedItem ? "#FFFFFF" : "#FFFFFF40",
-            border: item === selectedItem
-              ? "3px solid #50B748"
-              : "1px solid #FFFFFFA6",
+            border:
+              item === selectedItem
+                ? "3px solid #50B748"
+                : "1px solid #FFFFFFA6",
             borderRadius: "10px",
             padding: 1.5,
             "&:hover": {
-              backgroundColor: item === selectedItem ? "#FFFFFF" : "#FFFFFF80",
+              backgroundColor:
+                item === selectedItem ? "#FFFFFF" : "#FFFFFF80",
               borderColor: "#50B748",
             },
           }}
@@ -182,14 +175,23 @@ const MenuLeft: React.FC = () => {
             <ListItemButton
               onClick={() => {
                 handleClose();
-                setLeftMenuItem(detailReportAvailability ? "DisableDetailReport" : "Subscription");
+                setLeftMenuItem(
+                  detailReportAvailability
+                    ? "DisableDetailReport"
+                    : "Subscription"
+                );
               }}
             >
               <ListItemText>
-                <Typography variant="body2" sx={{ color: "#00256A", fontSize: 16 }}>
-                  {t(detailReportAvailability
-                    ? "Disable Detailed Report"
-                    : "Enable Detailed Report")}
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#00256A", fontSize: 16 }}
+                >
+                  {t(
+                    detailReportAvailability
+                      ? "Disable Detailed Report"
+                      : "Enable Detailed Report"
+                  )}
                 </Typography>
               </ListItemText>
             </ListItemButton>
@@ -202,7 +204,10 @@ const MenuLeft: React.FC = () => {
               }}
             >
               <ListItemText>
-                <Typography variant="body2" sx={{ color: "#00256A", fontSize: 16 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#00256A", fontSize: 16 }}
+                >
                   {t("Change Contact Information")}
                 </Typography>
               </ListItemText>
@@ -216,7 +221,10 @@ const MenuLeft: React.FC = () => {
               }}
             >
               <ListItemText>
-                <Typography variant="body2" sx={{ color: "#00256A", fontSize: 16 }}>
+                <Typography
+                  variant="body2"
+                  sx={{ color: "#00256A", fontSize: 16 }}
+                >
                   {t("Change Broadband Password")}
                 </Typography>
               </ListItemText>

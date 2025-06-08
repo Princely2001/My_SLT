@@ -1,6 +1,5 @@
 // src/components/BroadbandSection.js
 
-
 import { useEffect, useState } from "react";
 import fetchDataBalance from "../services/prepaid/fetchDataBalance";
 import useStore from "../services/useAppStore";
@@ -42,29 +41,25 @@ import DisableDetailedReport from "./BroadbandDetails/DisableDetailedReport";
 import Box from "@mui/material/Box";
 import VideoOnDemand from "./PeoTV/VideoOnDemand";
 
-
 import History from "./DataAddonHistory";
 
-import {
-  Typography,
-} from "@mui/material";
+import { Typography } from "@mui/material";
 
 import PeoTvPackages from "./PeoTV/PeoTvPackages";
 
 const UnderConstruction = () => {
   return (
     <Box
-    sx={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      width: "100%",
-      height: "450px",
-      backgroundColor: "white",
-      borderRadius: 3,
-      fontFamily: "Poppins, sans-serif"
-    }}
-    
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "450px",
+        backgroundColor: "white",
+        borderRadius: 3,
+        fontFamily: "Poppins, sans-serif"
+      }}
     >
       <Typography variant="body2" sx={{ color: "#0056A2", fontSize: 24 }}>
         Under Construction
@@ -72,6 +67,7 @@ const UnderConstruction = () => {
     </Box>
   );
 };
+
 const ContentSection = () => {
   const [addOnData, setAddOnData] = useState<DataBalance[]>([]);
   const [mainData, setMainData] = useState<DataBalance[]>([]);
@@ -101,41 +97,55 @@ const ContentSection = () => {
     "ContactInformationChange",
     "BroadbandPasswordChange",
     "GetExtraGB",
-  ]; // menu icons that will disable the left menu upon clicking
+  ];
 
   useEffect(() => {
-    const getDetailedReportAvalability = async () => {
-      const subcriberID = serviceDetails?.listofBBService[0]?.serviceID;
-      if (subcriberID) {
-        const response = await fetchDetaliedReportAvailability(subcriberID);
-        setDetailReportAvailability(response!["availability"]);
-        setEmail(response!["email"]);
+    const getDetailedReportAvailability = async () => {
+      const subscriberID = serviceDetails?.listofBBService[0]?.serviceID;
+      if (subscriberID) {
+        try {
+          const response = await fetchDetaliedReportAvailability(subscriberID);
+          if (response) {
+            setDetailReportAvailability(response.availability);
+            if (response.email) {
+              
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching detailed report availability:", error);
+        }
       }
     };
-    getDetailedReportAvalability();
-  }, [serviceDetails]);
+    getDetailedReportAvailability();
+  }, [serviceDetails, setEmail, setDetailReportAvailability]);
 
   useEffect(() => {
     const fetchData = async () => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      const data = await fetchDataBalance(selectedTelephone);
-
-      const { addOnData, mainData } = data!.reduce(
-        (acc, item) => {
-          if (item.packageCategory === "Add-ons") {
-            acc.addOnData.push(item);
-          } else {
-            acc.mainData.push(item);
-          }
-          return acc;
-        },
-        { addOnData: [], mainData: [] } as {
-          addOnData: DataBalance[];
-          mainData: DataBalance[];
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const data = await fetchDataBalance(selectedTelephone);
+        
+        if (data) {
+          const { addOnData, mainData } = data.reduce(
+            (acc, item) => {
+              if (item.packageCategory === "Add-ons") {
+                acc.addOnData.push(item);
+              } else {
+                acc.mainData.push(item);
+              }
+              return acc;
+            },
+            { addOnData: [], mainData: [] } as {
+              addOnData: DataBalance[];
+              mainData: DataBalance[];
+            }
+          );
+          setAddOnData(addOnData);
+          setMainData(mainData);
         }
-      );
-      setAddOnData(addOnData);
-      setMainData(mainData);
+      } catch (error) {
+        console.error("Error fetching data balance:", error);
+      }
     };
 
     fetchData();
@@ -159,8 +169,7 @@ const ContentSection = () => {
           height: "100%",
         }}
       >
-        {/* Rendering based on selectedLeftMenuItem */}
-        {/*Postpaid*/}
+        {/* Postpaid */}
         {selectedLeftMenuItem === "Summary" && <BroadbandDetailsPostPaid />}
         {selectedLeftMenuItem === "Daily Usage" && <DailyUsage />}
         {selectedLeftMenuItem === "Gift Data" && <GiftData />}
@@ -176,7 +185,6 @@ const ContentSection = () => {
         )}
         {selectedLeftMenuItem === "DetailedUsageDetails" && <DetailedUsage />}
         {selectedLeftMenuItem === "ProtocolReport" && <ProtocolReport />}
-
         {selectedLeftMenuItem === "PostPaidPackageUpgrade" && (
           <BroadbandPostPaidPackageUpgrader />
         )}
@@ -190,9 +198,7 @@ const ContentSection = () => {
           <DisableDetailedReport />
         )}
 
-
-        {/*Prepaid*/}
-        
+        {/* Prepaid */}
         {selectedLeftMenuItem === "Main Packages" && (
           <BroadbandDetailsPrePaid dataBalance={mainData} />
         )}
@@ -209,30 +215,28 @@ const ContentSection = () => {
           <TransactionsHistory serviceId={selectedTelephone} />
         )}
 
-        {/*PeoTV*/}
+        {/* PeoTV */}
         {selectedLeftMenuItem === "My Package" &&
           selectedNavbarItem === "PeoTV" && <MyPackagePeotv />}
         {selectedLeftMenuItem === "VOD" && <VideoOnDemand />}
         {selectedLeftMenuItem === "PEOTVGO" && <PeoTvGo />}
         {selectedLeftMenuItem === "Packages" && <PeoTvPackages />}
 
-        {/*Voice*/}
+        {/* Voice */}
         {selectedLeftMenuItem === "My Package" &&
           selectedNavbarItem === "Voice" && <MyPackageVoice />}
         {selectedLeftMenuItem === "Call Forwarding" && (
           <CallForwarding telephoneNo={selectedTelephone} />
         )}
 
-        {/*QuickAccess*/}
+        {/* QuickAccess */}
         {selectedLeftMenuItem === "New Services" && (
           <NewServicesPage telephoneNo={selectedTelephone} />
         )}
         {selectedLeftMenuItem === "Promotion" && (
           <Promotion telephoneNo={selectedTelephone} />
         )}
-
         {selectedLeftMenuItem === "Digital Life" && <DigitalLife />}
-
         {selectedLeftMenuItem === "Bill" && (
           <BillPage
             telephoneNo={selectedTelephone}

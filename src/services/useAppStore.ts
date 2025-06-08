@@ -4,6 +4,7 @@ import fetchServiceDetailByTelephone from "./fetchServiceDetails";
 
 interface AppState {
   selectedTelephone: string;
+   setEmail:string;
   selectedAccountNo: string;
   selectedNavbarItem: string;
   selectedLeftMenuItem: string;
@@ -47,6 +48,7 @@ const useStore = create<AppState>((set) => ({
   billMethodDataBundle: null,
   packageName: null,
   logingEmail: "",
+   setEmail:"",
   useeBillstatusEmail: "",
   usageDetails: null,
   detailReportAvailability: false,
