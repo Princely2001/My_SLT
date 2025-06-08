@@ -16,8 +16,6 @@ import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
-import axios from "axios";
-import fetchServiceDetailByTelephone from "../../services/fetchServiceDetails";
 import { useTranslation } from "react-i18next";
 
 interface DataPlan {
@@ -33,12 +31,6 @@ interface PackageDetail {
 
 interface DataPlanProps {
   packageName: string | null;
-}
-
-interface PaymentResponse {
-  success: boolean;
-  error?: string;
-  message?: string;
 }
 
 const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {

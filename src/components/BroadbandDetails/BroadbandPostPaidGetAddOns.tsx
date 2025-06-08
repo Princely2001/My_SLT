@@ -65,16 +65,22 @@ const BroadbandPostPaidGetAddOns = () => {
     setActiveIndex(currentIndex);
   };
 
-  useEffect(() => {
-    const fetchPackages = async () => {
-      const response: PostpaidAddOnPackage[] =
-        await fetchLTEPostpaidAddOnPackages(packageName, subscriberID);
-      setPackages(response);
-      console.log("Packages: ", response);
-      if (response.length > 0) setSelectedItem(response[0].category);
-    };
-    fetchPackages();
-  }, [selectedTelephone]);
+ useEffect(() => {
+  const fetchPackages = async () => {
+    if (!packageName || !subscriberID) return;
+    
+    try {
+      const response = await fetchLTEPostpaidAddOnPackages(packageName, subscriberID);
+      if (response) {
+        setPackages(response);
+        if (response.length > 0) setSelectedItem(response[0].category);
+      }
+    } catch (error) {
+      console.error("Error fetching packages:", error);
+    }
+  };
+  fetchPackages();
+}, [selectedTelephone, packageName, subscriberID]);
 
   const handleCardButtonClick = (addon: Addon) => {
     console.log("Selected Package: ", addon);
@@ -103,9 +109,11 @@ const BroadbandPostPaidGetAddOns = () => {
       return;
     }
 
-    const requiresCorrection =
-      packageCategory.category === "LMS" ||
-      packageCategory.category === "Home Schooling & WFH";
+  type SpecialCategory = "LMS" | "Home Schooling & WFH";
+
+const requiresCorrection = 
+  (packageCategory.category as SpecialCategory) === "LMS" ||
+  (packageCategory.category as SpecialCategory) === "Home Schooling & WFH";
 
     if (!requiresCorrection) {
       console.log(

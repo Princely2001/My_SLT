@@ -14,6 +14,13 @@ import { BBPackage, CurrentPackageDetails } from "../../types/types";
 import fetchPackageUpgrades from "../../services/postpaid/fetchPackageUpgrades";
 import upgradePackage from "../../services/postpaid/upgradePackage";
 
+interface PackageCardItem {
+  title: string;
+  subtitle: string;
+  price: string;
+}
+
+
 const CustomArrowIcon: React.FC = () => (
   <SvgIcon viewBox="0 0 24 24" sx={{ fontSize: 16 }}>
     <circle cx="12" cy="12" r="11" stroke="green" strokeWidth="2" fill="none" />
@@ -21,19 +28,20 @@ const CustomArrowIcon: React.FC = () => (
   </SvgIcon>
 );
 
-const BroadbandPostPaidPackageUpgrader = () => {
+const BroadbandPostPaidPackageUpgrader: React.FC = () => {
   const { t } = useTranslation();
-  const { serviceDetails, email } = useStore();
-  const [currentPackage, setCurrentPackage] = useState<CurrentPackageDetails>();
-  const packageType = serviceDetails?.listofBBService[0]?.serviceType;
-  const packageName = serviceDetails?.listofBBService[0]?.packageName;
+  const { serviceDetails} = useStore();
+  const storedEmail = localStorage.getItem("username");
+  const [currentPackage, setCurrentPackage] = useState<CurrentPackageDetails | null>(null);
+  const packageType = serviceDetails?.listofBBService[0]?.serviceType || "";
+  const packageName = serviceDetails?.listofBBService[0]?.packageName || "";
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [scrollLeft, setScrollLeft] = useState(0);
-  const tabs = ["standard", "any", "unlimited"];
-  const [selectedTab, setSelectedTab] = useState("standard");
+  const tabs = ["standard", "any", "unlimited"] as const;
+  const [selectedTab, setSelectedTab] = useState<typeof tabs[number]>("standard");
 
   const [standardPackages, setStandardPackages] = useState<BBPackage[]>([]);
   const [anyPackages, setAnyPackages] = useState<BBPackage[]>([]);
@@ -65,30 +73,29 @@ const BroadbandPostPaidPackageUpgrader = () => {
     setActiveIndex(currentIndex);
   };
 
-  const getPackages = () => {
-    let packages = [];
-
-    if (selectedTab === "standard") {
-      packages = standardPackages.map((pkg) => ({
-        title: pkg.BB_PACKAGE_NAME,
-        subtitle: `${t("package.standard")}: ${pkg.STANDARD_GB}GB + ${t("package.free")}: ${pkg.FREE_GB}GB`,
-        price: pkg.MONTHLY_RENTAL,
-      }));
-    } else if (selectedTab === "any") {
-      packages = anyPackages.map((pkg) => ({
-        title: pkg.BB_PACKAGE_NAME,
-        subtitle: `${pkg.STANDARD_GB}GB ${pkg.DESCRIPTION}`,
-        price: pkg.MONTHLY_RENTAL,
-      }));
-    } else if (selectedTab === "unlimited") {
-      packages = unlimitedPackages.map((pkg) => ({
-        title: pkg.BB_PACKAGE_NAME,
-        subtitle: pkg.DESCRIPTION,
-        price: pkg.MONTHLY_RENTAL,
-      }));
+  const getPackages = (): PackageCardItem[] => {
+    switch (selectedTab) {
+      case "standard":
+        return standardPackages.map((pkg) => ({
+          title: pkg.BB_PACKAGE_NAME,
+          subtitle: `${t("package.standard")}: ${pkg.STANDARD_GB}GB + ${t("package.free")}: ${pkg.FREE_GB}GB`,
+          price: pkg.MONTHLY_RENTAL,
+        }));
+      case "any":
+        return anyPackages.map((pkg) => ({
+          title: pkg.BB_PACKAGE_NAME,
+          subtitle: `${pkg.STANDARD_GB}GB ${pkg.DESCRIPTION}`,
+          price: pkg.MONTHLY_RENTAL,
+        }));
+      case "unlimited":
+        return unlimitedPackages.map((pkg) => ({
+          title: pkg.BB_PACKAGE_NAME,
+          subtitle: pkg.DESCRIPTION,
+          price: pkg.MONTHLY_RENTAL,
+        }));
+      default:
+        return [];
     }
-
-    return packages;
   };
 
   const packages = getPackages();
@@ -98,12 +105,11 @@ const BroadbandPostPaidPackageUpgrader = () => {
       try {
         if (packageType && packageName) {
           const response = await fetchCurrentPackage(packageType, packageName);
-          if (response) {
-            setCurrentPackage(response);
-          }
+          setCurrentPackage(response || null);
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching current package:", err);
+        setCurrentPackage(null);
       }
     };
     getCurrentPackage();
@@ -115,34 +121,41 @@ const BroadbandPostPaidPackageUpgrader = () => {
         if (packageType && packageName) {
           const response = await fetchPackageUpgrades(packageType, packageName);
           if (response) {
-            setStandardPackages(response.Standard.flat(1) || []);
-            setAnyPackages(response.Any.flat(1) || []);
-            setUnlimitedPackages(response.Unlimited.flat(1) || []);
+            setStandardPackages(response.Standard?.flat() || []);
+            setAnyPackages(response.Any?.flat() || []);
+            setUnlimitedPackages(response.Unlimited?.flat() || []);
           }
         }
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching package upgrades:", err);
+        setStandardPackages([]);
+        setAnyPackages([]);
+        setUnlimitedPackages([]);
       }
     };
     getPackageUpgrades();
   }, [packageType, packageName]);
 
-  const handleActivation = async (item: any) => {
+  const handleActivation = async (item: PackageCardItem) => {
+    if (!serviceDetails?.listofBBService[0] || !currentPackage) {
+      console.error("Service details or current package not available");
+      return;
+    }
+
     try {
-      const response = await upgradePackage(
-        serviceDetails!.listofBBService[0]?.serviceID,
-        serviceDetails!.listofBBService[0]?.serviceType,
-        serviceDetails!.contactNamewithInit,
-        serviceDetails!.contactMobile,
-        email,
-        currentPackage?.bB_PACKAGE_NAME || "",
+      await upgradePackage(
+        serviceDetails.listofBBService[0].serviceID,
+        serviceDetails.listofBBService[0].serviceType,
+        serviceDetails.contactNamewithInit || "",
+        serviceDetails.contactMobile || "",
+        storedEmail || "",
+        currentPackage.bB_PACKAGE_NAME,
         item.title,
-        currentPackage?.monthlY_RENTAL || "",
+        currentPackage.monthlY_RENTAL,
         item.price
       );
     } catch (error) {
-      console.error("An error occurred while upgrading the package:", error);
-      return null;
+      console.error("Package upgrade failed:", error);
     }
   };
 
@@ -330,110 +343,137 @@ const BroadbandPostPaidPackageUpgrader = () => {
         >
           <Box sx={{ display: "flex", gap: 1.5, width: "100%", px: 2 }}>
             {packages.map((item, index) => (
-              <Card
-                key={index}
-                sx={{
-                  minWidth: "32%",
-                  backgroundColor: "#0056A2D1",
-                  color: "white",
-                  borderRadius: "10px",
-                  transition: "transform 0.3s, margin 0.3s ease-in-out",
-                  "&:hover": {
-                    backgroundColor: "#0056A2",
-                    transform: "scale(1.05)",
-                    marginLeft: 2,
-                    marginRight: 2,
-                  },
-                }}
-              >
-                <CardContent sx={{ textAlign: "center" }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        mb: 2,
-                        textAlign: "center",
-                        fontSize: {
-                          xs: "1.2rem",
-                          sm: "1.3rem",
-                          md: "1.5rem",
-                        },
-                        fontWeight: "bold",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {item.title}
-                    </Typography>
+             <Card
+  key={index}
+  sx={{
+    minWidth: { xs: "100%", sm: "48%", md: "32%" }, // Responsive width
+    backgroundColor: "#0056A2D1",
+    color: "white",
+    borderRadius: "12px",
+    boxShadow: "0 4px 12px rgba(0, 86, 162, 0.3)",
+    transition: "all 0.3s ease-in-out",
+    "&:hover": {
+      backgroundColor: "#0056A2",
+      transform: "translateY(-5px)",
+      boxShadow: "0 8px 16px rgba(0, 86, 162, 0.4)",
+    },
+    height: "100%", // Ensure consistent height
+    display: "flex",
+    flexDirection: "column",
+  }}
+>
+  <CardContent sx={{ 
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    padding: { xs: 2, md: 3 },
+    textAlign: "center"
+  }}>
+    {/* Title Section */}
+    <Typography
+      variant="h6"
+      sx={{
+        mb: 2,
+        fontSize: {
+          xs: "1.3rem",
+          sm: "1.4rem",
+          md: "1.6rem",
+        },
+        fontWeight: "700",
+        lineHeight: 1.2,
+        minHeight: "3.5rem",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center"
+      }}
+    >
+      {item.title}
+    </Typography>
 
-                    <Box
-                      sx={{
-                        display: "flex",
-                        width: "70%",
-                        border: "3px solid white",
-                        padding: 2,
-                        borderRadius: 3,
-                        backgroundColor: "white",
-                        color: "#0056A2",
-                      }}
-                    >
-                      <Typography
-                        sx={{ margin: "auto", fontSize: "1rem" }}
-                        variant="body2"
-                      >
-                        <strong>{item.subtitle}</strong>
-                      </Typography>
-                    </Box>
-                    <Typography
-                      variant="body2"
-                      sx={{ mt: 1, fontSize: "1.5rem", fontWeight: "bold" }}
-                    >
-                      {t("common.currency")}{item.price} + {t("package.tax")}
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      sx={{ mb: 1, fontWeight: "bold" }}
-                    >
-                      ({t("package.perMonth")})
-                    </Typography>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        mt: 2,
-                        backgroundColor: "#FFFFFF",
-                        color: "#50B748",
-                        borderRadius: "10px",
-                        width: "55%",
-                        py: 1.5,
-                        "&:hover": {
-                          backgroundColor: "#4FD745",
-                          color: "white",
-                        },
-                      }}
-                      onClick={() => {handleActivation(item)}}
-                      fullWidth
-                    >
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          textTransform: "capitalize",
-                          fontSize: "1.25rem",
-                          fontWeight: "600",
-                        }}
-                      >
-                        {t("package.upgrade")}
-                      </Typography>
-                    </Button>
-                  </Box>
-                </CardContent>
-              </Card>
+    {/* Price Highlight Box */}
+    <Box
+      sx={{
+        my: 2,
+        mx: "auto",
+        width: "80%",
+        border: "3px solid white",
+        padding: { xs: 1.5, md: 2 },
+        borderRadius: "8px",
+        backgroundColor: "white",
+        color: "#0056A2",
+      }}
+    >
+      <Typography
+        sx={{ 
+          fontSize: { xs: "1.1rem", md: "1.2rem" },
+          fontWeight: "700"
+        }}
+      >
+        {item.subtitle}
+      </Typography>
+    </Box>
+
+    {/* Price Display */}
+    <Box sx={{ my: 1 }}>
+      <Typography
+        sx={{ 
+          fontSize: { xs: "1.4rem", md: "1.6rem" },
+          fontWeight: "700",
+          color: "#FFFFFF"
+        }}
+      >
+        {t("common.currency")}{item.price} + {t("package.tax")}
+      </Typography>
+      <Typography
+        sx={{ 
+          fontSize: "0.9rem",
+          fontWeight: "600",
+          color: "rgba(255, 255, 255, 0.8)"
+        }}
+      >
+        ({t("package.perMonth")})
+      </Typography>
+    </Box>
+
+    {/* Features List - Add if available */}
+    {/* {item.features && (
+      <Box sx={{ my: 2, textAlign: "left" }}>
+        {item.features.map((feature, i) => (
+          <Typography key={i} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+            <CheckCircleOutline sx={{ mr: 1, fontSize: "1.2rem" }} />
+            {feature}
+          </Typography>
+        ))}
+      </Box>
+    )} */}
+
+    {/* Upgrade Button */}
+    <Button
+      variant="contained"
+      sx={{
+        mt: "auto", // Pushes button to bottom
+        mb: 1,
+        backgroundColor: "#FFFFFF",
+        color: "#50B748",
+        borderRadius: "8px",
+        padding: { xs: "8px", md: "10px" },
+        fontSize: { xs: "1rem", md: "1.1rem" },
+        fontWeight: "600",
+        textTransform: "none",
+        "&:hover": {
+          backgroundColor: "#4FD745",
+          color: "white",
+          boxShadow: "0 4px 8px rgba(79, 215, 69, 0.4)"
+        },
+        width: "80%",
+        mx: "auto"
+      }}
+      onClick={() => handleActivation(item)}
+    >
+      {t("package.upgrade")}
+    </Button>
+  </CardContent>
+</Card>
             ))}
           </Box>
         </Box>

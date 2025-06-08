@@ -1,7 +1,16 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, Paper, TableContainer, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Paper,
+  TableContainer,
+  Typography,
+} from "@mui/material";
+import React, { useState } from "react";
 import downloadBill from "../../services/billMethod/downloadBill";
-import getEbillStatus from "../../services/billMethod/getEbillStatus"; 
 import resendBill from "../../services/billMethod/resendEBill";
 import useStore from "../../services/useAppStore";
 import { BillHistoryProps } from "../../types/types";
@@ -24,21 +33,20 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
   const billMethodDataBundle = useStore((state) => state.billMethodDataBundle);
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
-  const [emailAddress, setEmailAddress] = useState<string>("");
 
-  useEffect(() => {
-    if (accountNo && telephoneNo) {
-      getEbillStatus(accountNo, telephoneNo).then((response) => {
-        if (response?.emailaddress) {
-          setEmailAddress(response.emailaddress);
-        }
-      });
-    }
-  }, [accountNo, telephoneNo, billMethodDataBundle]);
-
-  const handleDownloadBill = async (eBillEmail: string, accountNo: string, tpNo: string, ebillMonth: string) => {
+  const handleDownloadBill = async (
+    eBillEmail: string,
+    accountNo: string,
+    tpNo: string,
+    ebillMonth: string
+  ) => {
     try {
-      const response: DownloadResponse = await downloadBill(eBillEmail, accountNo, tpNo, ebillMonth);
+      const response: DownloadResponse = await downloadBill(
+        eBillEmail,
+        accountNo,
+        tpNo,
+        ebillMonth
+      );
       if (response.success) {
         setDialogMessage(t("outstandingBills.downloadSuccess"));
       } else {
@@ -50,14 +58,24 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
     setOpenDialog(true);
   };
 
-  const handleEmailNow = async (eBillEmail: string, accountNo: string, tpNo: string, ebillMonth: string) => {
+  const handleEmailNow = async (
+    eBillEmail: string,
+    accountNo: string,
+    tpNo: string,
+    ebillMonth: string
+  ) => {
     if (!eBillEmail || eBillEmail.trim() === "") {
       setDialogMessage(t("outstandingBills.noEmail"));
       setOpenDialog(true);
       return;
     }
     try {
-      const response = await resendBill(eBillEmail, accountNo, ebillMonth, tpNo);
+      const response = await resendBill(
+        eBillEmail,
+        accountNo,
+        ebillMonth,
+        tpNo
+      );
       if (response?.success) {
         setDialogMessage(t("outstandingBills.emailSent"));
       } else {
@@ -83,9 +101,9 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
           textAlign="left"
           width="96%"
           sx={{
-            maxHeight: '400px',
-            overflowY: 'auto',
-            overflowX: 'hidden',
+            maxHeight: "400px",
+            overflowY: "auto",
+            overflowX: "hidden",
           }}
         >
           <TableContainer
@@ -95,7 +113,7 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
               overflow: "auto",
               maxHeight: 335,
               paddingRight: 0.5,
-              overflowX: 'hidden',
+              overflowX: "hidden",
               "&::-webkit-scrollbar": {
                 width: "8px",
                 height: "8px",
@@ -131,7 +149,8 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
                     {t("outstandingBills.outstanding")}: {bill.outstanding}
                   </Typography>
                   <Typography variant="body1" color="#0056A2">
-                    {t("outstandingBills.billValue")}: {bill.billValue} {t("outstandingBills.for")} {bill.billMonth}
+                    {t("outstandingBills.billValue")}: {bill.billValue}{" "}
+                    {t("outstandingBills.for")} {bill.billMonth}
                   </Typography>
                   <Typography variant="body1" color="#0056A2">
                     {t("outstandingBills.payments")}: {bill.payments}
@@ -151,7 +170,14 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
                       padding: "8px 16px",
                       "&:hover": { backgroundColor: "#f0f0f0" },
                     }}
-                    onClick={() => handleEmailNow(eBillEmail, accountNo, telephoneNo, String(bill.billMonth))}
+                    onClick={() =>
+                      handleEmailNow(
+                        eBillEmail,
+                        accountNo,
+                        telephoneNo,
+                        String(bill.billMonth)
+                      )
+                    }
                   >
                     <Typography variant="body2">
                       {t("outstandingBills.emailNow")}
@@ -171,7 +197,14 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
                       padding: "8px 16px",
                       "&:hover": { backgroundColor: "#f0f0f0" },
                     }}
-                    onClick={() => handleDownloadBill(eBillEmail, accountNo, telephoneNo, String(bill.billMonth))}
+                    onClick={() =>
+                      handleDownloadBill(
+                        eBillEmail,
+                        accountNo,
+                        telephoneNo,
+                        String(bill.billMonth)
+                      )
+                    }
                   >
                     <Typography variant="body2">
                       {t("outstandingBills.downloadEBill")}
