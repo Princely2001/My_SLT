@@ -92,7 +92,7 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
     console.log("Service Type Selected:", selectedItem);
 
     // Assuming you have firstName, lastName, nic, contactTelNo, and selectedItems populated
-    const description = selectedItems.join(", "); // For example, describe the selected services
+   
 
     const response: SalesLeadCreationResponse | null = await createSalesLead(
       telephoneNo,
