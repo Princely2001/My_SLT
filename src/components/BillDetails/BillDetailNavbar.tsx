@@ -9,7 +9,7 @@ interface NavProps {
 const Navbar: React.FC<NavProps> = ({ onTabChange }) => {
   const { t } = useTranslation();
 
-  // Translation keys for tabs, mapped from tab internal string to i18n keys
+  
   const tabs = [
     { label: "Total Payable", key: "total_payable" },
     { label: "Bill History", key: "bill_history" },

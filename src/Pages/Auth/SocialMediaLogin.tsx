@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Box from "@mui/material/Box";
@@ -13,47 +12,27 @@ import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import FacebookLogin from "@greatsumini/react-facebook-login";
 import axios from "axios";
 import { languageState } from "../../types/types";
+import { useState } from "react";
 
-// Facebook Type Definitions
-type FacebookAuthResponse = {
-  accessToken: string;
-  userID: string;
-  expiresIn: number;
-  signedRequest: string;
-  graphDomain: string;
-  data_access_expiration_time: number;
-};
-
-type FacebookProfile = {
-  id: string;
-  name: string;
-  email?: string;
-  picture?: {
-    data: {
-      url: string;
-    };
-  };
-};
+// Facebook Types (for safety, kept as `any` until confirmed)
+type FacebookAuthResponse = any;
+type FacebookProfile = any;
 
 const CLIENT_ID = "641643356344-un4nm5pqbp11f2g0h8rmuri4u8ij6fev.apps.googleusercontent.com";
 
 const SocialMediaLoginInner = () => {
   const { t, i18n } = useTranslation();
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
-  const [googleUser, setGoogleUser] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Handle language change
   const handleLanguageChange = (event: SelectChangeEvent) => {
     const newLanguage = event.target.value as 'en' | 'si' | 'ta';
     i18n.changeLanguage(newLanguage);
     languageState.currentLanguage = newLanguage;
-    if (typeof window !== 'undefined') {
-      sessionStorage.setItem('appLanguage', newLanguage);
-    }
+    sessionStorage.setItem('appLanguage', newLanguage);
   };
 
-  // Google Login Handler
+  // Google login logic
   const loginWithGoogle = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
       const accessToken = tokenResponse.access_token;
@@ -66,12 +45,10 @@ const SocialMediaLoginInner = () => {
           },
         });
 
-        const userInfo = res.data;
-        console.log("Google user info:", userInfo);
-        setGoogleUser(userInfo);
+        console.log("Google user info:", res.data);
         navigate("/home");
       } catch (err) {
-        console.error("Failed to fetch Google user info:", err);
+        console.error("Google user info fetch error:", err);
       }
     },
     onError: (error) => {
@@ -79,20 +56,22 @@ const SocialMediaLoginInner = () => {
     },
   });
 
-  // Facebook Handlers
+  // Facebook login success handler
   const handleFacebookSuccess = (response: FacebookAuthResponse) => {
     console.log("Facebook login success:", response);
     setIsFacebookLoading(false);
     navigate("/home");
   };
 
+  // Facebook profile info handler
+  const handleFacebookProfile = (profile: FacebookProfile) => {
+    console.log("Facebook profile:", profile);
+  };
+
+  // Facebook login failure handler
   const handleFacebookFailure = (error: unknown) => {
     console.error("Facebook login failed:", error);
     setIsFacebookLoading(false);
-  };
-
-  const handleFacebookProfile = (profile: FacebookProfile) => {
-    console.log("Facebook profile:", profile);
   };
 
   return (
@@ -116,12 +95,9 @@ const SocialMediaLoginInner = () => {
           inputProps={{ 'aria-label': t('languageSelector.selectLanguage') }}
           sx={{
             borderRadius: '20px',
-            '& .MuiSelect-select': {
-              py: 1,
-            }
+            '& .MuiSelect-select': { py: 1 }
           }}
         >
-          
           <MenuItem value="en">{t('languages.english')}</MenuItem>
           <MenuItem value="si">{t('languages.sinhala')}</MenuItem>
           <MenuItem value="ta">{t('languages.tamil')}</MenuItem>
@@ -132,14 +108,16 @@ const SocialMediaLoginInner = () => {
         {t("socialLogin.orSignInWith")}
       </Typography>
 
-      <Box sx={{ 
-        display: "flex", 
-        alignItems: "center", 
-        gap: 2, 
-        position: "relative",
-        width: "100%",
-        justifyContent: "center"
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 2,
+          position: "relative",
+          justifyContent: "center",
+          width: "100%",
+        }}
+      >
         {/* Social Media Buttons */}
         <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
           {/* Google Login */}
@@ -173,7 +151,7 @@ const SocialMediaLoginInner = () => {
                 onClick={(e) => {
                   e.preventDefault();
                   setIsFacebookLoading(true);
-                  onClick();
+                  if (onClick) onClick();
                 }}
                 sx={{
                   width: 37,
@@ -191,9 +169,9 @@ const SocialMediaLoginInner = () => {
 
         {/* Loading Indicator */}
         {isFacebookLoading && (
-          <CircularProgress 
-            size={24} 
-            sx={{ position: "absolute", right: -40 }} 
+          <CircularProgress
+            size={24}
+            sx={{ position: "absolute", right: -40 }}
             aria-label={t("socialLogin.loading")}
           />
         )}
