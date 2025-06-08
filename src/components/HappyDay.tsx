@@ -13,8 +13,6 @@ import { LocalizationProvider, StaticDatePicker } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs, { Dayjs } from "dayjs";
 import { useTranslation } from "react-i18next";
-
-import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import setHappyDay from "../services/postpaid/setHappyDay"; // Import API function
 import useStore from "../services/useAppStore"; // Import useStore
 
@@ -33,11 +31,6 @@ const HappyDay: React.FC = () => {
   const handleDateChange = (date: Dayjs | null) => {
     setSelectedDate(date);
   };
-
-  const handleDialogOpen = () => {
-    setDialogOpen(true);
-  };
-
   const handleDialogClose = () => {
     setDialogOpen(false);
   };

@@ -26,7 +26,7 @@ const GiftData: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Fetch serviceDetails and mobile number from the store
-  const { serviceDetails, setLeftMenuItem, giftDataMobileNumber, setGiftDataMobileNumber } = useStore();
+  const { serviceDetails, setLeftMenuItem,setGiftDataMobileNumber } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
 
   useEffect(() => {
