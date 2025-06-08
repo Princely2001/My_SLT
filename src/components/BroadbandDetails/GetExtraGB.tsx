@@ -177,32 +177,37 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
     }
   };
   
-  useEffect(() => {
-    const fetchData = async () => {
-      console.group("🌐 [API] Fetching Packages");
-      if (serviceID && packageName) {
-        try {
-          console.log("⏳ [Request] Fetching package details...");
-          const response = await fetchPackageDetails(serviceID, packageName);
-          console.log("✅ [Response] Received:", response);
+useEffect(() => {
+  const fetchData = async () => {
+    console.group("🌐 [API] Fetching Packages");
+    if (serviceID && packageName) {
+      try {
+        console.log("⏳ [Request] Fetching package details...");
+        const response = await fetchPackageDetails(serviceID, packageName);
+        console.log("✅ [Response] Received:", response);
 
-          if (response && response.length > 0) {
-            setPackageDetails(response);
-          } else {
-            console.warn("⚠️ [Warning] No package details found");
-            setErrorMessage(t("extra_gb.no_packages_error"));
-            setOpenDialog(true);
-          }
-        } catch (error) {
-          console.error("❌ [Error] Fetch Failed:", error);
-          setErrorMessage(t("extra_gb.fetch_error"));
+        if (response && response.length > 0) {
+          // Convert packageId to string to match PackageDetail[]
+          const mappedResponse: PackageDetail[] = response.map((bundle) => ({
+            ...bundle,
+            packageId: String(bundle.packageId),
+          }));
+          setPackageDetails(mappedResponse);
+        } else {
+          console.warn("⚠️ [Warning] No package details found");
+          setErrorMessage(t("extra_gb.no_packages_error"));
           setOpenDialog(true);
         }
+      } catch (error) {
+        console.error("❌ [Error] Fetch Failed:", error);
+        setErrorMessage(t("extra_gb.fetch_error"));
+        setOpenDialog(true);
       }
-      console.groupEnd();
-    };
-    fetchData();
-  }, [serviceID, packageName]);
+    }
+    console.groupEnd();
+  };
+  fetchData();
+}, [serviceID, packageName]);
 
   const handleDialogClose = () => {
     console.log("📢 [UI] Closing Dialog");
