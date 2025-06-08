@@ -35,7 +35,6 @@ interface CustomSectionProps {
 
 const CustomSection = ({ label, value }: CustomSectionProps) => {
   const { t } = useTranslation();
-   const WatermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   return (
     <Typography variant="body2" sx={commonTextStyle}>
       {t(label)}:
