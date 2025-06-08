@@ -1,7 +1,7 @@
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 
-// Replace with your image paths
+
 import AddToBillImage from "../../assets/Images/subscriptionPageImages/GetExtraGBAdd.jpeg";
 import PayNowImage from "../../assets/Images/subscriptionPageImages/GetExtraGBPay.jpeg";
 import WatermarkLogo from "../../assets/Images/watermarklogo.png";

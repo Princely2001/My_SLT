@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Button,
@@ -8,46 +8,49 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-import useStore from "../../services/useAppStore";
+
 import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 import { useTranslation } from "react-i18next";
 
 const VideoOnDemand = () => {
-  const { serviceDetails, setLeftMenuItem, selectedNavbarItem } = useStore();
-  const [showAlert, setShowAlert] = useState(false);
+ 
+  const serviceDetails = {
+    listofVODService: [
+      {
+        serviceID: "VOD12345",
+        movieTitle: "The Great Adventure",
+        serviceStatus: "Active",
+      },
+    ],
+  };
+
+  // const { serviceDetails, setLeftMenuItem } = useStore();
+  const [showAlert, setShowAlert] = useState(false); 
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (!serviceDetails?.listofVODService?.length) {
-      setShowAlert(true);
-    }
-  }, [serviceDetails, selectedNavbarItem]);
-
-  const handleCloseAlert = () => setShowAlert(false);
 
   return (
     <>
       {/* Alert Dialog */}
-      <Dialog open={showAlert} onClose={handleCloseAlert}>
+      <Dialog open={showAlert} onClose={() => setShowAlert(false)}>
         <DialogTitle>
-          <Typography variant="body2" sx={{ fontSize: "24px", color: "#00256A" }}>
+          <Typography variant="body2" sx={{ fontSize: 24, color: "#00256A" }}>
             {t("vod.noServiceTitle")}
           </Typography>
         </DialogTitle>
         <DialogContent>
-          <Typography variant="body2" sx={{ fontSize: "16px", color: "#0056A2" }}>
+          <Typography variant="body2" sx={{ fontSize: 16, color: "#0056A2" }}>
             {t("vod.noServiceMessage")}
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button sx={buttonStyle} onClick={handleCloseAlert} color="primary">
+          <Button sx={buttonStyle} onClick={() => setShowAlert(false)} color="primary">
             {t("c.close")}
           </Button>
           <Button
             sx={buttonStyle}
             onClick={() => {
-              handleCloseAlert();
-              setLeftMenuItem("New Services");
+              setShowAlert(false);
+              // setLeftMenuItem("New Services"); // Disabled for sample
               window.open("https://www.slt.lk/en/personal/peo-tv/vod", "_blank");
             }}
             color="primary"
@@ -61,40 +64,44 @@ const VideoOnDemand = () => {
       {/* Main Content Box */}
       <Box sx={containerStyle}>
         <Box sx={contentBoxStyle}>
-          {serviceDetails?.listofVODService?.length > 0 ? (
+          {serviceDetails?.listofVODService?.length ? (
             <>
               <Typography variant="body2" sx={textStyle}>
                 {`${t("vod.serviceID")} : ${serviceDetails.listofVODService[0].serviceID}`}
               </Typography>
-              <Typography variant="body2" sx={{ ...textStyle, fontSize: "36px" }}>
+              <Typography variant="body2" sx={{ ...textStyle, fontSize: 36 }}>
                 {serviceDetails.listofVODService[0].movieTitle}
               </Typography>
-              <Typography variant="body2" sx={{ ...textStyle, fontSize: "36px" }}>
+              <Typography variant="body2" sx={{ ...textStyle, fontSize: 36 }}>
                 {`${t("vod.status")} : `}
-                <Typography
-                  variant="body2"
-                  component={"span"}
-                  sx={{ color: "#4FD745", fontSize: "36px", fontWeight: 600 }}
+                <Box
+                  component="span"
+                  sx={{ color: "#4FD745", fontSize: 36, fontWeight: 600 }}
                 >
                   {serviceDetails.listofVODService[0].serviceStatus}
-                </Typography>
+                </Box>
               </Typography>
             </>
           ) : (
-            <Typography variant="body2" sx={{ ...textStyle, fontSize: "24px" }}>
+            <Typography variant="body2" sx={{ ...textStyle, fontSize: 24 }}>
               {t("vod.noVideos")}
             </Typography>
           )}
         </Box>
 
         {/* Watermark Logo */}
-        <Box component="img" src={WaterMarkLogo} alt="Watermark Logo" sx={watermarkStyle} />
+        <Box
+          component="img"
+          src={WaterMarkLogo}
+          alt="Watermark Logo"
+          sx={watermarkStyle}
+        />
       </Box>
     </>
   );
 };
 
-// Reusable Styles
+// Styles
 const buttonStyle = {
   backgroundColor: "#fff",
   color: "#00256A",
@@ -118,7 +125,7 @@ const containerStyle = {
 const contentBoxStyle = {
   margin: "auto",
   border: "3px dashed #0056A2",
-  borderRadius: "10px",
+  borderRadius: 10,
   display: "flex",
   flexDirection: "column",
   justifyContent: "center",
@@ -129,7 +136,7 @@ const contentBoxStyle = {
 
 const textStyle = {
   color: "#0056A2",
-  fontSize: "20px",
+  fontSize: 20,
   fontWeight: 600,
   mb: 2,
 };
@@ -139,7 +146,7 @@ const watermarkStyle = {
   position: "absolute",
   bottom: 20,
   right: 20,
-  width: "200px",
+  width: 200,
   opacity: 1,
 };
 

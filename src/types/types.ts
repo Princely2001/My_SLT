@@ -44,12 +44,6 @@ export interface BroadbandPrepaidAddOnPackageDetails {
   VALIDITY?: number;
 }
 
-// export interface WalletDetails {
-//   balanceType: string;
-//   balanceTypeName: string;
-//   totalAmount: string;
-//   balanceDetail: BalanceDetail[];
-// }
 
 export interface BalanceDetail {
   instanceId: string;

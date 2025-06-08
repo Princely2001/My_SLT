@@ -18,8 +18,11 @@ const MyPackagePeotv = () => {
   const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    if (serviceDetails?.listofPEOService.length === 0) {
+    
+    if (serviceDetails?.listofPEOService && serviceDetails.listofPEOService.length === 0) {
       setShowAlert(true);
+    } else {
+      setShowAlert(false);
     }
   }, [serviceDetails, selectedNavbarItem]);
 
@@ -95,7 +98,7 @@ const MyPackagePeotv = () => {
             height: "80%",
           }}
         >
-          {serviceDetails?.listofPEOService?.length > 0 ? (
+          {serviceDetails?.listofPEOService && serviceDetails.listofPEOService.length > 0 ? (
             <>
               <Typography
                 variant="body2"
@@ -109,10 +112,7 @@ const MyPackagePeotv = () => {
               >
                 {serviceDetails.listofPEOService[0].packageName}
               </Typography>
-              <Typography
-                variant="body2"
-                sx={{ color: "#0056A2", fontSize: "36px" }}
-              >
+              <Typography variant="body2" sx={{ color: "#0056A2", fontSize: "36px" }}>
                 {`${t("status")} : `}
                 <Typography
                   variant="body2"

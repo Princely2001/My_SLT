@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import fetchAccountDetails from "../../services/fetchAccountDetails";
 import removeAccount from "../../services/profile/removeAccount";
-import AddAccountForm from "../AddAccountForm"; // Import AddAccountForm
+import AddAccountForm from "../AddAccountForm"; 
 
 const PhoneNumberList: React.FC = () => {
   const [phoneNumbers, setPhoneNumbers] = useState<
@@ -36,7 +36,7 @@ const PhoneNumberList: React.FC = () => {
       if (accountData) {
         const phoneNumbersList = accountData.map((item) => ({
           phoneNumber: item.telephoneno,
-          accountNo: item.accountNo,
+          accountNo: item.accountno,
         }));
         setPhoneNumbers(phoneNumbersList);
       }
