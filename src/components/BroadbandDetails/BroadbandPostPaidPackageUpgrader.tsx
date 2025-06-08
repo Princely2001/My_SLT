@@ -19,8 +19,6 @@ interface PackageCardItem {
   subtitle: string;
   price: string;
 }
-
-
 const CustomArrowIcon: React.FC = () => (
   <SvgIcon viewBox="0 0 24 24" sx={{ fontSize: 16 }}>
     <circle cx="12" cy="12" r="11" stroke="green" strokeWidth="2" fill="none" />
@@ -148,7 +146,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC = () => {
         serviceDetails.listofBBService[0].serviceType,
         serviceDetails.contactNamewithInit || "",
         serviceDetails.contactMobile || "",
-        storedEmail || "",
+        storedEmail  || "",
         currentPackage.bB_PACKAGE_NAME,
         item.title,
         currentPackage.monthlY_RENTAL,
@@ -343,137 +341,110 @@ const BroadbandPostPaidPackageUpgrader: React.FC = () => {
         >
           <Box sx={{ display: "flex", gap: 1.5, width: "100%", px: 2 }}>
             {packages.map((item, index) => (
-             <Card
-  key={index}
-  sx={{
-    minWidth: { xs: "100%", sm: "48%", md: "32%" }, // Responsive width
-    backgroundColor: "#0056A2D1",
-    color: "white",
-    borderRadius: "12px",
-    boxShadow: "0 4px 12px rgba(0, 86, 162, 0.3)",
-    transition: "all 0.3s ease-in-out",
-    "&:hover": {
-      backgroundColor: "#0056A2",
-      transform: "translateY(-5px)",
-      boxShadow: "0 8px 16px rgba(0, 86, 162, 0.4)",
-    },
-    height: "100%", // Ensure consistent height
-    display: "flex",
-    flexDirection: "column",
-  }}
->
-  <CardContent sx={{ 
-    flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    padding: { xs: 2, md: 3 },
-    textAlign: "center"
-  }}>
-    {/* Title Section */}
-    <Typography
-      variant="h6"
-      sx={{
-        mb: 2,
-        fontSize: {
-          xs: "1.3rem",
-          sm: "1.4rem",
-          md: "1.6rem",
-        },
-        fontWeight: "700",
-        lineHeight: 1.2,
-        minHeight: "3.5rem",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center"
-      }}
-    >
-      {item.title}
-    </Typography>
+              <Card
+                key={index}
+                sx={{
+                  minWidth: "32%",
+                  backgroundColor: "#0056A2D1",
+                  color: "white",
+                  borderRadius: "10px",
+                  transition: "transform 0.3s, margin 0.3s ease-in-out",
+                  "&:hover": {
+                    backgroundColor: "#0056A2",
+                    transform: "scale(1.05)",
+                    marginLeft: 2,
+                    marginRight: 2,
+                  },
+                }}
+              >
+                <CardContent sx={{ textAlign: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        mb: 2,
+                        textAlign: "center",
+                        fontSize: {
+                          xs: "1.2rem",
+                          sm: "1.3rem",
+                          md: "1.5rem",
+                        },
+                        fontWeight: "bold",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      {item.title}
+                    </Typography>
 
-    {/* Price Highlight Box */}
-    <Box
-      sx={{
-        my: 2,
-        mx: "auto",
-        width: "80%",
-        border: "3px solid white",
-        padding: { xs: 1.5, md: 2 },
-        borderRadius: "8px",
-        backgroundColor: "white",
-        color: "#0056A2",
-      }}
-    >
-      <Typography
-        sx={{ 
-          fontSize: { xs: "1.1rem", md: "1.2rem" },
-          fontWeight: "700"
-        }}
-      >
-        {item.subtitle}
-      </Typography>
-    </Box>
-
-    {/* Price Display */}
-    <Box sx={{ my: 1 }}>
-      <Typography
-        sx={{ 
-          fontSize: { xs: "1.4rem", md: "1.6rem" },
-          fontWeight: "700",
-          color: "#FFFFFF"
-        }}
-      >
-        {t("common.currency")}{item.price} + {t("package.tax")}
-      </Typography>
-      <Typography
-        sx={{ 
-          fontSize: "0.9rem",
-          fontWeight: "600",
-          color: "rgba(255, 255, 255, 0.8)"
-        }}
-      >
-        ({t("package.perMonth")})
-      </Typography>
-    </Box>
-
-    {/* Features List - Add if available */}
-    {/* {item.features && (
-      <Box sx={{ my: 2, textAlign: "left" }}>
-        {item.features.map((feature, i) => (
-          <Typography key={i} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-            <CheckCircleOutline sx={{ mr: 1, fontSize: "1.2rem" }} />
-            {feature}
-          </Typography>
-        ))}
-      </Box>
-    )} */}
-
-    {/* Upgrade Button */}
-    <Button
-      variant="contained"
-      sx={{
-        mt: "auto", // Pushes button to bottom
-        mb: 1,
-        backgroundColor: "#FFFFFF",
-        color: "#50B748",
-        borderRadius: "8px",
-        padding: { xs: "8px", md: "10px" },
-        fontSize: { xs: "1rem", md: "1.1rem" },
-        fontWeight: "600",
-        textTransform: "none",
-        "&:hover": {
-          backgroundColor: "#4FD745",
-          color: "white",
-          boxShadow: "0 4px 8px rgba(79, 215, 69, 0.4)"
-        },
-        width: "80%",
-        mx: "auto"
-      }}
-      onClick={() => handleActivation(item)}
-    >
-      {t("package.upgrade")}
-    </Button>
-  </CardContent>
-</Card>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        width: "70%",
+                        border: "3px solid white",
+                        padding: 2,
+                        borderRadius: 3,
+                        backgroundColor: "white",
+                        color: "#0056A2",
+                      }}
+                    >
+                      <Typography
+                        sx={{ margin: "auto", fontSize: "1rem" }}
+                        variant="body2"
+                      >
+                        <strong>{item.subtitle}</strong>
+                      </Typography>
+                    </Box>
+                    <Typography
+                      variant="body2"
+                      sx={{ mt: 1, fontSize: "1.5rem", fontWeight: "bold" }}
+                    >
+                      {t("common.currency")}{item.price} + {t("package.tax")}
+                    </Typography>
+                    <Typography
+                      variant="body2"
+                      sx={{ mb: 1, fontWeight: "bold" }}
+                    >
+                      ({t("package.perMonth")})
+                    </Typography>
+                    <Button
+                      variant="contained"
+                      sx={{
+                        mt: 2,
+                        backgroundColor: "#FFFFFF",
+                        color: "#50B748",
+                        borderRadius: "10px",
+                        width: "55%",
+                        py: 1.5,
+                        "&:hover": {
+                          backgroundColor: "#4FD745",
+                          color: "white",
+                        },
+                      }}
+                      onClick={() => handleActivation(item)}
+                      fullWidth
+                    >
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          textTransform: "capitalize",
+                          fontSize: "1.25rem",
+                          fontWeight: "600",
+                        }}
+                      >
+                        {t("package.upgrade")}
+                      </Typography>
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
             ))}
           </Box>
         </Box>

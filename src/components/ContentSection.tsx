@@ -41,20 +41,14 @@ import fetchDetaliedReportAvailability from "../services/postpaid/enableDetailed
 import DisableDetailedReport from "./BroadbandDetails/DisableDetailedReport";
 import Box from "@mui/material/Box";
 import VideoOnDemand from "./PeoTV/VideoOnDemand";
-import fetchPurchaseHistory from "../services/postpaid/fetchhistorydetails";
-import BroadbandDetailsPrepaidSummary from "./BroadbandDetails/BroadbandDetailsPrepaidSummary";
+
 
 import History from "./DataAddonHistory";
 
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Typography,
 } from "@mui/material";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
+
 import PeoTvPackages from "./PeoTV/PeoTvPackages";
 
 const UnderConstruction = () => {
