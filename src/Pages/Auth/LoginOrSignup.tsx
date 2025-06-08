@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import backgroundImage from "../../assets/Images/background.jpg";
-import LoginImage from "../../assets/images/loginImage.png";
+import LoginImage from "..//..//assets//images//loginImage.png";
 import ForgetPassword from "./ForgetPassword";
 import Login from "./LogIn";
 import OTPPage from "./OTP";
