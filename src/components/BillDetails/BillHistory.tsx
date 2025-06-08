@@ -151,7 +151,7 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
                       padding: "8px 16px",
                       "&:hover": { backgroundColor: "#f0f0f0" },
                     }}
-                    onClick={() => handleEmailNow(eBillEmail, accountNo, telephoneNo, String(bill.billViewMonth))}
+                    onClick={() => handleEmailNow(eBillEmail, accountNo, telephoneNo, String(bill.billMonth))}
                   >
                     <Typography variant="body2">
                       {t("outstandingBills.emailNow")}
@@ -171,7 +171,7 @@ const OutstandingBills: React.FC<BillHistoryProps> = ({
                       padding: "8px 16px",
                       "&:hover": { backgroundColor: "#f0f0f0" },
                     }}
-                    onClick={() => handleDownloadBill(eBillEmail, accountNo, telephoneNo, String(bill.billViewMonth))}
+                    onClick={() => handleDownloadBill(eBillEmail, accountNo, telephoneNo, String(bill.billMonth))}
                   >
                     <Typography variant="body2">
                       {t("outstandingBills.downloadEBill")}

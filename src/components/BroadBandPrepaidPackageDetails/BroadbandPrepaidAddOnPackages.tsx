@@ -7,11 +7,9 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Typography,
   IconButton,
-  useTheme,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -19,13 +17,11 @@ import addBroadbandPackage from "../../services/prepaid/addBroadbandPackage";
 import { fetchLTEPrepaidAddOnPackages } from "../../services/prepaid/fetchLTEPrepaidAddOnPackages";
 import useStore from "../../services/useAppStore";
 import { BroadbandPrepaidAddOnPackageDetails } from "../../types/types";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const BroadbandPrepaidAddOnPackages: React.FC = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } = useStore();
   const [packages, setPackages] = useState<BroadbandPrepaidAddOnPackageDetails[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,10 +102,6 @@ const BroadbandPrepaidAddOnPackages: React.FC = () => {
       const newIndex = Math.min(packages.length - 1, activeDot + cardsPerView);
       scrollToDot(newIndex);
     }
-  };
-
-  const handleBackToMain = () => {
-    setLeftMenuItem(t('me.dataAddOns'));
   };
 
   const handleButtonPress = (index: number) => {

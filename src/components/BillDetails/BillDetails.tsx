@@ -2,13 +2,14 @@ import { Box, Button, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import fetchBillingDetails from "../../services/postpaid/fetchBillingDetails";
+import { BillingInquiry } from "../../types/types"; // Import the correct type
 
 interface BillingDetail {
   outstandingBalance: number;
   lastBillDate: string;
   lastPaymentAmount: number;
   lastPaymentDate: string;
-  billAmount: number; // You use billAmount in handlePayNow
+  billAmount: number;
 }
 
 interface BillDetailsProps {
@@ -24,7 +25,6 @@ const BillDetails: React.FC<BillDetailsProps> = ({
 }) => {
   const { t } = useTranslation();
 
-  // Use local state to store fetched billing details
   const [billingDetails, setBillingDetails] = useState<BillingDetail[] | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -32,8 +32,23 @@ const BillDetails: React.FC<BillDetailsProps> = ({
     const fetchDetails = async () => {
       setLoading(true);
       try {
-        const details = await fetchBillingDetails(telephoneNo, accountNo);
-        setBillingDetails(details);
+        const rawDetails = await fetchBillingDetails(telephoneNo, accountNo);
+
+        if (!rawDetails) {
+          setBillingDetails(null);
+          return;
+        }
+
+        // Convert string fields to numbers for type-safe use
+        const formattedDetails: BillingDetail[] = rawDetails.map((item: BillingInquiry) => ({
+          outstandingBalance: parseFloat(item.outstandingBalance),
+          lastBillDate: item.lastBillDate,
+          lastPaymentAmount: parseFloat(item.lastPaymentAmount),
+          lastPaymentDate: item.lastPaymentDate,
+          billAmount: parseFloat(item.billAmount),
+        }));
+
+        setBillingDetails(formattedDetails);
       } catch (error) {
         console.error("Failed to fetch billing details:", error);
         setBillingDetails(null);
@@ -45,7 +60,6 @@ const BillDetails: React.FC<BillDetailsProps> = ({
     fetchDetails();
   }, [telephoneNo, accountNo]);
 
-  // Show loader while fetching data
   if (loading) {
     return (
       <Box sx={{ p: 2, mt: 2, textAlign: "center", width: "95%" }}>
@@ -111,7 +125,7 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body1">{t("bill.totalPayable")}:</Typography>
               <Typography variant="body1">
-                {t("common.currency")} {billingData.outstandingBalance}
+                {t("common.currency")} {billingData.outstandingBalance.toFixed(2)}
               </Typography>
             </Box>
             <Typography variant="body1" sx={{ mt: 1 }}>
@@ -131,7 +145,7 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             }}
           >
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              {t("bill.lastPayment")}: {t("common.currency")} {billingData.lastPaymentAmount}
+              {t("bill.lastPayment")}: {t("common.currency")} {billingData.lastPaymentAmount.toFixed(2)}
             </Typography>
             <Typography variant="body1">
               {t("common.on")} {billingData.lastPaymentDate}

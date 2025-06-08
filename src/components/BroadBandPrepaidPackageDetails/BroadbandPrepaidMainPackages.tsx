@@ -7,7 +7,6 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
-  DialogContentText,
   DialogTitle,
   Typography,
   IconButton,
@@ -19,13 +18,11 @@ import { fetchLTEPrepaidMainPackages } from "../../services/prepaid/fetchLTEPrep
 import { BroadbandPrepaidMainPackageDetails } from "../../types/types";
 import addBroadbandPackage from "../../services/prepaid/addBroadbandPackage";
 import useStore from "../../services/useAppStore";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 
 const BroadbandPrepaidMainPackages: React.FC = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const { selectedTelephone, setLeftMenuItem, setPackageListUpdate } =
     useStore();
   const [packages, setPackages] = useState<
@@ -113,10 +110,6 @@ const BroadbandPrepaidMainPackages: React.FC = () => {
       const newIndex = Math.min(packages.length - 1, activeDot + cardsPerView);
       scrollToDot(newIndex);
     }
-  };
-
-  const handleBackToMain = () => {
-    setLeftMenuItem(t("packages.mainMenu"));
   };
 
   const handleButtonPress = (index: number) => {

@@ -17,7 +17,7 @@ interface BillPageProps {
 
 const BillPage: React.FC<BillPageProps> = ({ telephoneNo, accountNo }) => {
   const [selectedTab, setSelectedTab] = useState("Total Payable");
-  const [billingDetails, setBillingDetails] = useState<any>(null);
+  const [setBillingDetails] = useState<any>(null);
   const [billingHistory, setBillingHistory] = useState<any>(null);
   const setBillMethodDataBundle = useStore((state) => state.setBillMethodDataBundle); // Use the setBillMethodDataBundle method from store
 
@@ -77,7 +77,7 @@ const BillPage: React.FC<BillPageProps> = ({ telephoneNo, accountNo }) => {
                 selectedTab={selectedTab}
                 telephoneNo={telephoneNo}
                 accountNo={accountNo}
-                billingDetails={billingDetails}
+               
               />}
           {selectedTab === "Bill History" && <OutstandingBills
                 selectedTab={selectedTab}
