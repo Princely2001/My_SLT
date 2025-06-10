@@ -10,8 +10,6 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import RedeemImage from "../assets/Images/redeem.png";
-import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import redeemVoucher from "../services/postpaid/redeemVoucher";
 import useStore from "../services/useAppStore";
 import { textFieldStyle } from "../assets/Themes/CommonStyles";
@@ -28,7 +26,8 @@ const Redeem: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [showMessage, setShowMessage] = useState(false);
-
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
+  const RedeemImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/redeem.png";
   const handleValidate = async () => {
     if (!voucherId) {
       setMessage(t("redeem.enterVoucherId"));
@@ -238,7 +237,7 @@ const Redeem: React.FC = () => {
       </Dialog>
 
       <Box sx={{ position: "absolute", zIndex: 1, right: "2%", bottom: "2%" }}>
-        <img src={WatermarkLogo} alt={t("redeem.watermarkLogoAlt")} />
+        <img src={WaterMarkLogo} alt={t("redeem.watermarkLogoAlt")} />
       </Box>
     </Box>
   );

@@ -10,7 +10,6 @@ import {
   DialogActions,
   CircularProgress
 } from "@mui/material";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import fetchPackageDetails from "../../services/postpaid/fetchPackageDetails";
 import activatepackagedetails from "../../services/postpaid/activatepackagedetails";
@@ -38,6 +37,7 @@ const GetExtraGbPage: React.FC<DataPlanProps> = ({ packageName }) => {
   const { selectedTelephone } = useStore();
    const AddToBillImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/GetExtraGBAdd.jpeg";
     const  PayNowImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/GetExtraGBPay.jpeg";
+     const WatermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   
   const dataPlans: DataPlan[] = [
     { range: t("extra_gb.range_1_to_3"), pricePerGB: 100 },

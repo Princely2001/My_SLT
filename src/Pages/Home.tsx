@@ -1,5 +1,4 @@
 import Box from "@mui/material/Box";
-import homebackgroundImage from "../../src/assets/Images/HomeBackground.png";
 import AccountBalance from "../components/AccountBalance";
 import Banner from "../components/Banner";
 import ContentSection from "../components/ContentSection";
@@ -12,6 +11,7 @@ import Mobile from "../components/Mobile/Mobile";
 
 const Home = () => {
   const { selectedNavbarItem } = useStore();
+  const homebackgroundImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/HomeBackground.png";
   return (
     <>
       <Box

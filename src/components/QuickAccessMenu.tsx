@@ -3,37 +3,30 @@ import { Box, Button, Typography, Grid } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import useStore from "../services/useAppStore";
 
-// Image Imports
-import Promotion from "../../src/assets/Images/QuickAccessIcons/Promotion.png";
-import PromotionSelected from "../../src/assets/Images/QuickAccessIcons/PromotionSelected.png";
-import PromotionHover from "../../src/assets/Images/QuickAccessIcons/PromotionHover.png";
-
-import NewServices from "../../src/assets/Images/QuickAccessIcons/New Services.png";
-import NewServicesSelected from "../../src/assets/Images/QuickAccessIcons/NewServicesSelected.png";
-import NewServicesHover from "../../src/assets/Images/QuickAccessIcons/NewServicesHover.png";
-
-import DigitalLife from "../../src/assets/Images/QuickAccessIcons/Digital Life.png";
-import DigitalLifeSelected from "../../src/assets/Images/QuickAccessIcons/DigitalLifeSelected.png";
-import DigitalLifeHover from "../../src/assets/Images/QuickAccessIcons/DigitalLifeHover.png";
-
-import Bill from "../../src/assets/Images/QuickAccessIcons/Bill.png";
-import BillSelected from "../../src/assets/Images/QuickAccessIcons/BillSelected.png";
-import BillDisabled from "../../src/assets/Images/QuickAccessIcons/BillDisabled.png";
-import BillHover from "../../src/assets/Images/QuickAccessIcons/BillHover.png";
-
-import HotDevices from "../../src/assets/Images/QuickAccessIcons/Hot Devices.png";
-import HotDevicesSelected from "../../src/assets/Images/QuickAccessIcons/HotDevicesSelected.png";
-import HotDevicesHover from "../../src/assets/Images/QuickAccessIcons/HotDevicesHover.png";
-
-import Complaints from "../../src/assets/Images/QuickAccessIcons/Complaints.png";
-import ComplaintsSelected from "../../src/assets/Images/QuickAccessIcons/ComplaintsSelected.png";
-import ComplaintsDisabled from "../../src/assets/Images/QuickAccessIcons/ComplaintsDisabled.png";
-import ComplaintsHover from "../../src/assets/Images/QuickAccessIcons/ComplaintsHover.png";
-
 const QuickAccessMenu = () => {
   const { t } = useTranslation();
   const [selectedItem, setSelectedItem] = useState("");
   const [hover, setHover] = useState(-1);
+  const Promotion = "https://mysltimages.s3.eu-north-1.amazonaws.com/Promotion.png";
+  const  PromotionSelected = "https://mysltimages.s3.eu-north-1.amazonaws.com/PromotionSelected.png"; 
+  const PromotionHover = "https://mysltimages.s3.eu-north-1.amazonaws.com/PromotionHover.png"; 
+  const  NewServices = "https://mysltimages.s3.eu-north-1.amazonaws.com/New+Services.png"; 
+  const NewServicesSelected = "https://mysltimages.s3.eu-north-1.amazonaws.com/NewServicesSelected.png";
+  const NewServicesHover = "https://mysltimages.s3.eu-north-1.amazonaws.com/NewServicesHover.png"; 
+  const DigitalLife = "https://mysltimages.s3.eu-north-1.amazonaws.com/Digital+Life.png";
+  const  DigitalLifeSelected = "https://mysltimages.s3.eu-north-1.amazonaws.com/DigitalLifeSelected.png";
+  const DigitalLifeHover = "https://mysltimages.s3.eu-north-1.amazonaws.com/DigitalLifeHover.png"
+  const   Bill = "https://mysltimages.s3.eu-north-1.amazonaws.com/Bill.png"; 
+  const  BillSelected = "https://mysltimages.s3.eu-north-1.amazonaws.com/BillSelected.png"; 
+  const  BillDisabled = "https://mysltimages.s3.eu-north-1.amazonaws.com/BillDisabled.png"; 
+  const BillHover = "https://mysltimages.s3.eu-north-1.amazonaws.com/BillHover.png";
+  const HotDevices = "https://mysltimages.s3.eu-north-1.amazonaws.com/Hot+Devices.png"; 
+  const HotDevicesSelected = "https://mysltimages.s3.eu-north-1.amazonaws.com/HotDevicesSelected.png";
+  const  HotDevicesHover = "https://mysltimages.s3.eu-north-1.amazonaws.com/HotDevicesHover.png";
+  const Complaints = "https://mysltimages.s3.eu-north-1.amazonaws.com/Complaints.png";
+  const ComplaintsSelected = "https://mysltimages.s3.eu-north-1.amazonaws.com/ComplaintsSelected.png"; 
+  const ComplaintsDisabled = "https://mysltimages.s3.eu-north-1.amazonaws.com/ComplaintsDisabled.png";
+  const  ComplaintsHover = "https://mysltimages.s3.eu-north-1.amazonaws.com/ComplaintsHover.png";
 
   const {
     selectedTelephone,

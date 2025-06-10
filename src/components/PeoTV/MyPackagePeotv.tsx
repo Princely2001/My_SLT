@@ -10,15 +10,16 @@ import {
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import useStore from "../../services/useAppStore";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 
 const MyPackagePeotv = () => {
   const { t } = useTranslation();
   const { serviceDetails, setLeftMenuItem, selectedNavbarItem } = useStore();
   const [showAlert, setShowAlert] = useState(false);
+  
+  // Define image URL as a variable instead of importing
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   useEffect(() => {
-    
     if (serviceDetails?.listofPEOService && serviceDetails.listofPEOService.length === 0) {
       setShowAlert(true);
     } else {

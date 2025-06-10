@@ -1,6 +1,5 @@
 import { AppBar, Avatar, Box, Container, FormControl, IconButton, MenuItem, Popover, Select, SelectChangeEvent, Toolbar } from "@mui/material";
 import { useEffect, useState } from "react";
-import userImage from "../../src/assets/Images/profile.jpg";
 import fetchAccountDetails from "../services/fetchAccountDetails";
 import useStore from "../services/useAppStore";
 import { AccountDetails } from "../types/types";
@@ -8,6 +7,7 @@ import MySLTMenu from "./ProfileMenuUIs/MySLTMenu";
 
 const CustomAppBar = () => {
   const { fetchServiceDetails, setSelectedTelephone } = useStore();
+  const   userImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/profile.jpg";
   const [account, setAccount] = useState(""); // Selected account
   const [openDropdown, setOpenDropdown] = useState(false); // Dropdown open/close state
   const [accounts, setAccounts] = useState<AccountDetails[]>([

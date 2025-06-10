@@ -12,7 +12,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 import { textFieldStyle } from "../../assets/Themes/CommonStyles";
 import callForwardingRequest from "../../services/postpaid/Voice/callForwardingRequest";
 import checkCallForwardingStatus from "../../services/postpaid/Voice/checkCallForwardingStatus";
@@ -20,6 +19,7 @@ import checkCallForwardingStatus from "../../services/postpaid/Voice/checkCallFo
 const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
   const { t } = useTranslation();
   const [statusMessage, setStatusMessage] = useState<string>("");
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   const [errorMessage, setErrorMessage] = useState<string>("");
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [forwardingNumber, setForwardingNumber] = useState<string>("");
@@ -190,7 +190,7 @@ const CallForwarding: React.FC<{ telephoneNo: string }> = ({ telephoneNo }) => {
 
       <Box
         component="img"
-        src={WaterMarkLogo}
+        src={watermarkLogo}
         alt="Watermark Logo"
         sx={{
           zIndex: 1,

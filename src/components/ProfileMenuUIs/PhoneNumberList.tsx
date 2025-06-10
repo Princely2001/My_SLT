@@ -11,7 +11,6 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import fetchAccountDetails from "../../services/fetchAccountDetails";
 import removeAccount from "../../services/profile/removeAccount";
 import AddAccountForm from "../AddAccountForm"; 
@@ -21,6 +20,7 @@ const PhoneNumberList: React.FC = () => {
     { phoneNumber: string; accountNo: string }[]
   >([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   const [selectedPhoneNumber, setSelectedPhoneNumber] = useState<string | null>(
     null
   );
@@ -171,7 +171,7 @@ const PhoneNumberList: React.FC = () => {
       {/* Watermark */}
       <Box sx={{ position: "absolute", right: "2%", bottom: "2%" }}>
         <img
-          src={WatermarkLogo}
+          src={watermarkLogo}
           alt="Watermark Logo"
           style={{ height: "auto" }}
         />

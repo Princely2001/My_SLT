@@ -6,8 +6,6 @@ import CircularProgress from "@mui/material/CircularProgress";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select, { SelectChangeEvent } from "@mui/material/Select";
-import GoogleLogo from "../../assets/images/google-icon.png";
-import FacebookLogo from "../../assets/images/facebook-icon1.jpg";
 import { GoogleOAuthProvider, useGoogleLogin } from "@react-oauth/google";
 import FacebookLogin from "@greatsumini/react-facebook-login";
 import axios from "axios";
@@ -24,6 +22,8 @@ const SocialMediaLoginInner = () => {
   const { t, i18n } = useTranslation();
   const [isFacebookLoading, setIsFacebookLoading] = useState(false);
   const navigate = useNavigate();
+  const GoogleLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/google-icon.png";
+  const FacebookLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/facebook-icon1.jpg";
 
   const handleLanguageChange = (event: SelectChangeEvent) => {
     const newLanguage = event.target.value as 'en' | 'si' | 'ta';

@@ -11,18 +11,21 @@ import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import { useTranslation } from "react-i18next"; // ✅ Translation Hook
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
+import { useTranslation } from "react-i18next";
+
 import terminateUserProfile from "../../services/profile/terminateUserProfile";
 import updateUserInfo from "../../services/profile/updateUserInfo";
 
 const UserProfile = () => {
-  const { t } = useTranslation(); // ✅ Use translation function
+  const { t } = useTranslation();
   const storedEmail = localStorage.getItem("username");
   const [altrContact, setAltrContact] = useState("");
   const [name, setName] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
+
+  // Corrected variable name (camelCase)
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   const handleUpdate = async () => {
     if (!storedEmail) {
@@ -66,6 +69,7 @@ const UserProfile = () => {
           width: "100%",
         }}
       >
+        {/* Profile Header */}
         <Typography
           variant="body2"
           sx={{
@@ -78,6 +82,7 @@ const UserProfile = () => {
           {t("My Profile")}
         </Typography>
 
+        {/* User Info Box */}
         <Box
           sx={{
             display: "flex",
@@ -119,6 +124,7 @@ const UserProfile = () => {
           </IconButton>
         </Box>
 
+        {/* Profile Form */}
         <Box sx={{ width: "90%", marginBottom: "20px" }}>
           <Typography
             variant="body2"
@@ -190,14 +196,21 @@ const UserProfile = () => {
           </Button>
         </Box>
 
+        {/* Response Message */}
         {responseMessage && (
           <Typography variant="body2" sx={{ color: "#0056A2", marginTop: "20px" }}>
             {responseMessage}
           </Typography>
         )}
       </Box>
+
+      {/* Watermark Logo */}
       <Box sx={{ position: "absolute", zIndex: 1, right: "2%", bottom: "2%" }}>
-        <img src={WatermarkLogo} alt="Watermark Logo" style={{ height: "auto" }} />
+        <img 
+          src={watermarkLogo} 
+          alt="Watermark Logo" 
+          style={{ height: "auto", width: "200px" }} 
+        />
       </Box>
 
       {/* Confirmation Dialog */}

@@ -9,9 +9,6 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import BroadbandIcon from "../../assets/Images/NewServiceIcons/Broadband.png";
-import PeoTVIcon from "../../assets/Images/NewServiceIcons/PeoTV.png";
-import VoiceIcon from "../../assets/Images/NewServiceIcons/Voice.png";
 import createSalesLead, { SalesLeadCreationResponse } from "../../services/postpaid/createSalesLead"; // Import the API function
 
 // Define props for the component
@@ -31,6 +28,9 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
+  const BroadbandIcon = "https://mysltimages.s3.eu-north-1.amazonaws.com/Broadband.png";
+  const PeoTVIcon = "https://mysltimages.s3.eu-north-1.amazonaws.com/PeoTV.png";
+  const VoiceIcon = "https://mysltimages.s3.eu-north-1.amazonaws.com/Voice.png";
 
   console.log("Telephone Number in OtherRequestPage:", telephoneNo);
   console.log("Selected Item in OtherRequestPage:", selectedItem); 

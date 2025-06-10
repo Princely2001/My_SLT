@@ -1,13 +1,14 @@
 import Box from "@mui/material/Box";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
-import PeoTvGoImage from "../../assets/Images/PeoTVGoImage.png";
 import { Button, Typography } from "@mui/material";
 
 const PeoTvGo = () => {
+  const PeoTvGoImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/PeoTVGoImage.png";
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   const handleclick = () => {
     window.open("https://www.peotvgo.com/", "_blank");
   };
+
   return (
     <Box
       sx={{
@@ -22,10 +23,10 @@ const PeoTvGo = () => {
         borderRadius: 3,
       }}
     >
-      <Box component="img" src={PeoTvGoImage} />
+      <Box component="img" src={PeoTvGoImage} alt="Peo TV Go" />
 
       <Button
-        onClick={() => handleclick()}
+        onClick={handleclick}
         variant="contained"
         sx={{
           width: "200px",
@@ -47,6 +48,7 @@ const PeoTvGo = () => {
           Explore More
         </Typography>
       </Button>
+
       <Box
         component="img"
         src={WaterMarkLogo}

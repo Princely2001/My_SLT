@@ -1,12 +1,12 @@
 import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
-import fiberCharacter from "../../assets/Images/NewServiceIcons/fiberCableCharacter.png";
-import waterMarkLogo from "../../assets/Images/watermarklogo.png";
 import OrderAnimation from "../OrderComponent/Order";
 import { useState } from "react";
 
 const FiberRequestPage = () => {
   const [isDisabled, setIsDisabled] = useState(false);
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
+   const fiberCharacter = "https://mysltimages.s3.eu-north-1.amazonaws.com/fiberCableCharacter.png";
   const handleRequestClick = () => {
     // Open the URL in a new tab
     window.open("https://myslt.slt.lk/applyonline", "_blank");
@@ -60,7 +60,7 @@ const FiberRequestPage = () => {
       {/* Watermark Logo - Bottom Left */}
       <Box
         component="img"
-        src={waterMarkLogo}
+        src={watermarkLogo}
         alt="Watermark Logo"
         sx={{
           zIndex: 1,

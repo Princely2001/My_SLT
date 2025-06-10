@@ -1,13 +1,5 @@
 import { Box, Button, Card, CardContent, Typography } from "@mui/material";
 import React from "react";
-import CCTVImage from "../assets/images/DigitalLifeImages/CCTV.jpg";
-import DuthayaImage from "../assets/images/DigitalLifeImages/Duthaya.jpg";
-import eSiphalaImage from "../assets/images/DigitalLifeImages/esiphala.jpg";
-import eSportImage from "../assets/images/DigitalLifeImages/eSport.jpg";
-import KasperskyImage from "../assets/images/DigitalLifeImages/kaspersky.jpg";
-import SLTStorageImage from "../assets/images/DigitalLifeImages/sltStorage.jpg";
-import SLTLynkedImage from "../assets/images/DigitalLifeImages/SLTLynked.png";
-import SmartHomeImage from "../assets/images/DigitalLifeImages/smartHome.jpg";
 
 type Service = {
   id: number;
@@ -18,6 +10,17 @@ type Service = {
 
 const DigitalLife: React.FC = () => {
   // Data for each card with imported image URLs and optional URL for navigation
+  const CCTVImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/CCTV.jpg";
+  const   DuthayaImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/Duthaya.jpg"; 
+  const  eSiphalaImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/esiphala.jpg"; 
+  const   eSportImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/eSport.jpg"; 
+  const KasperskyImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/kaspersky.jpg";
+  const  SLTStorageImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/sltStorage.jpg"; 
+  const SLTLynkedImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/SLTLynked.png";
+  const  SmartHomeImage  = "https://mysltimages.s3.eu-north-1.amazonaws.com/smartHome.jpg";
+
+
+
   const services: Service[] = [
     {
       id: 1,

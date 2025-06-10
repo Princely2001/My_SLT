@@ -2,9 +2,6 @@ import { Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-
-
 import ForgetPassword from "./ForgetPassword";
 import Login from "./LogIn";
 import OTPPage from "./OTP";
@@ -16,7 +13,7 @@ const LoginOrSignup = () => {
   const { t } = useTranslation();
   const [selectedTab, setSelectedTab] = useState("login");
   const loginImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/loginImage.png";
-   const backgroundImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/HomeBackground.png";
+  const backgroundImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/HomeBackground.png";
 
   return (
     <Box

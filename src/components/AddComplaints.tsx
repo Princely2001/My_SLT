@@ -13,7 +13,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import arrow from "../assets/images/arrow.png";
 import { textFieldStyle } from "../assets/Themes/CommonStyles";
 // Import the API function
 import createFaultRequest from "../services/createFaultRequest";
@@ -29,6 +28,7 @@ const AddComplaints: React.FC<AddComplaintsProps> = ({ telephoneNo }) => {
   const serviceStatus = serviceDetails?.listofBBService[0]?.serviceStatus; // Get serviceStatus dynamically
   
   const [serviceOption, setServiceOption] = useState("All");
+   const  arrow = "https://mysltimages.s3.eu-north-1.amazonaws.com/arrow.png";
   const [contactNo, setContactNo] = useState("");
   const [faultDescription, setFaultDescription] = useState("");
   const [status] = useState(serviceStatus || "");  // Default to serviceStatus if available

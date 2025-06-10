@@ -1,12 +1,12 @@
 import Box from "@mui/material/Box";
 import { Typography } from "@mui/material";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 import useStore from "../../services/useAppStore";
 import { useTranslation } from "react-i18next";
 
 const MyPackageVoice = () => {
   const { t } = useTranslation();
   const { serviceDetails } = useStore();
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   return (
     <Box
@@ -61,7 +61,7 @@ const MyPackageVoice = () => {
       </Box>
       <Box
         component="img"
-        src={WaterMarkLogo}
+        src={watermarkLogo}
         alt="Watermark Logo"
         sx={{
           zIndex: 1,

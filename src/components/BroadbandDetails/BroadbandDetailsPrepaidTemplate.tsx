@@ -7,7 +7,6 @@ import { parseTime } from "../../services/helperFunctions";
 import useStore from "../../services/useAppStore";
 import { DataBalance, ServiceDetailsAPIResponse } from "../../types/types";
 import CircularProgressBar from "../CircularProgressBar";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 
 const commonTextStyle = {
   fontSize: "14px",
@@ -352,9 +351,24 @@ const BroadbandDetailsPrepaidTemplate = ({
             }}
           />
           <Box
-            sx={{ position: "absolute", zIndex: 1, right: "1%", bottom: "1%" }}
+            sx={{ 
+              position: "absolute", 
+              zIndex: 1, 
+              right: "1%", 
+              bottom: "1%",
+              width: "100px", // Added fixed width
+              height: "auto"  // Added height auto to maintain aspect ratio
+            }}
           >
-            <img src={WatermarkLogo} alt={t("broadband.watermarkAlt")} />
+            <img 
+              src="https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png" 
+              alt={t("broadband.watermarkAlt")} 
+              style={{ 
+                width: "100%", 
+                height: "auto",
+                opacity: 0.5 
+              }} 
+            />
           </Box>
         </Box>
       </Box>

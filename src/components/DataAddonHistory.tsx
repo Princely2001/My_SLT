@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { Grid, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@mui/material";
-import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import fetchPurchaseHistory from "../services/postpaid/fetchhistorydetails";
 import { DataBundle } from "../types/types";
 import {
@@ -34,6 +33,7 @@ const PurchaseHistoryComponent: React.FC = () => {
 
   const { serviceDetails} = useStore();
   const subscriberID = serviceDetails?.listofBBService[0]?.serviceID;
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   const today = new Date();
 
   const fetchHistory = useCallback(async () => {
@@ -551,7 +551,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         zIndex: 1, 
         pointerEvents: "none" 
       }}>
-        <img src={WatermarkLogo} alt={t("common.watermarkAlt")} width="160" height="180" />
+        <img src={WaterMarkLogo} alt={t("common.watermarkAlt")} width="160" height="180" />
       </Box>
     </Box>
   );

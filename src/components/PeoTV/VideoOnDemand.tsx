@@ -8,12 +8,12 @@ import {
   DialogTitle,
   Typography,
 } from "@mui/material";
-
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 import { useTranslation } from "react-i18next";
 
 const VideoOnDemand = () => {
- 
+  // Define image URL as a variable instead of importing
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
+
   const serviceDetails = {
     listofVODService: [
       {
@@ -24,7 +24,6 @@ const VideoOnDemand = () => {
     ],
   };
 
-  // const { serviceDetails, setLeftMenuItem } = useStore();
   const [showAlert, setShowAlert] = useState(false); 
   const { t } = useTranslation();
 
@@ -50,7 +49,6 @@ const VideoOnDemand = () => {
             sx={buttonStyle}
             onClick={() => {
               setShowAlert(false);
-              // setLeftMenuItem("New Services"); // Disabled for sample
               window.open("https://www.slt.lk/en/personal/peo-tv/vod", "_blank");
             }}
             color="primary"

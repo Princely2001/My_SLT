@@ -1,10 +1,12 @@
-import { Box, Typography} from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import useStore from "../../services/useAppStore";
-import WaterMarkLogo from "../../assets/Images/watermarklogo.png";
 
 const PeoTvPackages = () => {
-  const { serviceDetails} = useStore();
+  const { serviceDetails } = useStore();
   const packages = serviceDetails?.listofPEOService ?? [];
+  
+  // Define image URL as a variable instead of importing
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   return (
     <>
@@ -25,11 +27,18 @@ const PeoTvPackages = () => {
         </Box>
 
         {/* Watermark Logo */}
-        <Box component="img" src={WaterMarkLogo} alt="Watermark Logo" sx={watermarkStyle} />
+        <Box 
+          component="img" 
+          src={WaterMarkLogo} 
+          alt="Watermark Logo" 
+          sx={watermarkStyle} 
+        />
       </Box>
     </>
   );
 };
+
+// Styles
 const containerStyle = {
   position: "relative",
   display: "flex",

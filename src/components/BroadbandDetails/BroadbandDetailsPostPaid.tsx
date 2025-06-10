@@ -9,7 +9,6 @@ import {
   ServiceDetailsAPIResponse,
 } from "../../types/types";
 import CircularProgressBar from "../CircularProgressBar";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
 import fetchMyPackageUsage from "../../services/postpaid/fetchMyPackageUsage";
 import fetchOtherPackageUsage from "../../services/postpaid/fetchOtherUsage";
 import BroadbandNavbar from "./BroadbandNavbar";
@@ -93,6 +92,7 @@ const ActionButton = ({
 
 const BroadbandDetailsPostPaid = () => {
   const { t } = useTranslation();
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
   const { selectedTelephone, setLeftMenuItem, serviceDetails } = useStore();
   const [serviceData, setServiceData] =
     useState<ServiceDetailsAPIResponse | null>(null);
@@ -448,7 +448,7 @@ const BroadbandDetailsPostPaid = () => {
           <Box
             sx={{ position: "absolute", zIndex: 1, right: "1%", bottom: "1%" }}
           >
-            <img src={WatermarkLogo} alt={t("Watermark Logo")} />
+            <img src={watermarkLogo} alt={t("Watermark Logo")} />
           </Box>
         </Box>
       </Box>

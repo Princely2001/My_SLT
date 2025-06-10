@@ -1,11 +1,5 @@
 import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-
-
-import AddToBillImage from "../../assets/Images/subscriptionPageImages/GetExtraGBAdd.jpeg";
-import PayNowImage from "../../assets/Images/subscriptionPageImages/GetExtraGBPay.jpeg";
-import WatermarkLogo from "../../assets/Images/watermarklogo.png";
-
 import enrollDataGift from "../../services/postpaid/enrollDataGift";
 import getDataGiftPackages from "../../services/postpaid/getDataGiftPackages";
 import useStore from "../../services/useAppStore";
@@ -22,6 +16,9 @@ const GetGiftDataPage: React.FC = () => {
   const [isChecked, setIsChecked] = useState<boolean>(false); // state for checkbox
   const [openDialog, setOpenDialog] = useState(false); // state to open/close dialog
   const [dialogMessage, setDialogMessage] = useState(""); // state to hold the message
+  const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
+  const AddToBillImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/GetExtraGBAdd.jpeg";
+  const  PayNowImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/GetExtraGBPay.jpeg";
 
   const dataPlans = [
     { range: "1GB to 3GB", pricePerGB: 100 },
@@ -362,7 +359,7 @@ const GetGiftDataPage: React.FC = () => {
 
         <Box sx={{ position: "absolute", right: "2%", bottom: "1%" }}>
           <img
-            src={WatermarkLogo}
+            src={watermarkLogo}
             alt="Watermark"
             style={{ width: "120px", height: "auto" }}
           />

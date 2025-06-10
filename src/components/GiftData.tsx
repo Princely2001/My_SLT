@@ -10,7 +10,6 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import WatermarkLogo from "../assets/Images/watermarklogo.png";
 import { textFieldStyle } from "../assets/Themes/CommonStyles";
 import validateDataGiftSubscriber from "../services/postpaid/ValidateDataGiftResponse";
 import useStore from "../services/useAppStore";
@@ -24,6 +23,7 @@ const GiftData: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const WaterMarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
   // Fetch serviceDetails and mobile number from the store
   const { serviceDetails, setLeftMenuItem,setGiftDataMobileNumber } = useStore();
@@ -224,7 +224,7 @@ const GiftData: React.FC = () => {
       </Dialog>
 
       <Box sx={{ position: "absolute", zIndex: 1, right: "2%", bottom: "2%" }}>
-        <img src={WatermarkLogo} alt="Watermark Logo" />
+        <img src={WaterMarkLogo} alt="Watermark Logo" />
       </Box>
     </Box>
   );
