@@ -1,15 +1,16 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import ArrowImage from "../../assets/Images/MobileImages/arrowImage.png";
-import VolteImage from "../../assets/Images/MobileImages/VolteImage.png";
-import BottomImage from "../../assets/Images/MobileImages/BottomImageMobile.png";
-import TopImage from "../../assets/Images/MobileImages/TopImageMobile.png";
 import { Typography } from "@mui/material";
 
 const Mobile = () => {
   const handleRedirect = () => {
     window.open("https://www.mobitel.lk/selfcare-app", "_blank");
   };
+
+   const  ArrowImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/arrowImage.png";
+    const   VolteImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/VolteImage.png";
+     const  BottomImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/BottomImageMobile.png";
+      const  TopImage = "https://mysltimages.s3.eu-north-1.amazonaws.com/TopImageMobile.png";
   return (
     <Box
       sx={{
