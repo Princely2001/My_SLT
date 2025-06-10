@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--max-old-space-size=4096 vite",
+     "deploy": "gh-pages -d dist",
     "build": "node --max-old-space-size=4096 node_modules/vite/bin/vite.js build",
     "lint": "eslint .",
     "analyze": "cross-env NODE_OPTIONS=--max-old-space-size=8192 vite build --mode production && source-map-explorer dist/assets/**/*.js",
@@ -49,6 +50,7 @@
     "eslint": "^9.11.1",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.12",
+    "gh-pages": "^6.3.0",
     "globals": "^15.9.0",
     "source-map-explorer": "^2.5.3",
     "terser": "^5.42.0",
