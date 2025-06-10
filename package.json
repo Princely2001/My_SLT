@@ -3,12 +3,16 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
-  },
+ "scripts": {
+  "dev": "NODE_OPTIONS='--max-old-space-size=4096' vite",
+  "build": "NODE_OPTIONS='--max-old-space-size=4096' tsc -b && vite build",
+  "build:prod": "NODE_OPTIONS='--max-old-space-size=8192' vite build --mode production",
+  "lint": "eslint .",
+  "lint:fix": "eslint . --fix",
+  "preview": "vite preview",
+  "preview:prod": "NODE_OPTIONS='--max-old-space-size=4096' vite preview --mode production",
+  "analyze": "NODE_OPTIONS='--max-old-space-size=8192' vite build --mode production && source-map-explorer 'dist/assets/*.js'"
+},
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
