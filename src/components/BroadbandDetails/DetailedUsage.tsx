@@ -1,14 +1,17 @@
 import { Box, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 import useStore from "../../services/useAppStore";
 import ProgressBar from "./ProgressBar";
 
 const DetailedUsage = () => {
   const { usageDetails } = useStore();
+  const { t } = useTranslation();
+
   const itemArray = [
-    { label: "Base Package", color: "#4FD745" },
-    { label: "Extra GB", color: "#CF1C1F" },
-    { label: "Loyalty", color: "#F6E901" },
-    { label: "VAS", color: "#00B4EB" },
+    { label: t("detailedUsage.basePackage"), color: "#4FD745" },
+    { label: t("detailedUsage.extraGB"), color: "#CF1C1F" },
+    { label: t("detailedUsage.loyalty"), color: "#F6E901" },
+    { label: t("detailedUsage.vas"), color: "#00B4EB" },
   ];
 
   return (
@@ -33,7 +36,7 @@ const DetailedUsage = () => {
           variant="body2"
           sx={{ fontSize: "24px", fontWeight: 600, color: "#0056A2", mb: 2 }}
         >
-          ── Usage Details ──
+          ── {t("detailedUsage.title")} ──
         </Typography>
         <Box
           sx={{
@@ -44,8 +47,8 @@ const DetailedUsage = () => {
             mb: 1,
           }}
         >
-          {itemArray.map((item) => (
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          {itemArray.map((item, index) => (
+            <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <Box
                 sx={{
                   width: 16,
@@ -58,9 +61,10 @@ const DetailedUsage = () => {
             </Box>
           ))}
         </Box>
+
         <Box
           sx={{
-            mt:1,
+            mt: 1,
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
@@ -71,7 +75,9 @@ const DetailedUsage = () => {
           <Typography
             variant="body2"
             sx={{ color: "#0056A2", fontSize: "16px", fontWeight: 600 }}
-          >{`Total Usage - ${usageDetails?.daily_total_usage}${usageDetails?.volumeunit}`}</Typography>
+          >
+            {`${t("detailedUsage.totalUsage")} - ${usageDetails?.daily_total_usage}${usageDetails?.volumeunit}`}
+          </Typography>
           <Box
             sx={{
               mt: 1,
@@ -85,7 +91,6 @@ const DetailedUsage = () => {
           >
             <Box
               sx={{
-                
                 display: "flex",
                 width: `${usageDetails?.daily_percentage}%`,
                 height: "100%",
@@ -93,34 +98,33 @@ const DetailedUsage = () => {
               }}
             >
               {usageDetails?.usages ? (
-                usageDetails.usages.map((usage, index) => {
-                  return (
-                    <Box
-                      key={index}
-                      sx={{
-                        width: `${usage.percentage}%`,
-                        height: 12,
-                        backgroundColor:
-                          usage.sorter === 1
-                            ? "#4FD745"
-                            : usage.sorter === 2
-                            ? "#F6E901"
-                            : usage.sorter === 3
-                            ? "#CF1C1F"
-                            : "#00B4EB",
-                      }}
-                    ></Box>
-                  );
-                })
+                usageDetails.usages.map((usage, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      width: `${usage.percentage}%`,
+                      height: 12,
+                      backgroundColor:
+                        usage.sorter === 1
+                          ? "#4FD745"
+                          : usage.sorter === 2
+                          ? "#F6E901"
+                          : usage.sorter === 3
+                          ? "#CF1C1F"
+                          : "#00B4EB",
+                    }}
+                  />
+                ))
               ) : (
-                <Box>no data</Box>
+                <Box>{t("detailedUsage.noData")}</Box>
               )}
             </Box>
           </Box>
         </Box>
+
         <Box
           sx={{
-            mt:4,
+            mt: 4,
             display: "flex",
             justifyContent: "space-between",
             flexWrap: "wrap",
@@ -132,32 +136,30 @@ const DetailedUsage = () => {
           {usageDetails?.usages ? (
             usageDetails.usages.map((usage, index) => (
               <Box sx={{ width: "45%" }} key={index}>
-                {" "}
                 <ProgressBar usage={usage} />
               </Box>
             ))
           ) : (
-            <Box>no data</Box>
+            <Box>{t("detailedUsage.noData")}</Box>
           )}
         </Box>
-      <Box
-        sx={{
-          mt:4,
-          display: "flex",
-          gap: 2,
-          justifyContent: "space-around",
-          width: "90%",
-          height: "30px",
 
-        }}
-      >
-        <StyledText text="PD - Peak Download" />
-        <StyledText text="PU - Peak Upload" />
-        <StyledText text="OD - Off Peak Download" />
-        <StyledText text="OU - Off Peak Upload" />
+        <Box
+          sx={{
+            mt: 4,
+            display: "flex",
+            gap: 2,
+            justifyContent: "space-around",
+            width: "90%",
+            height: "30px",
+          }}
+        >
+          <StyledText text={t("detailedUsage.pd")} />
+          <StyledText text={t("detailedUsage.pu")} />
+          <StyledText text={t("detailedUsage.od")} />
+          <StyledText text={t("detailedUsage.ou")} />
+        </Box>
       </Box>
-      </Box>
-
     </>
   );
 };

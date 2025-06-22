@@ -1,29 +1,35 @@
-import { Box, Button, Card, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useState } from "react";
-
 import { textFieldStyle } from "../../assets/Themes/CommonStyles";
-
 import updateContact from "../../services/profile/updateContact";
 import useStore from "../../services/useAppStore";
+import { useTranslation } from "react-i18next";
 
 const ChangeContactForm = () => {
-  const { serviceDetails } = useStore(); // Fetch serviceDetails from the store
+  const { t } = useTranslation();
+  const { serviceDetails } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
   const WatermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
 
-  // State variables to store form inputs
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [mobile, setMobile] = useState("");
-  
-  // State variables for dialog box
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
 
-  // Handle form submission
   const handleSubmit = async () => {
     if (!serviceID || !fullName || !email || !mobile) {
-      setDialogMessage("Please fill all the fields correctly");
+      setDialogMessage(t("fillAllFields"));
       setDialogOpen(true);
       return;
     }
@@ -31,17 +37,16 @@ const ChangeContactForm = () => {
     try {
       const response = await updateContact(serviceID, email, mobile, fullName);
       if (response) {
-        setDialogMessage("Contact updated successfully");
+        setDialogMessage(t("updateSuccess"));
       } else {
-        setDialogMessage("Failed to update contact. Please try again.");
+        setDialogMessage(t("updateFailed"));
       }
     } catch (error) {
-      setDialogMessage("Error during contact update. Please try again.");
+      setDialogMessage(t("updateError"));
     }
     setDialogOpen(true);
   };
 
-  // Close the dialog box
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
@@ -67,7 +72,7 @@ const ChangeContactForm = () => {
         align="center"
         sx={{ fontSize: "24px", fontWeight: "bold", marginBottom: 4 }}
       >
-        Change Contact Information
+        {t("changeContactInfo")}
       </Typography>
 
       <Box
@@ -93,31 +98,24 @@ const ChangeContactForm = () => {
             borderRadius: "12px",
             display: "flex",
             flexDirection: "column",
-            gap: 2, // Add gap between fields
+            gap: 2,
           }}
         >
           {/* Full Name */}
           <Box>
             <Typography
               variant="body2"
-              sx={{
-                fontWeight: "bold",
-                color: "#0056A2",
-                marginBottom: "8px",
-                textAlign: "left",
-              }}
+              sx={{ fontWeight: "bold", color: "#0056A2", marginBottom: "8px", textAlign: "left" }}
             >
-              Full Name :
+              {t("fullName")} :
             </Typography>
             <TextField
               fullWidth
               variant="outlined"
               size="small"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)} // Update state
-              sx={{
-                ...textFieldStyle(),
-              }}
+              onChange={(e) => setFullName(e.target.value)}
+              sx={textFieldStyle()}
             />
           </Box>
 
@@ -125,24 +123,17 @@ const ChangeContactForm = () => {
           <Box>
             <Typography
               variant="body2"
-              sx={{
-                fontWeight: "bold",
-                color: "#0056A2",
-                marginBottom: "8px",
-                textAlign: "left",
-              }}
+              sx={{ fontWeight: "bold", color: "#0056A2", marginBottom: "8px", textAlign: "left" }}
             >
-              Email Address :
+              {t("emailAddress")} :
             </Typography>
             <TextField
               fullWidth
               variant="outlined"
               size="small"
               value={email}
-              onChange={(e) => setEmail(e.target.value)} // Update state
-              sx={{
-                ...textFieldStyle(),
-              }}
+              onChange={(e) => setEmail(e.target.value)}
+              sx={textFieldStyle()}
             />
           </Box>
 
@@ -150,38 +141,25 @@ const ChangeContactForm = () => {
           <Box>
             <Typography
               variant="body2"
-              sx={{
-                fontWeight: "bold",
-                color: "#0056A2",
-                marginBottom: "8px",
-                textAlign: "left",
-              }}
+              sx={{ fontWeight: "bold", color: "#0056A2", marginBottom: "8px", textAlign: "left" }}
             >
-              Mobile :
+              {t("mobile")} :
             </Typography>
             <TextField
               fullWidth
               variant="outlined"
               size="small"
               value={mobile}
-              onChange={(e) => setMobile(e.target.value)} // Update state
-              sx={{
-                ...textFieldStyle(),
-              }}
+              onChange={(e) => setMobile(e.target.value)}
+              sx={textFieldStyle()}
             />
           </Box>
 
           {/* Submit Button */}
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: "16px",
-            }}
-          >
+          <Box sx={{ display: "flex", justifyContent: "center", marginTop: "16px" }}>
             <Button
               variant="outlined"
-              onClick={handleSubmit} // Call handleSubmit on button click
+              onClick={handleSubmit}
               sx={{
                 display: "flex",
                 gap: 2,
@@ -197,11 +175,8 @@ const ChangeContactForm = () => {
                 fontSize: "12",
               }}
             >
-              <Typography
-                variant="body2"
-                sx={{ fontWeight: "600px", fontSize: "16px" }}
-              >
-                Submit
+              <Typography variant="body2" sx={{ fontWeight: "600px", fontSize: "16px" }}>
+                {t("submit")}
               </Typography>
             </Button>
           </Box>
@@ -212,20 +187,15 @@ const ChangeContactForm = () => {
         <img src={WatermarkLogo} alt="Watermark Logo" />
       </Box>
 
-      {/* Dialog box for response messages */}
-      <Dialog
-        open={dialogOpen}
-        onClose={handleCloseDialog}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{"Notification"}</DialogTitle>
+      {/* Dialog box */}
+      <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>{t("notification")}</DialogTitle>
         <DialogContent>
           <Typography variant="body1">{dialogMessage}</Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseDialog} autoFocus>
-            OK
+            {t("ok")}
           </Button>
         </DialogActions>
       </Dialog>

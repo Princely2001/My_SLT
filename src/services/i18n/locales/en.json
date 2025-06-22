@@ -248,7 +248,7 @@
       "price": "Price"
     }
   },
-  "common": {
+  
     "from": "From",
     "to": "To",
     "search": "Search",
@@ -258,7 +258,7 @@
     "notAvailable": "N/A",
     "currency": "Rs.",
     "watermarkAlt": "Watermark Logo"
-  },
+  ,
   "extra_gb": {
     "price_plan": "Price Plan",
     "range_1_to_3": "1GB to 3GB",
@@ -449,7 +449,108 @@
     "view": "View", "detailedUsageDetails": "Detailed Usage Details",
     "protocolReport": "Protocol Report",
     "subscription": "Subscription"
-  }
+  }, "changeContactInfo": "Change Contact Information",
+  "fullName": "Full Name",
+  "emailAddress": "Email Address",
+  "mobile": "Mobile",
+  "submit": "Submit",
+  "notification": "Notification",
+  "fillAllFields": "Please fill all the fields correctly",
+  "updateSuccess": "Contact updated successfully",
+  "updateFailed": "Failed to update contact. Please try again.",
+  "updateError": "Error during contact update. Please try again.",
+  "ok": "OK","unsubscribeTitle": "── Unsubscribe for detailed reports ──",
+  "unsubscribeText": "Unsubscribe to usage report",
+  "submit": "Submit","changePasswordTitle": "Change Broadband Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm Password",
+  "updatePassword": "Update Password", "on": "On",  "go": "Go","promotion_title": "── Promotion ──",
+  "loading_promotions": "Loading promotions...",
+  "error_fetching_promotions": "Failed to fetch promotions.",
+  "no_promotions": "This Number has no promotions available.",
+  "activated": "Activated",
+  "activate": "Activate",
+  "promotion_activation": "Promotion Activation",
+  "close": "Close", "detailedUsage": {
+    "title": "Usage Details",
+    "basePackage": "Base Package",
+    "extraGB": "Extra GB",
+    "loyalty": "Loyalty",
+    "vas": "VAS",
+    "totalUsage": "Total Usage",
+    "noData": "No data",
+    "pd": "PD - Peak Download",
+    "pu": "PU - Peak Upload",
+    "od": "OD - Off Peak Download",
+    "ou": "OU - Off Peak Upload"
+  },"protocol": {
+  "total": "Total",
+  "download": "Download",
+  "upload": "Upload",
+  "dateUsage": "Data Usage for Date"
+}, "fiberRequest": {
+    "title": "SLT FIBER HOME LINE"
+  }, "newServices": {
+    "title": "New Services",
+    "fiber": "Fiber",
+    "megaline": "Megaline",
+    "4glte": "4G LTE"
+  }, "firstName": "First Name",
+  "lastName": "Last Name",
+  "nic": "NIC",
+  "mobileNumber": "Mobile Number",
+  "submit": "Submit",
+  "success": "Success",
+  "error": "Error",
+  "newConnectionCreated": "New Connection created successfully!",
+  "unexpectedError": "An unexpected error occurred.", "requestNow": "Request Now",
+  "fiberOnTheWay": "Fiber is on the way", "currentMonth": "Current Month",
+  "dailyUsage": "Daily Usage",
+  "loadingData": "Loading data...",
+  "basePackage": "Base Package",
+  "extraGB": "Extra GB",
+  "loyalty": "Loyalty",
+  "vas": "VAS",
+  "date": "Date",
+  "totalUsage": "Total Usage",
+  "usage": "Usage",
+  "report": "Report",
+  "viewDetailedUsage": "View Detailed Usage",
+  "noData": "No data",
+  "more": "More",
+  "view": "View",
+  "noDataAvailable": "No data available","complaints": {
+    "title": "Complaints",
+    "noFaultsFound": "No Faults Found.",
+    "failedToFetch": "Failed to fetch fault list.",
+    "failedToFetchTryAgain": "Failed to fetch fault list. Please try again.",
+    "serviceName": "Service Name",
+    "faultRef": "Fault Ref",
+    "status": "Status",
+    "date": "Date",
+    "submitButton": "SUBMIT YOUR COMPLAINT"
+  },
+  "common": {
+    "loading": "Loading..."
+  }, "addComplaints": {
+    "title": "Submit Complaint",
+    "serviceType": "Service Type",
+    "contactNumber": "Contact Number",
+    "description": "Complaint Description",
+    "location": "Enter Location",
+    "all": "All",
+    "broadband": "Broadband",
+    "peotv": "PeoTV",
+    "voice": "Voice",
+    "submit": "Submit",
+    "success": "Success",
+    "error": "Error",
+    "ok": "Ok",
+    "validationError": "Please fill in all required fields.",
+    "submitSuccess": "Complaint submitted successfully!",
+    "submitFailure": "An unexpected error occurred."
+  }, "currency": "Rs."
  
 
 

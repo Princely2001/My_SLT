@@ -14,9 +14,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import checkOfferAvailability from "../services/postpaid/checkOfferAvailability";
 import PromotionpackageActivation from "../services/postpaid/PromotionpackageActivation";
-
 
 interface PromotionData {
   title: string;
@@ -31,6 +31,7 @@ interface PromotionProps {
 }
 
 const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
+  const { t } = useTranslation();
   const [promotions, setPromotions] = useState<PromotionData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -57,14 +58,14 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
         }
       } catch (error) {
         console.error("Failed to fetch promotions:", error);
-        setError("Failed to fetch promotions.");
+        setError(t("error_fetching_promotions"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchPromotions();
-  }, [telephoneNo]);
+  }, [telephoneNo, t]);
 
   const handleActivate = async (packageid: number, refno: number) => {
     try {
@@ -107,23 +108,27 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
       }}
     >
       <Typography variant="body2" align="center" sx={{ fontSize: 24, fontWeight: "bold" }}>
-        ── Promotion ──
+        {t("promotion_title")}
       </Typography>
+
       {loading && (
         <Typography variant="body1" color="textSecondary">
-          Loading promotions...
+          {t("loading_promotions")}
         </Typography>
       )}
+
       {error && (
         <Typography variant="body1" color="error">
           {error}
         </Typography>
       )}
+
       {!loading && !error && promotions.length === 0 && (
         <Typography variant="body2" color="textSecondary" sx={{ fontSize: 24 }}>
-          This Number has no promotions available.
+          {t("no_promotions")}
         </Typography>
       )}
+
       {!loading && !error && promotions.length > 0 && (
         <Box
           sx={{
@@ -134,12 +139,10 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
             alignItems: "center",
           }}
         >
-          <IconButton
-            onClick={() => scroll(-200)}
-            sx={{ position: "absolute", left: 0, zIndex: 1 }}
-          >
+          <IconButton onClick={() => scroll(-200)} sx={{ position: "absolute", left: 0, zIndex: 1 }}>
             <ArrowBackIosIcon />
           </IconButton>
+
           <Box
             ref={scrollRef}
             sx={{
@@ -171,13 +174,7 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
                 }}
               >
                 <CardContent sx={{ textAlign: "center" }}>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
+                  <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                     <Box
                       sx={{
                         height: "200px",
@@ -190,7 +187,7 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
                         mt: 1,
                         mb: 1,
                       }}
-                    ></Box>
+                    />
                     <Typography variant="body2" sx={{ fontSize: 20, mb: 1 }}>
                       {promo.title}
                     </Typography>
@@ -206,7 +203,7 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
                       }}
                     >
                       <Typography variant="body2" sx={{ fontSize: 16 }}>
-                        {promo.activated ? "Activated" : "Activate"}
+                        {promo.activated ? t("activated") : t("activate")}
                       </Typography>
                     </Button>
                   </Box>
@@ -214,21 +211,20 @@ const Promotion: React.FC<PromotionProps> = ({ telephoneNo }) => {
               </Card>
             ))}
           </Box>
-          <IconButton
-            onClick={() => scroll(200)}
-            sx={{ position: "absolute", right: 0, zIndex: 1 }}
-          >
+
+          <IconButton onClick={() => scroll(200)} sx={{ position: "absolute", right: 0, zIndex: 1 }}>
             <ArrowForwardIosIcon />
           </IconButton>
         </Box>
       )}
+
       <Dialog open={dialogOpen} onClose={handleCloseDialog}>
-        <DialogTitle>Promotion Activation</DialogTitle>
+        <DialogTitle>{t("promotion_activation")}</DialogTitle>
         <DialogContent>
           <DialogContentText>{dialogMessage}</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Close</Button>
+          <Button onClick={handleCloseDialog}>{t("close")}</Button>
         </DialogActions>
       </Dialog>
     </Box>

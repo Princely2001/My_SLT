@@ -10,8 +10,11 @@ import {
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { textFieldStyle } from "../../assets/Themes/CommonStyles";
+import { useTranslation } from "react-i18next";
 
 const ChangeBroadbandPassword = () => {
+  const { t } = useTranslation();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const WatermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
@@ -39,9 +42,9 @@ const ChangeBroadbandPassword = () => {
       <Typography
         variant="body2"
         align="center"
-        sx={{ fontSize:"24px",fontWeight: "bold", marginBottom: 4 }}
+        sx={{ fontSize: "24px", fontWeight: "bold", marginBottom: 4 }}
       >
-        Change Contact Information
+        {t("changePasswordTitle")}
       </Typography>
 
       <Box
@@ -67,10 +70,10 @@ const ChangeBroadbandPassword = () => {
             borderRadius: "12px",
             display: "flex",
             flexDirection: "column",
-            gap: 2, // Add gap between fields
+            gap: 2,
           }}
         >
-          {/* Full Name Field */}
+          {/* Current Password */}
           <Box>
             <Typography
               variant="body2"
@@ -81,29 +84,17 @@ const ChangeBroadbandPassword = () => {
                 textAlign: "left",
               }}
             >
-              Current Password :
+              {t("currentPassword")} :
             </Typography>
             <TextField
               fullWidth
               variant="outlined"
               size="small"
-              sx={{
-                ...textFieldStyle(),
-                position: "relative",
-                "& .MuiInputBase-root::before": {
-                  
-                  position: "absolute",
-                  left: "10px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "#B0B0B0", 
-                  pointerEvents: "none",
-                },
-              }}
+              sx={textFieldStyle()}
             />
           </Box>
 
-          {/* New Password Field */}
+          {/* New Password */}
           <Box>
             <Typography
               variant="body2"
@@ -114,26 +105,14 @@ const ChangeBroadbandPassword = () => {
                 textAlign: "left",
               }}
             >
-              New Password :
+              {t("newPassword")} :
             </Typography>
             <TextField
               fullWidth
               variant="outlined"
               size="small"
               type={showPassword ? "text" : "password"}
-              sx={{
-                ...textFieldStyle(),
-                position: "relative",
-                "& .MuiInputBase-root::before": {
-                  content: '"• • • • •"',
-                  position: "absolute",
-                  left: "10px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "#B0B0B0", // Watermark color
-                  pointerEvents: "none",
-                },
-              }}
+              sx={textFieldStyle()}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -146,7 +125,7 @@ const ChangeBroadbandPassword = () => {
             />
           </Box>
 
-          
+          {/* Confirm Password */}
           <Box>
             <Typography
               variant="body2"
@@ -157,26 +136,14 @@ const ChangeBroadbandPassword = () => {
                 textAlign: "left",
               }}
             >
-              Confirm Password :
+              {t("confirmPassword")} :
             </Typography>
             <TextField
               fullWidth
               variant="outlined"
               size="small"
               type={showConfirmPassword ? "text" : "password"}
-              sx={{
-                ...textFieldStyle(),
-                position: "relative",
-                "& .MuiInputBase-root::before": {
-                  content: '"• • • • •"',
-                  position: "absolute",
-                  left: "10px",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  color: "#B0B0B0", // Watermark color
-                  pointerEvents: "none",
-                },
-              }}
+              sx={textFieldStyle()}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -189,7 +156,7 @@ const ChangeBroadbandPassword = () => {
             />
           </Box>
 
-          
+          {/* Update Button */}
           <Box
             sx={{
               display: "flex",
@@ -216,14 +183,15 @@ const ChangeBroadbandPassword = () => {
             >
               <Typography
                 variant="body2"
-                sx={{ fontWeight: "85%", fontSize: "16px" }}
+                sx={{ fontWeight: "600", fontSize: "16px" }}
               >
-                Update Password
+                {t("updatePassword")}
               </Typography>
             </Button>
           </Box>
         </Card>
       </Box>
+
       <Box sx={{ position: "absolute", zIndex: 1, right: "2%", bottom: "2%" }}>
         <img src={WatermarkLogo} alt="Watermark Logo" />
       </Box>

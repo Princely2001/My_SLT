@@ -217,7 +217,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               color: "#0056A2", 
               mb: 0.5 
             }}>
-              {t("common.from")}:
+              {t("from")}:
             </Typography>
             <DatePicker 
               selected={dateRange.from} 
@@ -247,7 +247,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               color: "#0056A2", 
               mb: 0.5 
             }}>
-              {t("common.to")}:
+              {t("to")}:
             </Typography>
             <DatePicker 
               selected={dateRange.to} 
@@ -298,7 +298,7 @@ const PurchaseHistoryComponent: React.FC = () => {
               fontWeight: 600, 
               textTransform: "none" 
             }}>
-              {t("common.search")}
+              {t("search")}
             </Typography>
           )}
         </Button>
@@ -410,14 +410,14 @@ const PurchaseHistoryComponent: React.FC = () => {
                             fontSize: "14px", 
                             color: "#0056A2" 
                           }}>
-                            {item.vasPackage || t("common.unknownPackage")}
+                            {item.vasPackage || t("unknownPackage")}
                           </Typography>
                           <Typography sx={{ 
                             fontSize: "14px", 
                             fontWeight: 600, 
                             color: "#0056A2" 
                           }}>
-                            {t("common.currency")} {item.payPrice || "0.00"}
+                            {t("currency")} {item.payPrice || "0.00"}
                           </Typography>
                         </Box>
                         <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
@@ -425,13 +425,13 @@ const PurchaseHistoryComponent: React.FC = () => {
                             fontSize: "13px", 
                             color: "#4B4B4B" 
                           }}>
-                            <strong>{t("common.type")}:</strong> {item.vasType || t("common.notAvailable")}
+                            <strong>{t("type")}:</strong> {item.vasType || t("notAvailable")}
                           </Typography>
                           <Typography sx={{ 
                             fontSize: "13px", 
                             color: "#4B4B4B" 
                           }}>
-                            <strong>{t("common.validTill")}:</strong> {item.validTill || t("common.notAvailable")}
+                            <strong>{t("validTill")}:</strong> {item.validTill || t("notAvailable")}
                           </Typography>
                         </Box>
                       </Paper>
@@ -516,16 +516,16 @@ const PurchaseHistoryComponent: React.FC = () => {
                         }}
                       >
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasType || t("common.notAvailable")}
+                          {item.vasType || t("notAvailable")}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.vasPackage || t("common.notAvailable")}
+                          {item.vasPackage || t("notAvailable")}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {item.validTill || t("common.notAvailable")}
+                          {item.validTill || t("notAvailable")}
                         </TableCell>
                         <TableCell align="center" sx={{ padding: "6px", color: "#0056A2" }}>
-                          {t("common.currency")} {item.payPrice || "0.00"}
+                          {t("currency")} {item.payPrice || "0.00"}
                         </TableCell>
                       </TableRow>
                     ))
@@ -551,7 +551,7 @@ const PurchaseHistoryComponent: React.FC = () => {
         zIndex: 1, 
         pointerEvents: "none" 
       }}>
-        <img src={WaterMarkLogo} alt={t("common.watermarkAlt")} width="160" height="180" />
+        <img src={WaterMarkLogo} alt={t("watermarkAlt")} width="160" height="180" />
       </Box>
     </Box>
   );

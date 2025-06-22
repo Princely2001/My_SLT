@@ -212,7 +212,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC = () => {
               mr: 1,
             }}
           >
-            {t("common.currency")} {currentPackage?.monthlY_RENTAL} + {t("package.tax")}
+            {t("currency")} {currentPackage?.monthlY_RENTAL} + {t("package.tax")}
           </Typography>
           <Typography
             variant="body2"
@@ -406,7 +406,7 @@ const BroadbandPostPaidPackageUpgrader: React.FC = () => {
                       variant="body2"
                       sx={{ mt: 1, fontSize: "1.5rem", fontWeight: "bold" }}
                     >
-                      {t("common.currency")}{item.price} + {t("package.tax")}
+                      {t("currency")}{item.price} + {t("package.tax")}
                     </Typography>
                     <Typography
                       variant="body2"

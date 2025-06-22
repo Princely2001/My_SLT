@@ -226,7 +226,7 @@
       "price": "விலை"
     }
   },
-  "common": {
+  
     "from": "இருந்து",
     "to": "வரை",
     "search": "தேடு",
@@ -236,7 +236,7 @@
     "notAvailable": "இல்லை",
     "currency": "ரூ.",
     "watermarkAlt": "நீர் முத்திரை லோகோ"
-  },"package": {
+  ,"package": {
   "currentPackage": "தற்போதைய தொகுப்பு",
   "standard": "நிலையானது",
   "free": "இலவசம்",
@@ -445,7 +445,130 @@
     "view": "காண்க", "detailedUsageDetails": "விரிவான பயன்பாட்டு விவரங்கள்",
     "protocolReport": "ப்ரோட்டோகால் அறிக்கை",
     "subscription": "சந்தா"
-  }
+  }, "changeContactInfo": "தொடர்பு விவரங்களை மாற்றவும்",
+  "fullName": "முழு பெயர்",
+  "emailAddress": "மின்னஞ்சல் முகவரி",
+  "mobile": "மொபைல் எண்",
+  "submit": "சமர்ப்பிக்கவும்",
+  "notification": "அறிவிப்பு",
+  "fillAllFields": "தயவுசெய்து அனைத்து புலங்களையும் சரியாக நிரப்பவும்",
+  "updateSuccess": "தொடர்பு வெற்றிகரமாக புதுப்பிக்கப்பட்டது",
+  "updateFailed": "தொடர்பு புதுப்பிக்க முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+  "updateError": "தொடர்பு புதுப்பிக்கும்போது பிழை ஏற்பட்டது. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+  "ok": "சரி", "unsubscribeTitle": "── விரிவான அறிக்கைகளுக்கான சந்தாவை நிறுத்தவும் ──",
+  "unsubscribeText": "பயன்பாடு அறிக்கையை சந்தாவை நிறுத்தவும்",
+  "submit": "சமர்ப்பிக்கவும்", "changePasswordTitle": "பிராட்பேண்ட் கடவுச்சொல்லை மாற்றவும்",
+  "currentPassword": "தற்போதைய கடவுச்சொல்",
+  "newPassword": "புதிய கடவுச்சொல்",
+  "confirmPassword": "கடவுச்சொல்லை உறுதிப்படுத்தவும்",
+  "updatePassword": "கடவுச்சொல்லை புதுப்பிக்கவும்", "on": "தேதி", "go": "போ","promotion_title": "── விளம்பரம் ──",
+  "loading_promotions": "விளம்பரங்களை ஏற்றுகிறது...",
+  "error_fetching_promotions": "விளம்பரங்களை பெற முடியவில்லை.",
+  "no_promotions": "இந்த எண்ணிற்கு விளம்பரங்கள் இல்லை.",
+  "activated": "செயல்படுத்தப்பட்டது",
+  "activate": "செயல்படுத்து",
+  "promotion_activation": "விளம்பரம் செயல்படுத்தல்",
+  "close": "மூடு","detailedUsage": {
+    "title": "பயன்பாடு விவரங்கள்",
+    "basePackage": "அடிப்படை தொகுப்பு",
+    "extraGB": "கூடுதல் GB",
+    "loyalty": "நம்பிக்கை",
+    "vas": "VAS சேவைகள்",
+    "totalUsage": "மொத்த பயன்பாடு",
+    "noData": "தகவல் இல்லை",
+    "pd": "PD - உச்ச நேர பதிவிறக்கம்",
+    "pu": "PU - உச்ச நேர பதிவேற்றம்",
+    "od": "OD - அனுசரண நேர பதிவிறக்கம்",
+    "ou": "OU - அனுசரண நேர பதிவேற்றம்"
+  },"protocol": {
+  "total": "மொத்தம்",
+  "download": "பதிவிறக்கம்",
+  "upload": "பதிவேற்றம்",
+  "dateUsage": "தேதிக்கான தரவுப் பயன்பாடு"
+},"fiberRequest": {
+    "title": "SLT ஃபைபர் ஹோம் லைன்"
+  },"newServices": {
+    "title": "புதிய சேவைகள்",
+    "fiber": "ஃபைபர்",
+    "megaline": "மேகலைன்",
+    "4glte": "4G LTE"
+  },"firstName": "முதல் பெயர்",
+  "lastName": "இறுதி பெயர்",
+  "nic": "அடையாள அட்டை எண்",
+  "mobileNumber": "கைபேசி எண்",
+  "submit": "சமர்ப்பிக்கவும்",
+  "success": "வெற்றி",
+  "error": "பிழை",
+  "newConnectionCreated": "புதிய இணைப்பு வெற்றிகரமாக உருவாக்கப்பட்டது.",
+  "unexpectedError": "எதிர்பாராத பிழை ஏற்பட்டுள்ளது.", "requestNow": "இப்போது கோரிக்கை செய்யவும்",
+  "fiberOnTheWay": "ஃபைபர் வருவதாக உள்ளது", "currentMonth": "தற்போதைய மாதம்",
+  "dailyUsage": "தினசரி பயன்பாடு",
+  "loadingData": "தரவு ஏற்றப்படுகிறது...",
+  "basePackage": "அடிப்படை தொகுப்பு",
+  "extraGB": "மேலதிக GB",
+  "loyalty": "நம்பிக்கையாளர்",
+  "vas": "VAS",
+  "date": "தேதி",
+  "totalUsage": "மொத்த பயன்பாடு",
+  "usage": "பயன்பாடு",
+  "report": "அறிக்கை",
+  "viewDetailedUsage": "விரிவான பயன்பாட்டைப் பார்க்கவும்",
+  "noData": "தரவு இல்லை",
+  "more": "மேலும்",
+  "view": "பார்க்கவும்",
+  "noDataAvailable": "தரவு இல்லை", "complaints": {
+    "title": "புகார்கள்",
+    "noFaultsFound": "எந்த குறைகளும் இல்லை.",
+    "failedToFetch": "குறைப்பட்டியலை பெற முடியவில்லை.",
+    "failedToFetchTryAgain": "குறைப்பட்டியலை பெற முடியவில்லை. தயவுசெய்து மீண்டும் முயற்சிக்கவும்.",
+    "serviceName": "சேவை பெயர்",
+    "faultRef": "குறை குறிப்பு எண்",
+    "status": "நிலை",
+    "date": "தேதி",
+    "submitButton": "உங்கள் புகாரை சமர்ப்பிக்கவும்"
+  },
+  "common": {
+    "loading": "ஏற்றப்படுகிறது..."
+  },"add_complaints": {
+    "title": "புகார் சமர்ப்பிக்கவும்",
+    "serviceType": "சேவை வகை",
+    "contactNumber": "தொடர்பு எண்",
+    "complaintDescription": "புகார் விவரம்",
+    "mapPlaceholder": "தேவையானால் இடத்தைத் தேர்ந்தெடுக்கவும்",
+    "submitBtn": "சமர்ப்பிக்கவும்",
+    "validationError": "தயவுசெய்து தேவையான அனைத்து வயது நிரப்பவும்.",
+    "success": "புகார் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+    "unknownError": "அறியப்படாத பிழை ஏற்பட்டது",
+    "unexpectedError": "ஒரு எதிர்பாராத பிழை ஏற்பட்டது",
+    "services": {
+      "all": "அனைத்தும்",
+      "broadband": "ப்ரோட்பேண்ட்",
+      "peotv": "பீஓடிவி",
+      "voice": "ஒலி"
+    }
+  },
+  "common": {
+    "success": "வெற்றி",
+    "error": "பிழை",
+    "ok": "சரி"
+  },"addComplaints": {
+    "title": "புகாரை சமர்ப்பிக்கவும்",
+    "serviceType": "சேவை வகை",
+    "contactNumber": "தொலைபேசி எண்",
+    "description": "புகார் விவரம்",
+    "location": "இருப்பிடத்தை உள்ளிடவும்",
+    "all": "அனைத்தும்",
+    "broadband": "ப்ராட்பேண்ட்",
+    "peotv": "PeoTV",
+    "voice": "ஒலி",
+    "submit": "சமர்ப்பிக்கவும்",
+    "success": "வெற்றி",
+    "error": "பிழை",
+    "ok": "சரி",
+    "validationError": "தயவுசெய்து தேவையான எல்லா புலங்களையும் நிரப்பவும்.",
+    "submitSuccess": "புகார் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது!",
+    "submitFailure": "予期せぬエラーが発生しました。"
+  }, "currency": "ரூ."
 
 
 

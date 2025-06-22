@@ -2,11 +2,14 @@ import { Button, Typography } from "@mui/material";
 import Box from "@mui/material/Box";
 import OrderAnimation from "../OrderComponent/Order";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 const FiberRequestPage = () => {
+  const { t } = useTranslation();
   const [isDisabled, setIsDisabled] = useState(false);
   const watermarkLogo = "https://mysltimages.s3.eu-north-1.amazonaws.com/watermarklogo.png";
-   const fiberCharacter = "https://mysltimages.s3.eu-north-1.amazonaws.com/fiberCableCharacter.png";
+  const fiberCharacter = "https://mysltimages.s3.eu-north-1.amazonaws.com/fiberCableCharacter.png";
+
   const handleRequestClick = () => {
     // Open the URL in a new tab
     window.open("https://myslt.slt.lk/applyonline", "_blank");
@@ -37,24 +40,24 @@ const FiberRequestPage = () => {
         variant="body2"
         sx={{ padding: "10vh", fontSize: 24, fontWeight: "bold" }}
       >
-        SLT FIBER HOME LINE
+        {t("fiberRequest.title")}
       </Typography>
 
       {/* Request Button */}
       <Button
-      disableRipple
-      onClick={handleClick}
-      disabled={isDisabled}
+        disableRipple
+        onClick={handleClick}
+        disabled={isDisabled}
         sx={{
           backgroundColor: "#fff",
           "&:disabled": {
             backgroundColor: "#fff",
             color: "inherit",
-            pointerEvents: "none", 
-        }}}
+            pointerEvents: "none",
+          },
+        }}
       >
-        
-        <OrderAnimation/>
+        <OrderAnimation />
       </Button>
 
       {/* Watermark Logo - Bottom Left */}

@@ -9,39 +9,36 @@ import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useState } from "react";
-import createSalesLead, { SalesLeadCreationResponse } from "../../services/postpaid/createSalesLead"; // Import the API function
+import { useTranslation } from "react-i18next";
+import createSalesLead, { SalesLeadCreationResponse } from "../../services/postpaid/createSalesLead";
 
-// Define props for the component
 interface OtherRequestPageProps {
   telephoneNo: string;
   selectedItem: string;
 }
 
 const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, selectedItem }) => {
+  const { t } = useTranslation();
+
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
   const [nic, setNic] = useState<string>("");
   const [contactTelNo, setContactTelNo] = useState<string>("");
 
-  // State for managing dialog and error message
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [message, setMessage] = useState("");
   const [isSuccess, setIsSuccess] = useState(true);
+
   const BroadbandIcon = "https://mysltimages.s3.eu-north-1.amazonaws.com/Broadband.png";
   const PeoTVIcon = "https://mysltimages.s3.eu-north-1.amazonaws.com/PeoTV.png";
   const VoiceIcon = "https://mysltimages.s3.eu-north-1.amazonaws.com/Voice.png";
-
-  console.log("Telephone Number in OtherRequestPage:", telephoneNo);
-  console.log("Selected Item in OtherRequestPage:", selectedItem); 
 
   const handleClick = (item: string) => {
     const updatedItems = selectedItems.includes(item)
       ? selectedItems.filter((i) => i !== item)
       : [...selectedItems, item];
-
     setSelectedItems(updatedItems);
-    console.log("Selected Items after click:", updatedItems); 
   };
 
   const buttonItems = [
@@ -87,66 +84,49 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
   });
 
   const handleSubmit = async () => {
-    console.log("Form Submitted. Selected Items:", selectedItems); 
-    console.log("Telephone Number on Submit:", telephoneNo); 
-    console.log("Service Type Selected:", selectedItem);
-
-    // Assuming you have firstName, lastName, nic, contactTelNo, and selectedItems populated
-   
-
     const response: SalesLeadCreationResponse | null = await createSalesLead(
       telephoneNo,
       firstName,
       lastName,
       nic,
       contactTelNo,
-      selectedItems,  // Array of selected items
+      selectedItems,
       selectedItem
     );
 
     if (response) {
       if (response.isSuccess) {
-        console.log("New Connection Created Successfully:", response.dataBundle);
         setIsSuccess(true);
-        setMessage("New Connection created successfully!");
+        setMessage(t("newConnectionCreated"));
       } else {
-        console.error("Error creating sales lead:", response.errorMessege);
         setIsSuccess(false);
-        setMessage(response.errorMessege || "An unexpected error occurred.");
+        setMessage(response.errorMessege || t("unexpectedError"));
       }
     } else {
-      console.error("API call failed.");
       setIsSuccess(false);
-      setMessage("An unexpected error occurred.");
+      setMessage(t("unexpectedError"));
     }
-
-    // Open the dialog box to show the message
     setIsDialogOpen(true);
   };
 
-  // Handle the dialog close action
   const handleDialogClose = () => {
-    setIsDialogOpen(false); // Close the dialog
+    setIsDialogOpen(false);
   };
 
   return (
     <Box
       sx={{
         paddingX: 5,
-        display: "Flex",
-        flexDirection: "Column",
+        display: "flex",
+        flexDirection: "column",
         alignItems: "center",
       }}
     >
-      <Typography variant="body2" sx={{ ...commonFontStyle, mb: 2 }}>
-        {/*Telephone Number: {telephoneNo}*/}
-      </Typography>
       <Grid container spacing={1}>
-        {/* Use Grid item with proper breakpoint props */}
         <Grid item xs={12} md={6}>
           <Box sx={{ padding: 1 }}>
             <Typography variant="body2" sx={{ ...commonFontStyle }}>
-              First Name
+              {t("firstName")}
             </Typography>
             <TextField
               variant="outlined"
@@ -156,10 +136,11 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
             />
           </Box>
         </Grid>
+
         <Grid item xs={12} md={6}>
           <Box sx={{ padding: 1 }}>
             <Typography variant="body2" sx={{ ...commonFontStyle }}>
-              Last Name
+              {t("lastName")}
             </Typography>
             <TextField
               variant="outlined"
@@ -169,10 +150,11 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
             />
           </Box>
         </Grid>
+
         <Grid item xs={12} md={6}>
           <Box sx={{ padding: 1 }}>
             <Typography variant="body2" sx={{ ...commonFontStyle }}>
-              NIC
+              {t("nic")}
             </Typography>
             <TextField
               variant="outlined"
@@ -182,10 +164,11 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
             />
           </Box>
         </Grid>
+
         <Grid item xs={12} md={6}>
           <Box sx={{ padding: 1 }}>
             <Typography variant="body2" sx={{ ...commonFontStyle }}>
-              Mobile Number
+              {t("mobileNumber")}
             </Typography>
             <TextField
               variant="outlined"
@@ -225,12 +208,15 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
                 sx={{ display: "flex", flexDirection: "column", gap: 1 }}
               >
                 <Box sx={ButtonStyle(isSelected)}>
-                  <img src={item.image} alt={item.label} />
+                  <img src={item.image} alt={item.label} width={20} />
                 </Box>
                 <Typography
-                  variant="body2"
-                  align="center"
-                  sx={{ ...commonFontStyle, fontSize: 12 }}
+                  sx={{
+                    color: isSelected ? "#0056A2" : "#00256A",
+                    fontSize: 14,
+                    fontWeight: "bold",
+                    textTransform: "capitalize",
+                  }}
                 >
                   {item.label}
                 </Typography>
@@ -239,13 +225,6 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
           );
         })}
       </Box>
-
-      <Typography
-        variant="body2"
-        sx={{ mt: 2, ...commonFontStyle, color: "#0056A2" }}
-      >
-       {/* Selected Items: {selectedItems.length > 0 ? selectedItems.join(", ") : "None"}*/}
-      </Typography>
 
       <Button
         sx={{
@@ -264,14 +243,13 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
           variant="body2"
           sx={{ ...commonFontStyle, fontSize: 16, textTransform: "capitalize" }}
         >
-          Submit
+          {t("submit")}
         </Typography>
       </Button>
 
-      {/* Error Message Dialog */}
       <Dialog open={isDialogOpen} onClose={handleDialogClose}>
         <DialogTitle sx={{ textAlign: "center", color: isSuccess ? "green" : "red" }}>
-          {isSuccess ? "Success" : "Error"}
+          {isSuccess ? t("success") : t("error")}
         </DialogTitle>
         <DialogContent>
           <DialogContentText
@@ -280,8 +258,8 @@ const OtherRequestPage: React.FC<OtherRequestPageProps> = ({ telephoneNo, select
               alignItems: "center",
               gap: 1,
               color: "#0056A2",
-              fontWeight: "bold", // Increase the weight to bold
-              fontSize: "20px", // Adjust the font size as needed
+              fontWeight: "bold",
+              fontSize: "20px",
             }}
           >
             {message}

@@ -1,6 +1,9 @@
 import { Box, Button, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const DisableDetailedReport = () => {
+  const { t } = useTranslation();
+
   return (
     <Box
       sx={{
@@ -28,8 +31,9 @@ const DisableDetailedReport = () => {
           marginBottom: 1,
         }}
       >
-        ── Unsubscribe for detailed reports ──
+        {t("unsubscribeTitle")}
       </Typography>
+
       <Box
         sx={{
           display: "flex",
@@ -41,7 +45,7 @@ const DisableDetailedReport = () => {
         }}
       >
         <Typography variant="body2" sx={{ fontSize: "20px", color: "#0056A2" }}>
-          Unsubscribe to usage report
+          {t("unsubscribeText")}
         </Typography>
         <Button
           sx={{
@@ -55,7 +59,9 @@ const DisableDetailedReport = () => {
             },
           }}
         >
-          <Typography variant="body2" sx={{textTransform:"capitalize"}}>Submit</Typography>
+          <Typography variant="body2" sx={{ textTransform: "capitalize" }}>
+            {t("submit")}
+          </Typography>
         </Button>
       </Box>
     </Box>

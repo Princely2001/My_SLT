@@ -125,7 +125,7 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             <Box display="flex" justifyContent="space-between">
               <Typography variant="body1">{t("bill.totalPayable")}:</Typography>
               <Typography variant="body1">
-                {t("common.currency")} {billingData.outstandingBalance.toFixed(2)}
+                {t("currency")} {billingData.outstandingBalance.toFixed(2)}
               </Typography>
             </Box>
             <Typography variant="body1" sx={{ mt: 1 }}>
@@ -145,10 +145,10 @@ const BillDetails: React.FC<BillDetailsProps> = ({
             }}
           >
             <Typography variant="body1" sx={{ fontWeight: "bold" }}>
-              {t("bill.lastPayment")}: {t("common.currency")} {billingData.lastPaymentAmount.toFixed(2)}
+              {t("bill.lastPayment")}: {t("currency")} {billingData.lastPaymentAmount.toFixed(2)}
             </Typography>
             <Typography variant="body1">
-              {t("common.on")} {billingData.lastPaymentDate}
+              {t("on")} {billingData.lastPaymentDate}
             </Typography>
           </Box>
 

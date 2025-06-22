@@ -4,21 +4,26 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 import FiberRequestPage from "./FiberRequestPage";
 import OtherRequestPage from "./OtherRequestPage";
+import { useTranslation } from "react-i18next";
 
 // Define props for the NewServicesPage component
 interface NewServicesPageProps {
   telephoneNo: string;
+  // You might want to add selectedItem prop here too if needed in OtherRequestPage
 }
 
 const NewServicesPage: React.FC<NewServicesPageProps> = ({ telephoneNo }) => {
+  const { t } = useTranslation();
+
   const [selectedItem, setSelectedItem] = useState("Fiber");
 
   console.log("Telephone Number:", telephoneNo); // Log the telephone number
 
+  // Use translated labels for items
   const items = [
-    { label: "Fiber", key: "Fiber" },
-    { label: "Megaline", key: "Megaline" },
-    { label: "4G LTE", key: "4G LTE" },
+    { label: t("newServices.fiber"), key: "Fiber" },
+    { label: t("newServices.megaline"), key: "Megaline" },
+    { label: t("newServices.4glte"), key: "4G LTE" },
   ];
 
   const handleItemClick = (item: string) => {
@@ -45,7 +50,7 @@ const NewServicesPage: React.FC<NewServicesPageProps> = ({ telephoneNo }) => {
         align="center"
         sx={{ fontSize: 24, fontWeight: "bold" }}
       >
-        ── New Services ──
+        ── {t("newServices.title")} ──
       </Typography>
       <Box
         sx={{
@@ -92,10 +97,7 @@ const NewServicesPage: React.FC<NewServicesPageProps> = ({ telephoneNo }) => {
       <Box>
         <Typography variant="body2" sx={{ marginTop: 2 }}>
           {selectedItem === "Fiber" && <FiberRequestPage />}
-          {selectedItem === "Megaline" && (
-            <OtherRequestPage telephoneNo={telephoneNo} selectedItem={selectedItem} />
-          )}
-          {selectedItem === "4G LTE" && (
+          {(selectedItem === "Megaline" || selectedItem === "4G LTE") && (
             <OtherRequestPage telephoneNo={telephoneNo} selectedItem={selectedItem} />
           )}
         </Typography>

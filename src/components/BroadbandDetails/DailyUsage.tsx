@@ -16,8 +16,9 @@ import fetchDailyUsageData from "../../services/postpaid/fetchDailyUsage";
 import fetchPreviousDailyUsageData from "../../services/postpaid/fetchPreviousDailyUsageData";
 import useStore from "../../services/useAppStore";
 import { DailyUsageDetails } from "../../types/types";
+import { useTranslation } from "react-i18next";
 
-const getMonthNames = (): string[] => {
+const getMonthNames = (t: any): string[] => {
   const now = new Date();
   const monthNames = new Intl.DateTimeFormat("en-US", { month: "long" });
 
@@ -28,54 +29,46 @@ const getMonthNames = (): string[] => {
     new Date(now.setMonth(now.getMonth() - 1))
   ); // Month before last
 
-  return ["Current Month", lastMonth, twoMonthsAgo];
+  // Return translated names for "Current Month" + month names
+  return [t("currentMonth"), lastMonth, twoMonthsAgo];
 };
 
 const DailyUsage = () => {
-  const { serviceDetails,setLeftMenuItem,setUsageDetails,detailReportAvailability } = useStore(); // Fetch serviceDetails from the store
+  const { t } = useTranslation();
+  const { serviceDetails, setLeftMenuItem, setUsageDetails, detailReportAvailability } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
-  const months = getMonthNames();
+  const months = getMonthNames(t);
   const [selectedMonth, setSelectedMonth] = useState<string>(months[0]);
-  const [usageData, setUsageData] = useState<DailyUsageDetails[]>([]); // State to store fetched usage data
-  const [loading, setLoading] = useState<boolean>(false); // State to handle loading
+  const [usageData, setUsageData] = useState<DailyUsageDetails[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  // Fetch daily usage data based on selected month
   useEffect(() => {
     const fetchData = async () => {
-      setLoading(true); // Start loading
+      setLoading(true);
       try {
-        console.log("Fetching daily usage data for serviceID:", serviceID); // Debug log
-
         let data: DailyUsageDetails[] | null = null;
 
         if (serviceID) {
           if (selectedMonth === months[0]) {
-            // Current Month
             data = await fetchDailyUsageData(serviceID, "01");
           } else if (selectedMonth === months[1]) {
-            // Last Month
             data = await fetchPreviousDailyUsageData(serviceID, "01", 1);
           } else if (selectedMonth === months[2]) {
-            // Two Months Ago
             data = await fetchPreviousDailyUsageData(serviceID, "01", 2);
           }
         }
-        // Log the fetched data to debug
         if (data) {
-          console.log("Fetched Daily Usage Data:", data);
-          setUsageData(data); // Update the state with the fetched data
-        } else {
-          console.error("No usage data found for serviceID:", serviceID);
+          setUsageData(data);
         }
       } catch (error) {
         console.error("Error fetching daily usage data:", error);
       } finally {
-        setLoading(false); // Stop loading
+        setLoading(false);
       }
     };
 
-    fetchData(); // Call the fetch function
-  }, [serviceID, selectedMonth]); // Re-fetch when serviceID or selectedMonth changes
+    fetchData();
+  }, [serviceID, selectedMonth]);
 
   const handleMonthChange = (month: string) => {
     setSelectedMonth(month);
@@ -105,7 +98,7 @@ const DailyUsage = () => {
           marginBottom: 1,
         }}
       >
-        ── Daily Usage ──
+        ── {t("dailyUsage")} ──
       </Typography>
 
       {/* Month Navigation */}
@@ -154,7 +147,7 @@ const DailyUsage = () => {
       {/* Loading state */}
       {loading && (
         <Typography variant="body1" sx={{ color: "#0056A2", marginBottom: 2 }}>
-          Loading data...
+          {t("loadingData")}
         </Typography>
       )}
 
@@ -168,50 +161,22 @@ const DailyUsage = () => {
           mb: 1,
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box
-            sx={{
-              width: 16,
-              height: 16,
-              bgcolor: "#00D300",
-              borderRadius: "50%",
-            }}
-          />
-          <Typography variant="body2">Base Package</Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box
-            sx={{
-              width: 16,
-              height: 16,
-              bgcolor: "#ED4872",
-              borderRadius: "50%",
-            }}
-          />
-          <Typography variant="body2">Extra GB</Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box
-            sx={{
-              width: 16,
-              height: 16,
-              bgcolor: "#FFDD00",
-              borderRadius: "50%",
-            }}
-          />
-          <Typography variant="body2">Loyalty</Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Box
-            sx={{
-              width: 16,
-              height: 16,
-              bgcolor: "#00FFFF",
-              borderRadius: "50%",
-            }}
-          />
-          <Typography variant="body2">VAS</Typography>
-        </Box>
+        {["basePackage", "extraGB", "loyalty", "vas"].map((label, index) => {
+          const colors = ["#00D300", "#ED4872", "#FFDD00", "#00FFFF"];
+          return (
+            <Box key={index} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Box
+                sx={{
+                  width: 16,
+                  height: 16,
+                  bgcolor: colors[index],
+                  borderRadius: "50%",
+                }}
+              />
+              <Typography variant="body2">{t(label)}</Typography>
+            </Box>
+          );
+        })}
       </Box>
 
       {/* Table */}
@@ -249,120 +214,127 @@ const DailyUsage = () => {
             }}
           >
             <TableRow>
-              <TableCell
-                align="center"
-                sx={{ color: "#FFFFFF", fontWeight: "bold" }}
-              >
-                Date
+              <TableCell align="center" sx={{ color: "#FFFFFF", fontWeight: "bold" }}>
+                {t("date")}
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ color: "#FFFFFF", fontWeight: "bold" }}
-              >
-                <Typography variant="body2" sx={{fontWeight: "bold"}}>Total Usage</Typography>
+              <TableCell align="center" sx={{ color: "#FFFFFF", fontWeight: "bold" }}>
+                <Typography variant="body2" sx={{ fontWeight: "bold" }}>
+                  {t("totalUsage")}
+                </Typography>
                 <Typography variant="body2">(in GB)</Typography>
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ width: "40%", color: "#FFFFFF", fontWeight: "bold" }}
-              >
-                Usage
+              <TableCell align="center" sx={{ width: "40%", color: "#FFFFFF", fontWeight: "bold" }}>
+                {t("usage")}
               </TableCell>
-              <TableCell
-                align="center"
-                sx={{ color: "#FFFFFF", fontWeight: "bold" }}
-              >
-                Report
+              <TableCell align="center" sx={{ color: "#FFFFFF", fontWeight: "bold" }}>
+                {t("report")}
               </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {usageData ? (
-              usageData?.map((row: DailyUsageDetails, index: number) => (
+              usageData.map((row: DailyUsageDetails, index: number) => (
                 <TableRow key={index} sx={{ height: "40px" }}>
-                  <TableCell align="center" sx={{ padding: "6px" }}>{row.displaydate}</TableCell>
-                  <TableCell align="center" sx={{ padding: "6px" }}>{row.daily_total_usage} </TableCell>
+                  <TableCell align="center" sx={{ padding: "6px" }}>
+                    {row.displaydate}
+                  </TableCell>
+                  <TableCell align="center" sx={{ padding: "6px" }}>
+                    {row.daily_total_usage}
+                  </TableCell>
                   <TableCell align="center" sx={{ padding: "6px" }}>
                     {row?.usages ? (
-                    <Box
-                      sx={{
-                        height:"40px",
-                        pt:2,
-                        display: "flex",
-                        justifyContent: "end",
-                        alignItems: "center", // Center the progress bar vertically
-                        flexDirection: "column",
-                        width: "100%", // Ensure full width for the progress bar
-                      }}
-                    >
                       <Box
                         sx={{
+                          height: "40px",
+                          pt: 2,
                           display: "flex",
+                          justifyContent: "end",
+                          alignItems: "center",
+                          flexDirection: "column",
                           width: "100%",
-                          height: 9,
-                          borderRadius: "5px",
-                          backgroundColor: "#E5E5EF",
-                          overflow: "hidden",
                         }}
                       >
                         <Box
-                        sx={{
+                          sx={{
                             display: "flex",
-                            width: `${row.daily_percentage}%`,
-                            height: "100%",
+                            width: "100%",
+                            height: 9,
                             borderRadius: "5px",
-                            
-                        }}
+                            backgroundColor: "#E5E5EF",
+                            overflow: "hidden",
+                          }}
                         >
-                            {row?.usages?
-                            row.usages.map((usage, index) => {
-                          return (
-                            <Box
-                              key={index}
-                              sx={{
-                                width: `${usage.percentage}%`,
-                                height: 9,
-                                backgroundColor: usage.sorter === 1 ? "#00D300" : usage.sorter === 2 ? "#FFDD00" : usage.sorter === 3 ? "#ED4872" : "#00FFFF",
-                                
-                              }}
-                            ></Box>
-                          );
-                        }):<Box>no data</Box>
-                      }
+                          <Box
+                            sx={{
+                              display: "flex",
+                              width: `${row.daily_percentage}%`,
+                              height: "100%",
+                              borderRadius: "5px",
+                            }}
+                          >
+                            {row.usages
+                              ? row.usages.map((usage, index) => {
+                                  const colors = ["#00D300", "#FFDD00", "#ED4872", "#00FFFF"];
+                                  return (
+                                    <Box
+                                      key={index}
+                                      sx={{
+                                        width: `${usage.percentage}%`,
+                                        height: 9,
+                                        backgroundColor: usage.sorter === 1
+                                          ? colors[0]
+                                          : usage.sorter === 2
+                                          ? colors[1]
+                                          : usage.sorter === 3
+                                          ? colors[2]
+                                          : colors[3],
+                                      }}
+                                    ></Box>
+                                  );
+                                })
+                              : null}
+                          </Box>
                         </Box>
+                        <Link
+                          onClick={() => {
+                            setLeftMenuItem("DetailedUsageDetails");
+                            setUsageDetails(row);
+                          }}
+                          href="#"
+                          underline="hover"
+                          sx={{
+                            fontSize: "0.75rem",
+                            textAlign: "center",
+                            mt: 1,
+                            color: "#0056A2",
+                          }}
+                        >
+                          {t("viewDetailedUsage")}
+                        </Link>
                       </Box>
-                      <Link
-                      onClick={() => {
-                        setLeftMenuItem("DetailedUsageDetails");
-                        setUsageDetails(row);
-                      }}
-                        href="#"
-                        underline="hover"
-                        sx={{
-                          fontSize: "0.75rem",
-                          textAlign: "center",
-                          mt: 1, // Added margin-top for spacing
-                          color: "#0056A2",
-                        }}
-                      >
-                        View Detailed Usage
-                      </Link>
-                    </Box>):<Box>
-                      <Typography variant="body2" sx={{color:"#0056A2", fontWeight:600}}>
-                        No data
-                      </Typography>
-                      </Box>}
+                    ) : (
+                      <Box>
+                        <Typography variant="body2" sx={{ color: "#0056A2", fontWeight: 600 }}>
+                          {t("noData")}
+                        </Typography>
+                      </Box>
+                    )}
                   </TableCell>
                   <TableCell align="center">
-                    <Link onClick={() => {
-                      if(detailReportAvailability){
+                    <Link
+                      onClick={() => {
+                        if (detailReportAvailability) {
                           setLeftMenuItem("ProtocolReport");
                           setUsageDetails(row);
-                      }else{
-                        setLeftMenuItem("Subscription");
-                      }
-                        }} href="#" underline="hover" sx={{ color: "#0056A2" }}>
-                      {detailReportAvailability? "More":"View"}
+                        } else {
+                          setLeftMenuItem("Subscription");
+                        }
+                      }}
+                      href="#"
+                      underline="hover"
+                      sx={{ color: "#0056A2" }}
+                    >
+                      {detailReportAvailability ? t("more") : t("view")}
                     </Link>
                   </TableCell>
                 </TableRow>
@@ -370,7 +342,7 @@ const DailyUsage = () => {
             ) : (
               <TableRow>
                 <TableCell colSpan={4} align="center">
-                  No data available
+                  {t("noDataAvailable")}
                 </TableCell>
               </TableRow>
             )}

@@ -9,8 +9,10 @@ import {
   ProtocolData,
   ProtocolReportDetails,
 } from "../../types/types";
+import { useTranslation } from "react-i18next";
 
 const ProtocolReport = () => {
+  const { t } = useTranslation();
   const { usageDetails, serviceDetails } = useStore();
   const serviceID = serviceDetails?.listofBBService[0]?.serviceID;
   const [loading, setLoading] = useState(false);
@@ -18,27 +20,16 @@ const ProtocolReport = () => {
   const [protocolReport, setProtocolReport] = useState<ProtocolReportDetails>();
   const tabs = ["Total", "Download", "Upload"];
   const colorArray = [
-    "#3070F5",
-    "#57BEB5",
-    "#AE59DC",
-    "#5B61D6",
-    "#EA334B",
-    "#F2A73B",
-    "#F5C242",
-    "#9F6EDD",
-    "#F56991",
-    "#67D968",
-    "#B0B0B0",
+    "#3070F5", "#57BEB5", "#AE59DC", "#5B61D6", "#EA334B", "#F2A73B",
+    "#F5C242", "#9F6EDD", "#F56991", "#67D968", "#B0B0B0",
   ];
+
   useEffect(() => {
     const getProtocolReport = async () => {
       setLoading(true);
       if (serviceID && usageDetails?.date) {
         const response = await fetchProtocolReport(serviceID, usageDetails?.date);
-        if (response) {
-          setProtocolReport(response);
-          console.log("protocol report : ", response);
-        }
+        if (response) setProtocolReport(response);
       }
       setLoading(false);
     };
@@ -57,15 +48,9 @@ const ProtocolReport = () => {
     }));
   };
 
-  const totalMappedData = protocolReport
-    ? mapObjectToDataFormat(protocolReport.total, colorArray)
-    : [];
-  const downloadMappedData = protocolReport
-    ? mapObjectToDataFormat(protocolReport.download, colorArray)
-    : [];
-  const uploadMappedData = protocolReport
-    ? mapObjectToDataFormat(protocolReport.upload, colorArray)
-    : [];
+  const totalMappedData = protocolReport ? mapObjectToDataFormat(protocolReport.total, colorArray) : [];
+  const downloadMappedData = protocolReport ? mapObjectToDataFormat(protocolReport.download, colorArray) : [];
+  const uploadMappedData = protocolReport ? mapObjectToDataFormat(protocolReport.upload, colorArray) : [];
 
   const currentMappedData =
     selectedTab === "Total"
@@ -85,7 +70,7 @@ const ProtocolReport = () => {
         backgroundColor: "#FFFFFF",
         padding: 2,
         borderRadius: "10px",
-        height:"450px",
+        height: "450px",
         boxShadow: "0px 3px 3px #0000004A",
         overflow: "hidden",
       }}
@@ -94,6 +79,7 @@ const ProtocolReport = () => {
         <CircularProgress />
       ) : (
         <>
+          {/* Left section: Legend and Labels */}
           <Box
             sx={{
               width: "40%",
@@ -105,7 +91,7 @@ const ProtocolReport = () => {
               padding: 2,
             }}
           >
-            <Box sx={{display:"flex",width:"100%",justifyContent:"center"}}>
+            <Box sx={{ display: "flex", width: "100%", justifyContent: "center" }}>
               <Typography
                 variant="body2"
                 sx={{
@@ -116,7 +102,7 @@ const ProtocolReport = () => {
                   color: "#0056A2",
                 }}
               >
-                ── {selectedTab} ──
+                ── {t(`protocol.${selectedTab.toLowerCase()}`)} ──
               </Typography>
             </Box>
             {currentMappedData.map((item) => (
@@ -138,16 +124,17 @@ const ProtocolReport = () => {
                     backgroundColor: item.color,
                   }}
                 ></Box>
-                <Typography variant="body2" sx={{color:"#00256B", fontWeight: 500 }}>
+                <Typography variant="body2" sx={{ color: "#00256B", fontWeight: 500 }}>
                   {item.label}
                 </Typography>
                 <Typography variant="body2" sx={{ color: "#888" }}>
                   ({item.value.toFixed(2)}%)
                 </Typography>
-                
               </Box>
             ))}
           </Box>
+
+          {/* Right section: Chart and Tabs */}
           <Box
             sx={{
               display: "flex",
@@ -200,7 +187,7 @@ const ProtocolReport = () => {
                     textTransform: "none",
                   }}
                 >
-                  <Typography variant="body2">{tab}</Typography>
+                  <Typography variant="body2">{t(`protocol.${tab.toLowerCase()}`)}</Typography>
                 </Button>
               ))}
             </Box>
@@ -222,11 +209,7 @@ const ProtocolReport = () => {
                 },
               ]}
               sx={{
-                mt:2,
-                "& .MuiPieArc-root": {
-                  border: "2px solid ",
-                  color: "#0056A2",
-                },
+                mt: 2,
                 [`& .${pieArcLabelClasses.root}`]: {
                   fontWeight: "bold",
                   fill: "#ffffff",
@@ -236,12 +219,10 @@ const ProtocolReport = () => {
               }}
               width={400}
               height={250}
-              slotProps={{
-                legend: { hidden: true },
-              }}
+              slotProps={{ legend: { hidden: true } }}
             />
-            <Typography sx ={{position:"relative",bottom:"20px", color: "#0056A2",}}>
-            Data Usage for Date : {usageDetails?.displaydate}
+            <Typography sx={{ position: "relative", bottom: "20px", color: "#0056A2" }}>
+              {t("protocol.dateUsage")} : {usageDetails?.displaydate}
             </Typography>
           </Box>
         </>

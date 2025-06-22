@@ -271,7 +271,7 @@
       "price": "මිල"
     }
   },
-  "common": {
+   
     "from": "සිට",
     "to": "වෙත",
     "search": "සොයන්න",
@@ -281,7 +281,7 @@
     "notAvailable": "නැත",
     "currency": "රු.",
     "watermarkAlt": "ජල සලකුණු ලාංඡනය"
-  },"extra_gb": {
+  ,"extra_gb": {
   "price_plan": "මිල සැලැස්ම",
   "range_1_to_3": "1GB සිට 3GB දක්වා",
   "range_5_to_19": "5GB සිට 19GB දක්වා",
@@ -471,7 +471,132 @@
     "view": "බලන්න", "detailedUsageDetails": "විස්තරාත්මක භාවිත විස්තර",
     "protocolReport": "ප්‍රොටෝකෝල් වාර්තාව",
     "subscription": "දායකත්වය"
-  }
+  }, "changeContactInfo": "සම්බන්ධතා තොරතුරු වෙනස් කරන්න",
+  "fullName": "සම්පූර්ණ නම",
+  "emailAddress": "ඊමේල් ලිපිනය",
+  "mobile": "ජංගම දුරකථන අංකය",
+  "submit": "යොමු කරන්න",
+  "notification": "දැනුම්දීම",
+  "fillAllFields": "කරුණාකර සියලු ක්ෂේත්‍ර නිවැරදිව පුරවන්න",
+  "updateSuccess": "සම්බන්ධතා තොරතුරු සාර්ථකව යාවත්කාලින කළා",
+  "updateFailed": "සම්බන්ධතා යාවත්කාලීන කිරීම අසාර්ථකයි. කරුණාකර නැවත උත්සාහ කරන්න.",
+  "updateError": "සම්බන්ධතා යාවත්කාලීන කිරීමේදී දෝෂයක් සිදු විය. කරුණාකර නැවත උත්සාහ කරන්න.",
+  "ok": "හරි","unsubscribeTitle": "── විස්තරාත්මක වාර්තා සඳහා දායකත්වය අවසන් කරන්න ──",
+  "unsubscribeText": "භාවිත වාර්තාව සඳහා දායකත්වය අවසන් කරන්න",
+  "submit": "යොමු කරන්න", "changePasswordTitle": "බ්‍රෝඩ්බැන්ඩ් මුරපදය වෙනස් කරන්න",
+  "currentPassword": "වත්මන් මුරපදය",
+  "newPassword": "නව මුරපදය",
+  "confirmPassword": "මුරපදය තහවුරු කරන්න",
+  "updatePassword": "මුරපදය යාවත්කාලීන කරන්න", "on": "දිනය", "go": "යන්න","promotion_title": "── ප්‍රවර්ධන ──",
+  "loading_promotions": "ප්‍රවර්ධන ලැබෙමින් පවතියි...",
+  "error_fetching_promotions": "ප්‍රවර්ධන ලබා ගැනීමට අසමත් විය.",
+  "no_promotions": "මෙම අංකයට ප්‍රවර්ධන නොමැත.",
+  "activated": "සක්‍රීය කර ඇත",
+  "activate": "සක්‍රීය කරන්න",
+  "promotion_activation": "ප්‍රවර්ධන සක්‍රීය කිරීම",
+  "close": "වසන්න", "detailedUsage": {
+    "title": "භාවිත විස්තර",
+    "basePackage": "මූලික පැකේජය",
+    "extraGB": "අමතර GB",
+    "loyalty": "පුනරූපීතාව",
+    "vas": "VAS සේවාවන්",
+    "totalUsage": "මුළු භාවිතය",
+    "noData": "දත්ත නැත",
+    "pd": "PD - උච්චාංශ බාගත කිරීම",
+    "pu": "PU - උච්චාංශ උඩුගත කිරීම",
+    "od": "OD - අවුච්චාංශ බාගත කිරීම",
+    "ou": "OU - අවුච්චාංශ උඩුගත කිරීම"
+  },"protocol": {
+  "total": "මුළු",
+  "download": "බාගත",
+  "upload": "උඩුගත",
+  "dateUsage": "දින සඳහා දත්ත භාවිතය"
+},"fiberRequest": {
+    "title": "SLT ෆයිබර් ගෘහ රේඛාව"
+  }, "newServices": {
+    "title": "නව සේවා",
+    "fiber": "ෆයිබර්",
+    "megaline": "මැගාලයින්",
+    "4glte": "4G LTE"
+  }, "firstName": "පළමු නම",
+  "lastName": "අවසන් නම",
+  "nic": "ජාතික හැඳුනුම්පත් අංකය (NIC)",
+  "mobileNumber": "ජංගම දුරකථන අංකය",
+  "submit": "යවන්න",
+  "success": "සාර්ථකයි",
+  "error": "දෝෂයකි",
+  "newConnectionCreated": "නව සම්බන්ධතාවය සාර්ථකව තනන ලදි!",
+  "unexpectedError": "අපේක්ෂිත නොවූ දෝෂයක් සිදු විය.","requestNow": "දැන් ඉල්ලන්න",
+  "fiberOnTheWay": "ෆයිබර් මඟින් යමින් පවතී", "currentMonth": "වත්මන් මාසය",
+  "dailyUsage": "දිනපතා භාවිතය",
+  "loadingData": "දත්ත පූරණය වෙමින් පවතී...",
+  "basePackage": "මූලික පැකේජය",
+  "extraGB": "අතිරේක GB",
+  "loyalty": "වෛවර්",
+  "vas": "VAS",
+  "date": "දිනය",
+  "totalUsage": "මුළු භාවිතය",
+  "usage": "භාවිතය",
+  "report": "වාර්තාව",
+  "viewDetailedUsage": "විස්තරාත්මක භාවිතය බැලීම",
+  "noData": "දත්ත නොමැත",
+  "more": "වැඩි",
+  "view": "බලන්න",
+  "noDataAvailable": "දත්ත නොමැත","complaints": {
+    "title": "පැමිණිලි",
+    "noFaultsFound": "දෝෂ කිසිවක් හමු නොවීය.",
+    "failedToFetch": "දෝෂ ලැයිස්තුව ලබා ගැනීම අසාර්ථක විය.",
+    "failedToFetchTryAgain": "දෝෂ ලැයිස්තුව ලබා ගැනීම අසාර්ථක විය. කරුණාකර නැවත උත්සහ කරන්න.",
+    "serviceName": "සේවා නාමය",
+    "faultRef": "දෝෂ යොමු අංකය",
+    "status": "තත්ත්වය",
+    "date": "දිනය",
+    "submitButton": "ඔබගේ පැමිණිල්ල ඉදිරිපත් කරන්න"
+  },
+  "common": {
+    "loading": "පැරැඳෙමින්..."
+  },  "add_complaints": {
+    "title": "පැමිණිල්ල ඉදිරිපත් කරන්න",
+    "serviceType": "සේවා වර්ගය",
+    "contactNumber": "දුරකථන අංකය",
+    "complaintDescription": "පැමිණිලි විස්තරය",
+    "mapPlaceholder": "අවශ්‍ය නම් ස්ථානය තෝරන්න",
+    "submitBtn": "ඉදිරිපත් කරන්න",
+    "validationError": "අවශ්‍ය සියළු ක්ෂේත්‍ර පුරවන්න.",
+    "success": "පැමිණිල්ල සමත් ලෙස ඉදිරිපත් කරන ලදි!",
+    "unknownError": "නොදන්නා දෝෂයක් සිදු විය",
+    "unexpectedError": "අනපේක්ෂිත දෝෂයක් සිදුවිය",
+    "services": {
+      "all": "සියල්ල",
+      "broadband": "බ්‍රොඩ්බෑන්ඩ්",
+      "peotv": "පීඕටීවී",
+      "voice": "හඬ"
+    }
+  },
+  "common": {
+    "success": "සාර්ථකයි",
+    "error": "දෝෂයකි",
+    "ok": "හරි"
+  }, "addComplaints": {
+    "title": "පැමිණිල්ලක් ඉදිරිපත් කරන්න",
+    "serviceType": "සේවා වර්ගය",
+    "contactNumber": "දුරකථන අංකය",
+    "description": "පැමිණිල්ලේ විස්තරය",
+    "location": "ස්ථානය ඇතුළත් කරන්න",
+    "all": "සියල්ල",
+    "broadband": "බ්‍රෝඩ්බෑන්ඩ්",
+    "peotv": "PeoTV",
+    "voice": "හඬ",
+    "submit": "ඉදිරිපත් කරන්න",
+    "success": "සාර්ථකයි",
+    "error": "දෝෂයක්",
+    "ok": "හරි",
+    "validationError": "කරුණාකර සියලු අවශ්‍ය ක්ෂේත්‍ර පුරවන්න.",
+    "submitSuccess": "පැමිණිල්ල සාර්ථකව ඉදිරිපත් කරන ලදි!",
+    "submitFailure": "予期せぬエラーが発生しました。"
+  },  "currency": "රු."
+
+
  
 
 

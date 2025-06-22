@@ -1,8 +1,10 @@
 import { useState } from "react";
-import "./OrderAnimation.css"; // Import custom CSS styles here
+import "./OrderAnimation.css"; // Import your CSS
 import { Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 const OrderAnimation = () => {
+  const { t } = useTranslation();
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleClick = () => {
@@ -17,12 +19,12 @@ const OrderAnimation = () => {
     >
       <span className="default">
         <Typography sx={{ fontSize: "20px" }} variant="body2">
-          Request Now
+          {t("requestNow")}
         </Typography>
       </span>
       <span className="success">
         <Typography sx={{ fontSize: "18px" }} variant="body2">
-          Fiber is on the way
+          {t("fiberOnTheWay")}
           <svg className="scaled-icon" viewBox="0 0 12 10">
             <polyline points="1.5 6 4.5 9 10.5 1" />
           </svg>
