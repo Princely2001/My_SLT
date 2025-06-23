@@ -67,7 +67,7 @@ const CustomAppBar = () => {
           {/* Logo */}
           <Box sx={{ display: "flex", alignItems: "center", mr: 2 }}>
             <img
-              src="src/assets/images/SLTMobitel_Logo.svg 2.png"
+              src="https://mysltimages.s3.eu-north-1.amazonaws.com/SLTMobitel_Logo.svg+2.png"
               alt="Logo"
               style={{ height: "8vh", minHeight: "50px" }}
             />
